@@ -1,0 +1,16 @@
+
+Modules to add:
+  [ ] rar
+  [ ] pdf (could be based on pdfcrack)
+  [ ] excel
+  [X] ccrypt
+  (...)
+
+Ideas:
+  [X] find number of files into the ZIP, RAR (or ...) and select the 
+      smallest file to test (will have a gain for each operations with a
+      little amount of data) [select stored file first].
+  [ ] multi threading
+  [ ] use internal generator (if you have quite good C or C++ implementation ;))
+  [ ] distributed system
+  [ ] use GMP

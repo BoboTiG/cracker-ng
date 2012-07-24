@@ -1,0 +1,20 @@
+
+=== Compilation options ================================================
+
+-DDEBUG
+	print additional informations for debug/devel purpose
+
+-DUSE_STATS
+	enable crack statistics
+
+
+=== Compilation stage ==================================================
+
+make
+	print available modules
+
+make <module> [debug=yes]
+	build the <module> binary into bin/
+
+make all [debug=yes]
+	build all available modules into bin/

@@ -1,0 +1,13 @@
+﻿
+ * icon from http://www.iconarchive.com/
+ 
+ * CPT module based on the work of Peter Selinger
+	URL: http://ccrypt.sourceforge.net/
+
+ * ZIP module based on Info-ZIP sources
+	URL: http://www.info-zip.org/
+
+ * memcmp_ng() based on the work of acidzombie24 and Rocso
+	URL: http://stackoverflow.com/questions/1684898/whats-the-most-efficient-way-to-compare-two-blocks-of-memory
+
+ * thanks to my dad for some logic help

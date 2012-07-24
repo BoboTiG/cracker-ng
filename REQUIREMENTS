@@ -1,0 +1,7 @@
+
+Libraries:
+	pthread
+
+Libraries for ZIP module:
+	libboost-dev
+	libboost-iostreams
