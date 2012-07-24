@@ -5,7 +5,9 @@ Cracker-ng
 Copyright (C) 2011-2012 by Mickaël 'Tiger-222' Schoentgen.
  
 Cracker-ng comes with ABSOLUTELY NO WARRANTY.
+
 This is free software, and you are welcome to redistribute it under 
+
 certain conditions. See the GNU General Public Licence for details.
 
 
@@ -47,6 +49,7 @@ Examples with ZIP module:
 - bruteforce attack:
 
 	john --incremental --stdout | zipcracker-ng file[.zip]
+	
 	crunch 1 8 -f charset.lst lalpha | zipcracker-ng file[.zip]
 
 
