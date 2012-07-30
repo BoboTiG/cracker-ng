@@ -3,7 +3,7 @@
  * \file cptcracker-ng.cpp
  * \brief ccrypt module for Cracker-ng.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2012.07.24
+ * \date 2012.07.30
  */
 
 
@@ -12,7 +12,7 @@
 // C'est parti mon kiki !
 int main(int argc, char *argv[]) {
 	
-	if ( ! argz_traitment(argv) ) {
+	if ( argc && ! argz_traitment(argv) ) {
 		return 0;
 	}
 	
@@ -90,7 +90,8 @@ void ccrypt_crack(ifstream & filei) {
 	}
 	
 	// Free
-	delete[] encryption_header, b;
+	delete[] encryption_header;
+	delete[] b;
 	
 	// Statistics and result
 	#if (!defined(DEBUG) && defined(USE_STATS))
