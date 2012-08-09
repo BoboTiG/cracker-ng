@@ -3,9 +3,10 @@
  * \file rijndael.h
  * \brief Part of CPT Cracker-ng.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2011.12.26
+ * \date 2011.08.09
  *
  * Copyright (C) 2000-2009 Peter Selinger.
+ * Copyright (C) 2012 Mickaël 'Tiger-222' Schoentgen.
  * This file is part of ccrypt. It is free software and it is covered
  * by the GNU general public license. See the file COPYING for details.
  * 
@@ -15,45 +16,30 @@
  * Reference ANSI C code for NIST competition
  * authors: Paulo Barreto
  *          Vincent Rijmen
+ * 
+ * This is an optimized version for Cracker-ng.
  */
 
 
 #ifndef __RIJNDAEL_H
 #define __RIJNDAEL_H
 
-# ifndef __RIJNDAEL_WORD
-# define __RIJNDAEL_WORD
-
 typedef unsigned char word8;
-
-#ifdef UINT32_TYPE
-typedef UINT32_TYPE word32;
-#else
-typedef int word32;		/* should be a 32-bit integer type */
-#endif
-
-# endif				/* __RIJNDAEL_WORD */
-
-/* a type to hold 32 bits accessible as 1 integer or 4 bytes */
+typedef int word32;
 union word8x4_u {
-  word8 w8[4];
-  word32 w32;
+	word8 w8[4];
+	word32 w32;
 };
 typedef union word8x4_u word8x4;
 
 #include "tables.h"
 
-#define MAXBC		(256/32)
-#define MAXKC		(256/32)
-#define MAXROUNDS	14
-#define MAXRK           ((MAXROUNDS+1)*MAXBC)
+#define MAXBC (256/32)
+#define MAXRK (15*MAXBC)
 
 typedef struct {
-  int BC;
-  int KC;
-  int ROUNDS;
-  int shift[2][4];
-  word32 rk[MAXRK];
+	word32 rk[MAXRK];
+	int shift[2][4];
 } roundkey;
 
 /* keys and blocks are externally treated as word32 arrays, to
@@ -64,8 +50,7 @@ typedef struct {
    by keyBits. keyBits and blockBits may only be 128, 196, or
    256. Returns non-zero if arguments are invalid. */
 
-int xrijndaelKeySched(word32 key[], int keyBits, int blockBits,
-		      roundkey *rkk);
+int xrijndaelKeySched(word32 key[], roundkey *rkk);
 
 /* encrypt, resp. decrypt, block using rijndael roundkey rkk. rkk must
    have been created with xrijndaelKeySched. Size of block, in bits,
@@ -76,4 +61,4 @@ int xrijndaelKeySched(word32 key[], int keyBits, int blockBits,
 void xrijndaelEncrypt(word32 block[], roundkey *rkk);
 void xrijndaelDecrypt(word32 block[], roundkey *rkk);
 
-#endif				/* __RIJNDAEL_H */
+#endif /* __RIJNDAEL_H */

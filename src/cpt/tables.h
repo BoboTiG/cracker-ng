@@ -11,9 +11,15 @@
  */
 
 
+#ifndef TABLES_H
+#define TABLES_H
+
+#include "rijndael.h"
+
 extern word8x4 M0[4][256];
 extern word8x4 M1[4][256];
 extern int xrcon[30];
 extern word8 xS[256];
 extern word8 xSi[256];
 
+#endif // TABLES_H

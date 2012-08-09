@@ -1,20 +1,11 @@
 
-=== Compilation options ================================================
-
--DDEBUG
-	print additional informations for debug/devel purpose
-
--DUSE_STATS
-	enable crack statistics
-
-
 === Compilation stage ==================================================
 
 make
 	print available modules
 
-make <module> [debug=yes]
+make <module>
 	build the <module> binary into bin/
 
-make all [debug=yes]
+make all
 	build all available modules into bin/
