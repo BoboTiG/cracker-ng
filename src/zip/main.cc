@@ -33,8 +33,8 @@ unsigned int Cracker::check() {
 		cout << " ! Unable to find Central Directory signatures." << endl;
 		return 0;
 	}
-	read_central_directory();
-	read_end_central_directory();
+	read_ng::read_central_directory(this->filei, &this->cd, this->start_byte);
+	read_ng::read_end_central_directory(this->filei, &this->ecd, this->end_byte);
 	init_lfh();
 	determine_chosen_one();
 	if ( cd.is_encrypted && lfh.is_encrypted ) {
@@ -74,7 +74,7 @@ void Cracker::crack() {
 	boost::iostreams::filtering_streambuf<boost::iostreams::input> in;
 	size_t num = 0, total = 0;
 	unsigned int found = 0;
-	functions::statistics s = { &num, &total, &found };
+	functions_ng::statistics s = { &num, &total, &found };
 	pthread_t stat;
 	
 	if ( this->lfh.good_crc_32 == 0 ) {
@@ -97,9 +97,9 @@ void Cracker::crack() {
 	
 	// Let's go!
 	cout << " . Working ..." << endl;
-	pthread_create(&stat, NULL, functions::stats, (void*)&s);
+	pthread_create(&stat, NULL, functions_ng::stats, (void*)&s);
 	pthread_detach(stat);
-	while ( (password = functions::read_stdin(pwd_buffer, PWD_MAX)) != NULL ) {
+	while ( (password = functions_ng::read_stdin(pwd_buffer, PWD_MAX)) != NULL ) {
 		#if 0
 			cout
 				<< endl
@@ -170,11 +170,11 @@ void Cracker::crack() {
 		found = 2;
 	}
 	pthread_join(stat, (void**)NULL);
-	functions::result(chosen_one);
+	functions_ng::result(chosen_one);
 }
 
 int main(int argc, char *argv[]) {
-	if ( ! functions::argz_traitment(argc, argv, MODULE, VERSION) ) {
+	if ( ! functions_ng::argz_traitment(argc, argv, MODULE, VERSION) ) {
 		return 0;
 	}
 	printf(" ~ %s Cracker-ng v.%s { Tiger-222 }\n", MODULE, VERSION);
@@ -255,22 +255,22 @@ void Cracker::determine_chosen_one() {
 	this->filei.seekg(this->lfh.start_byte, ios::beg);
 	if ( this->ecd.total_entries > 1 ) {
 		for ( unsigned int i = 1; i <= this->ecd.total_entries; ++i ) {
-			read_local_file_header(true);
+			read_ng::read_local_file_header(this->filei, &this->lfh, true);
 		}
 	} else {
-		read_local_file_header(false);
+		read_ng::read_local_file_header(this->filei, &this->lfh, false);
 	}
 	#if 0
 		cout << endl;
 		cout << "--- The chosen one" << endl;
-		cout << "version_needed_to_extract ..= " << lfh->version_needed_to_extract << endl;
-		cout << "compression_method .........= " << lfh->compression_method << endl;
-		cout << "last_mod_file_time .........= " << lfh->last_mod_file_time << endl;
-		cout << "start_byte .................= " << lfh->start_byte << endl;
-		cout << "is_encrypted ...............= " << lfh->is_encrypted << endl;
-		cout << "strong_encryption ..........= " << lfh->strong_encryption << endl;
-		cout << "good_crc_32 ................= " << (int*)lfh->good_crc_32 << endl;
-		cout << "good_length ................= " << lfh->good_length << endl;
+		cout << "version_needed_to_extract ..= " << this->lfh.version_needed_to_extract << endl;
+		cout << "compression_method .........= " << this->lfh.compression_method << endl;
+		cout << "last_mod_file_time .........= " << this->lfh.last_mod_file_time << endl;
+		cout << "start_byte .................= " << this->lfh.start_byte << endl;
+		cout << "is_encrypted ...............= " << this->lfh.is_encrypted << endl;
+		cout << "strong_encryption ..........= " << this->lfh.strong_encryption << endl;
+		cout << "good_crc_32 ................= " << (int*)this->lfh.good_crc_32 << endl;
+		cout << "good_length ................= " << this->lfh.good_length << endl;
 		cout << endl;
 	#endif
 }
@@ -319,264 +319,6 @@ unsigned int Cracker::find_central_directory() {
 	return found;
 }
 
-void Cracker::read_central_directory() {
-	this->filei.seekg(this->start_byte, ios::beg);
-	this->filei.read((char*)&this->cd.header_signature,            4);
-	this->filei.read((char*)&this->cd.version_made_by,             2);
-	this->filei.read((char*)&this->cd.version_needed_to_extract,   2);
-	this->filei.read((char*)&this->cd.general_purpose_bit_flag,    2);
-	this->filei.read((char*)&this->cd.compression_method,          2);
-	this->filei.read((char*)&this->cd.last_mod_file_time,          2);
-	this->filei.read((char*)&this->cd.last_mod_file_date,          2);
-	this->filei.read((char*)&this->cd.crc_32,                      4);
-	this->filei.read((char*)&this->cd.compressed_size,             4);
-	this->filei.read((char*)&this->cd.uncompressed_size,           4);
-	this->filei.read((char*)&this->cd.file_name_length,            2);
-	this->filei.read((char*)&this->cd.extra_field_length,          2);
-	this->filei.read((char*)&this->cd.file_comment_length,         2);
-	this->filei.read((char*)&this->cd.disk_number_part,            2);
-	this->filei.read((char*)&this->cd.internal_file_attributes,    2);
-	this->filei.read((char*)&this->cd.external_file_attributes,    4);
-	this->filei.read((char*)&this->cd.relative_offset_of_local_fh, 4);
-	if ( this->cd.file_name_length > 0 ) {
-		this->cd.file_name = new char[this->cd.file_name_length + 1];
-		this->filei.read(this->cd.file_name, this->cd.file_name_length);
-		this->cd.file_name[this->cd.file_name_length] = '\0';
-	}
-	if ( this->cd.extra_field_length > 0 ) {
-		this->cd.extra_field = new char[this->cd.extra_field_length];
-		this->filei.read(this->cd.extra_field, this->cd.extra_field_length);
-	}
-	if ( this->cd.file_comment_length > 0 ) {
-		this->cd.file_comment = new char[this->cd.file_comment_length + 1];
-		this->filei.read(this->cd.file_comment, this->cd.file_comment_length);
-		this->cd.file_comment[this->cd.file_comment_length] = '\0';
-	}
-	// Check encryption
-	this->cd.is_encrypted = this->cd.strong_encryption = false;
-	if ( this->cd.general_purpose_bit_flag & 1 ) {
-		this->cd.is_encrypted = true;
-	}
-	if ( this->cd.general_purpose_bit_flag & (1 << 6) ) {
-		this->cd.strong_encryption = true;
-	}
-	
-	#if 0
-		cout << endl;
-		cout << "--- Central Directory" << endl;
-		cout << "header_signature ...........= " << (int*)this->cd.header_signature << endl;
-		cout << "version_made_by ............= " << this->cd.version_made_by << endl;
-		cout << "version_needed_to_extract ..= " << this->cd.version_needed_to_extract << endl;
-		cout << "general_purpose_bit_flag ...= " << this->cd.general_purpose_bit_flag << endl;
-		cout << "compression_method .........= " << this->cd.compression_method << endl;
-		cout << "last_mod_file_time .........= " << this->cd.last_mod_file_time << endl;
-		cout << "last_mod_file_date .........= " << this->cd.last_mod_file_date << endl;
-		cout << "crc_32 .....................= " << (int*)this->cd.crc_32 << endl;
-		cout << "compressed_size ............= " << this->cd.compressed_size << endl;
-		cout << "uncompressed_size ..........= " << this->cd.uncompressed_size << endl;
-		cout << "file_name_length ...........= " << this->cd.file_name_length << endl;
-		cout << "extra_field_length .........= " << this->cd.extra_field_length << endl;
-		cout << "file_comment_length ........= " << this->cd.file_comment_length << endl;
-		cout << "disk_number_part ...........= " << this->cd.disk_number_part << endl;
-		cout << "internal_file_attributes ...= " << (int*)this->cd.internal_file_attributes << endl;
-		cout << "external_file_attributes ...= " << (int*)this->cd.external_file_attributes << endl;
-		cout << "relative_offset_of_local_hd = " << (int*)this->cd.relative_offset_of_local_fh << endl;
-		if ( this->cd.file_name_length > 0 ) {
-			cout << "file_name ..................= " << this->cd.file_name << endl;
-		}
-		if ( this->cd.extra_field_length > 0 ) {
-			cout << "extra_field ................= " << this->cd.extra_field << endl;
-		}
-		if ( this->cd.file_comment_length > 0 ) {
-			cout << "file_comment ...............= " << this->cd.file_comment << endl;
-		}
-	#endif
-	if ( this->cd.file_name_length > 0 ) {
-		delete[] this->cd.file_name;
-	}
-	if ( this->cd.extra_field_length > 0 ) {
-		delete[] this->cd.extra_field;
-	}
-	if ( this->cd.file_comment_length > 0 ) {
-		delete[] this->cd.file_comment;
-	}
-}
-
-void Cracker::read_end_central_directory() {
-	this->filei.seekg(this->end_byte, ios::beg);
-	this->filei.read((char*)&this->ecd.header_signature,            4);
-	this->filei.read((char*)&this->ecd.number_of_disk,              2);
-	this->filei.read((char*)&this->ecd.number_of_disk_with_cd,      2);
-	this->filei.read((char*)&this->ecd.cd_on_this_disk,             2);
-	this->filei.read((char*)&this->ecd.total_entries,               2);
-	this->filei.read((char*)&this->ecd.cd_size,                     4);
-	this->filei.read((char*)&this->ecd.offset,                      4);
-	this->filei.read((char*)&this->ecd.zip_file_comment_length,     2);
-	if ( this->ecd.zip_file_comment_length > 0 ) {
-		this->ecd.zip_file_comment = new char[this->ecd.zip_file_comment_length + 1];
-		this->filei.read(this->ecd.zip_file_comment, this->ecd.zip_file_comment_length);
-		this->ecd.zip_file_comment[this->ecd.zip_file_comment_length] = '\0';
-	}
-	
-	#if 0
-		cout << endl;
-		cout << "--- End of Central Directory" << endl;
-		cout << "header_signature ...........= " << (int*)this->ecd.header_signature << endl;
-		cout << "number_of_disk .............= " << this->ecd.number_of_disk << endl;
-		cout << "number_of_disk_with_cd .....= " << this->ecd.number_of_disk_with_cd << endl;
-		cout << "cd_on_this_disk ............= " << this->ecd.cd_on_this_disk << endl;
-		cout << "total_entries ..............= " << this->ecd.total_entries << endl;
-		cout << "cd_size ....................= " << this->ecd.cd_size << endl;
-		cout << "offset .....................= " << this->ecd.offset << endl;
-		cout << "zip_file_comment_length ....= " << this->ecd.zip_file_comment_length << endl;
-		if ( ecd->zip_file_comment_length > 0 ) {
-			cout << "zip_file_comment ...........= " << this->ecd.zip_file_comment << endl;
-		}
-	#endif
-	
-	if ( this->ecd.zip_file_comment_length > 0 ) {
-		delete[] this->ecd.zip_file_comment;
-	}
-}
-
-void Cracker::read_local_file_header(bool several) {
-	local_file_header *local_lfh = new local_file_header;
-
-	this->filei.read((char*)&local_lfh->header_signature,            4);
-	this->filei.read((char*)&local_lfh->version_needed_to_extract,   2);
-	this->filei.read((char*)&local_lfh->general_purpose_bit_flag,    2);
-	this->filei.read((char*)&local_lfh->compression_method,          2);
-	this->filei.read((char*)&local_lfh->last_mod_file_time,          2);
-	this->filei.read((char*)&local_lfh->last_mod_file_date,          2);
-	this->filei.read((char*)&local_lfh->crc_32,                      4);
-	this->filei.read((char*)&local_lfh->compressed_size,             4);
-	this->filei.read((char*)&local_lfh->uncompressed_size,           4);
-	this->filei.read((char*)&local_lfh->file_name_length,            2);
-	this->filei.read((char*)&local_lfh->extra_field_length,          2);
-	if ( local_lfh->file_name_length > 0 ) {
-		local_lfh->file_name = new char[local_lfh->file_name_length + 1];
-		this->filei.read(local_lfh->file_name, local_lfh->file_name_length);
-		local_lfh->file_name[local_lfh->file_name_length] = '\0';
-	}
-	if ( local_lfh->extra_field_length > 0 ) {
-		local_lfh->extra_field = new char[local_lfh->extra_field_length + 1];
-		this->filei.read(local_lfh->extra_field, local_lfh->extra_field_length);
-		local_lfh->extra_field[local_lfh->extra_field_length] = '\0';
-	}
-	
-	// Save the compressed data start byte
-	local_lfh->start_byte = this->filei.tellg();
-	
-	// Data Descriptor
-	local_lfh->has_data_descriptor = false;
-	local_lfh->data_desc_crc_32 = 0;
-	if ( local_lfh->general_purpose_bit_flag & (1 << 3) ) {
-		local_lfh->has_data_descriptor = true;
-	}
-	if ( local_lfh->has_data_descriptor ) {
-		this->filei.seekg(local_lfh->compressed_size, ios::cur);
-		this->filei.read((char*)&local_lfh->data_desc_signature, 4);
-		if ( local_lfh->data_desc_signature != 0x8074b50 ) {
-			local_lfh->data_desc_crc_32 = local_lfh->data_desc_signature;
-			local_lfh->data_desc_signature = 0;
-		} else {
-			this->filei.read((char*)&local_lfh->data_desc_crc_32, 4);
-		}
-		this->filei.read((char*)&local_lfh->data_desc_compressed_size, 4);
-		this->filei.read((char*)&local_lfh->data_desc_uncompressed_size, 4);
-	}
-	
-	// Data length
-	local_lfh->good_length =
-	(
-		local_lfh->uncompressed_size > 0 ?
-			local_lfh->uncompressed_size : local_lfh->data_desc_uncompressed_size
-	);
-	
-	// CRC-32
-	local_lfh->good_crc_32 =
-	(
-		local_lfh->crc_32 > 0 ?
-			local_lfh->crc_32 :
-			(
-				local_lfh->data_desc_crc_32 > 0 ? local_lfh->data_desc_crc_32 :	0
-			)
-	);
-	
-	// Check encryption
-	local_lfh->is_encrypted = false;
-	local_lfh->strong_encryption = false;
-	if ( local_lfh->general_purpose_bit_flag & 1 ) {
-		local_lfh->is_encrypted = true;
-	}
-	if ( local_lfh->general_purpose_bit_flag & (1 << 6) ) {
-		local_lfh->strong_encryption = true;
-	}
-	
-	#if 0
-		cout << endl;
-		cout << "--- Local File Header" << endl;
-		cout << "header_signature ...........= " << (int*)local_lfh->header_signature << endl;
-		cout << "version_needed_to_extract ..= " << local_lfh->version_needed_to_extract << endl;
-		cout << "general_purpose_bit_flag ...= " << local_lfh->general_purpose_bit_flag << endl;
-		cout << "compression_method .........= " << local_lfh->compression_method << endl;
-		cout << "last_mod_file_time .........= " << local_lfh->last_mod_file_time << endl;
-		cout << "last_mod_file_date .........= " << local_lfh->last_mod_file_date << endl;
-		cout << "crc_32 .....................= " << (int*)local_lfh->crc_32 << endl;
-		cout << "compressed_size ............= " << local_lfh->compressed_size << endl;
-		cout << "uncompressed_size ..........= " << local_lfh->uncompressed_size << endl;
-		cout << "file_name_length ...........= " << local_lfh->file_name_length << endl;
-		cout << "extra_field_length .........= " << local_lfh->extra_field_length << endl;
-		if ( local_lfh->file_name_length > 0 ) {
-			cout << "file_name ..................= " << local_lfh->file_name << endl;
-		}
-		if ( local_lfh->extra_field_length > 0 ) {
-			cout << "extra_field ................= " << (int*)local_lfh->extra_field << endl;
-		}
-		cout << "---" << endl;
-		cout << "start_byte .................= " << local_lfh->start_byte << endl;
-		cout << "is_encrypted ...............= " << local_lfh->is_encrypted << endl;
-		cout << "strong_encryption ..........= " << local_lfh->strong_encryption << endl;
-		cout << "has_data_descriptor ........= " << local_lfh->has_data_descriptor << endl;
-		if ( local_lfh->has_data_descriptor ) {
-			cout << "data_desc_signature ........= " << (int*)local_lfh->data_desc_signature << endl;
-			cout << "data_desc_crc_32 ...........= " << (int*)local_lfh->data_desc_crc_32 << endl;
-			cout << "data_desc_compressed_size ..= " << local_lfh->data_desc_compressed_size << endl;
-			cout << "data_desc_uncompressed_size = " << local_lfh->data_desc_uncompressed_size << endl;
-		}
-		cout << "good_crc_32 ................= " << (int*)local_lfh->good_crc_32 << endl;
-		cout << "good_length ................= " << local_lfh->good_length << endl;
-		cout << endl;
-	#endif
-	
-	if ( local_lfh->file_name_length > 0 ) {
-		delete[] local_lfh->file_name;
-	}
-	if ( local_lfh->extra_field_length > 0 ) {
-		delete[] local_lfh->extra_field;
-	}
-
-	// Now, let's decide if we need this entry o_0
-	if ( several ) {
-		if ( local_lfh->good_length > 0 ) {
-			if ( local_lfh->compression_method <= this->lfh.compression_method ) {
-				if ( local_lfh->good_length <= this->lfh.good_length ) {
-					transpose_lfh(local_lfh);
-				}
-			} else {
-				if ( local_lfh->good_length <= this->lfh.good_length ) {
-					transpose_lfh(local_lfh);
-				}
-				// Go to the next one
-				this->filei.seekg(local_lfh->start_byte, ios::beg);
-				this->filei.seekg(local_lfh->compressed_size);
-			}
-		}
-	} else {
-		transpose_lfh(local_lfh);
-	}
-}
-
 void Cracker::init_lfh() {
 	this->lfh.good_crc_32               = 0;
 	this->lfh.version_needed_to_extract = 0;
@@ -586,15 +328,4 @@ void Cracker::init_lfh() {
 	this->lfh.last_mod_file_time        = 0;
 	this->lfh.strong_encryption         = true;
 	this->lfh.is_encrypted              = true;
-}
-
-void Cracker::transpose_lfh(struct local_file_header * local_lfh) {
-	this->lfh.good_crc_32               = local_lfh->good_crc_32;
-	this->lfh.version_needed_to_extract = local_lfh->version_needed_to_extract;
-	this->lfh.compression_method        = local_lfh->compression_method;
-	this->lfh.start_byte                = local_lfh->start_byte;
-	this->lfh.good_length               = local_lfh->good_length;
-	this->lfh.last_mod_file_time        = local_lfh->last_mod_file_time;
-	this->lfh.strong_encryption         = local_lfh->strong_encryption;
-	this->lfh.is_encrypted              = local_lfh->is_encrypted;
 }

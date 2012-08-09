@@ -1,27 +1,27 @@
 
 /*!
- * \file functions-ng.cc
+ * \file functions.cc
  * \brief Cracker-ng (optimized) functions.
  * \author Mickaël 'Tiger-222' Schoentgen
  * \date 2012.08.09
  */
 
 
-#include "functions-ng.h"
+#include "functions.h"
 
 
-namespace functions {
+namespace functions_ng {
 
 unsigned int argz_traitment(int argc, char**argv, string module, string version) {
 	bool okay = 1;
 	if ( argc == 1 ) {
-		functions::usage(module);
+		functions_ng::usage(module);
 		okay = 0;
 	} else if ( ! strcmp(argv[1], "-h") || ! strcmp(argv[1], "--help") ) {
-		functions::help(module);
+		functions_ng::help(module);
 		okay = 0;
 	} else if ( ! strcmp(argv[1], "-v") || ! strcmp(argv[1], "--version") ) {
-		functions::version(module, version);
+		functions_ng::version(module, version);
 		okay = 0;
 	}
 	return okay;
@@ -34,7 +34,7 @@ void help(const string module) {
 		<< "This is free software, and you are welcome to redistribute it under" << endl
 		<< "certain conditions. See the GNU General Public Licence for details." << endl << endl
 		<< "Cracker-ng, a multiple file cracker." << endl << endl;
-	functions::usage(module);
+	functions_ng::usage(module);
 	cout
 		<< endl << "<file> could be an option like:" << endl
 		<< "    -h, --help     display this message" << endl 
@@ -52,7 +52,7 @@ void result(const string password) {
 }
 
 void *stats(void *argz) {
-	functions::statistics *s = (functions::statistics *)argz;
+	functions_ng::statistics *s = (functions_ng::statistics *)argz;
 	Stats statistics = Stats(s->num, s->total, s->found);
 	statistics.start();
 	statistics.stats_sumary();

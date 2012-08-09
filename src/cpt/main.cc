@@ -27,7 +27,7 @@ void Cracker::crack() {
 	string chosen_one;
 	size_t num = 0, total = 0;
 	unsigned int found = 0;
-	functions::statistics s = { &num, &total, &found };
+	functions_ng::statistics s = { &num, &total, &found };
 	pthread_t stat;
 	
 	// Read encrypted data
@@ -42,9 +42,9 @@ void Cracker::crack() {
 	st->rkks = rkks;
 	
 	// Let's go!
-	pthread_create(&stat, NULL, functions::stats, (void*)&s);
+	pthread_create(&stat, NULL, functions_ng::stats, (void*)&s);
 	pthread_detach(stat);
-	while ( (password = functions::read_stdin(buffer, PWD_MAX)) != NULL ) {
+	while ( (password = functions_ng::read_stdin(buffer, PWD_MAX)) != NULL ) {
 		ccdecrypt_init(b, st, password);
 		memcpy(inbuf, encryption_header, PWD_MAX);
 		b->next_in = inbuf;
@@ -65,12 +65,12 @@ void Cracker::crack() {
 		found = 2;
 	}
 	pthread_join(stat, (void**)NULL);
-	functions::result(chosen_one);
+	functions_ng::result(chosen_one);
 }
 
 
 int main(int argc, char *argv[]) {
-	if ( ! functions::argz_traitment(argc, argv, MODULE, VERSION) ) {
+	if ( ! functions_ng::argz_traitment(argc, argv, MODULE, VERSION) ) {
 		return 0;
 	}
 	printf(" ~ %s Cracker-ng v.%s { Tiger-222 }\n", MODULE, VERSION);

@@ -11,7 +11,6 @@
 	. all modules:
 		* each module has its own Makefile and there is a Makefile to build them all
 		+ binaries for GNU/Linux 64 bits
-		- 
 	. CPT module:
 		. updated to version 0.1-3
 		. is now oriented-object
@@ -22,9 +21,10 @@
 		. is now oriented-object
 		. merge crypt.c into crypt.h
 		. merge traditional_pkware.* into main.*
+		* read.*: create read_ng namespace to reduce code in main.*
 	. shared functions:
 		. stats.* are now oriented-object (class Stats)
-		+ functions.h: create the "functions" namespace
+		+ functions.h: create the functions_ng namespace
 		- cracker-ng.* (few merges with functions.h)
 
 [ july 24 2012 ]

@@ -1,6 +1,6 @@
 
 /*!
- * \file functions-ng.h
+ * \file functions.h
  * \brief Cracker-ng (optimized) functions headers.
  * \author Mickaël 'Tiger-222' Schoentgen
  * \date 2012.08.09
@@ -19,7 +19,7 @@
 using namespace std;
 
 
-namespace functions {
+namespace functions_ng {
 
 typedef struct {
 	size_t       * num;

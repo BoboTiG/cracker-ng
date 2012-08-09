@@ -22,7 +22,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "rijndael.h"
-#include "../shared/functions-ng.h"
+#include "../shared/functions.h"
 
 #define MAGIC "c051"   /* magic string for this version of ccrypt */
 
@@ -89,7 +89,7 @@ inline unsigned int ccdecrypt(ccrypt_stream_s *b) {
 			/* check the "magic number" */
 			memcpy(lbuf, st->buf, 32);
 			xrijndaelDecrypt(lbuf, &st->rkks[0]);
-			if ( functions::memcmp_ng<char>((char *)lbuf, MAGIC, 4) == 0 ) {
+			if ( functions_ng::memcmp_ng<char>((char *)lbuf, MAGIC, 4) == 0 ) {
 				/* key matches */
 				return 0;
 			}

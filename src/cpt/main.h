@@ -15,7 +15,7 @@
 #define PWD_MAX  32       //!< Maximum password length
 
 #include <pthread.h>
-#include "../shared/functions-ng.h"
+#include "../shared/functions.h"
 #include "tables.h"
 #include "rijndael.h"
 #include "ccryptlib.h"

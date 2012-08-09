@@ -23,8 +23,8 @@ $(NAME): $(OBJ)
 %.o: %.cc
 	$(CXX) $(CFLAGS) -c $*.cc
 
-functions.o: ../shared/functions-ng.cc ../shared/functions-ng.h
-	$(CXX) $(CFLAGS) -c ../shared/$*-ng.cc -o $@
+functions.o: ../shared/functions.cc ../shared/functions.h
+	$(CXX) $(CFLAGS) -c ../shared/$*.cc
 
 stats.o: ../shared/stats.cc ../shared/stats.h
 	$(CXX) $(CFLAGS) -c ../shared/$*.cc
