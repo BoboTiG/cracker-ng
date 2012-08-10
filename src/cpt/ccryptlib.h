@@ -3,7 +3,7 @@
  * \file ccryptlib.h
  * \brief Part of CPT Cracker-ng.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2012.08.09
+ * \date 2012.08.10
  * 
  * Copyright (C) 2000-2009 Peter Selinger.
  * Copyright (C) 2012 Mickaël 'Tiger-222' Schoentgen.
@@ -49,6 +49,7 @@ inline void hashstring(const char *keystring, word32 *hash) {
 	register unsigned int i;
 	roundkey rkk;
 	word32 key[8] = {0};      /* rijndael key */
+	
 	for ( ;; ) {
 		for ( i = 0; i < 32; ++i ) {
 			if ( *keystring == '\0' ) {
@@ -67,6 +68,7 @@ inline void hashstring(const char *keystring, word32 *hash) {
 
 inline void ccdecrypt_init(ccrypt_stream_s *b, ccrypt_state_s *st, const char *key) {
 	word32 keyblock[8] = {0};
+	
 	b->state = NULL;
 	/* generate the roundkeys */
 	hashstring(key, keyblock);
@@ -80,6 +82,7 @@ inline unsigned int ccdecrypt(ccrypt_stream_s *b) {
 	ccrypt_state_s *st = (ccrypt_state_s *)b->state;
 	word32 lbuf[8];
 	char *cbuf = (char *)st->buf;
+	
 	for ( ;; ) {
 		cbuf[st->bufindex] = *b->next_in;
 		++b->next_in;

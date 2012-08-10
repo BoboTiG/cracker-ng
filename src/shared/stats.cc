@@ -3,7 +3,7 @@
  * \file stats.cpp
  * \brief Statistics functions.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2012.08.09
+ * \date 2012.08.10
  */
 
 
@@ -48,14 +48,13 @@ void Stats::start() {
 		*this->num = 0;
 	}
 	stats_sumary();
-	pthread_exit(NULL);
 }
 
 void Stats::stats_sumary() {
 	long unsigned int the_time = elapsed_seconds();
 	if ( the_time > 0 ) {
 		size_t pwd = *this->total / the_time;
-		cout << "\033[A . Worked at "
+		cout << "\033[A . Worked at ~ "
 			 << format_number(pwd).c_str()
 			 << " pwd/sec for "
 			 << format_number(*this->total).c_str()
