@@ -111,7 +111,7 @@ struct local_file_header_light {
 };
 
 
-void transpose_lfh(struct local_file_header *, struct local_file_header_light *);
+void transpose_lfh(struct local_file_header &, struct local_file_header_light *);
 
 
 namespace read_ng {
