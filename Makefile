@@ -9,13 +9,13 @@ all: title
 clean:
 	rm -f bin/*$(NAME)
 
-modules: $(MODULES)
+modules: title $(MODULES)
 
 title:
 	@echo " ~ Cracker-ng, a multiple file password finder."
 	@mkdir -p bin
 
-$(MODULES): title
+$(MODULES):
 	@echo " + Building $@ module ..."
 	make -C src/$@/ $@$(NAME) clean
 	mv src/$@/$@$(NAME) bin/

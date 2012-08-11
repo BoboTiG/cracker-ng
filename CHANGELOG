@@ -24,6 +24,7 @@
 		* read.*: create read_ng namespace to reduce code in main.*
 	. shared functions:
 		. stats.* are now oriented-object (class Stats)
+		* move $total passwords out of statistics struct
 		+ functions.h: create the functions_ng namespace
 		- cracker-ng.* (few merges with functions.h)
 

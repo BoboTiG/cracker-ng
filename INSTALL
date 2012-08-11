@@ -7,5 +7,5 @@ make
 make <module>
 	build the <module> binary into bin/
 
-make all
+make modules
 	build all available modules into bin/
