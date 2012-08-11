@@ -3,7 +3,7 @@
  * \file functions.cc
  * \brief Cracker-ng (optimized) functions.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2012.08.10
+ * \date 2012.08.11
  */
 
 
@@ -53,7 +53,7 @@ void result(const string password) {
 
 void *stats(void *argz) {
 	functions_ng::statistics *s = (functions_ng::statistics *)argz;
-	Stats statistics(s->num, s->total, s->found);
+	Stats statistics(s->num, s->found);
 	statistics.start();
 	pthread_exit(NULL);
 }

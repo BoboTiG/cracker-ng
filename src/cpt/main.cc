@@ -3,7 +3,7 @@
  * \file main.cc
  * \brief ccrypt module for Cracker-ng.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2012.08.10
+ * \date 2012.08.11
  */
 
 
@@ -25,9 +25,9 @@ void Cracker::crack() {
 	ccrypt_state_s *st;
 	roundkey *rkks;
 	string chosen_one;
-	size_t num = 0, total = 0;
+	size_t num = 0;
 	unsigned int found = 0;
-	functions_ng::statistics s = { &num, &total, &found };
+	functions_ng::statistics s = { &num, &found };
 	pthread_t stat;
 	
 	// Read encrypted data
@@ -55,7 +55,6 @@ void Cracker::crack() {
 			break;
 		}
 		++num;
-		++total;
 	}
 	delete[] encryption_header;
 	free(b);

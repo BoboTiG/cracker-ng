@@ -3,7 +3,7 @@
  * \file functions.h
  * \brief Cracker-ng (optimized) functions headers.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2012.08.09
+ * \date 2012.08.11
  */
 
 
@@ -23,7 +23,6 @@ namespace functions_ng {
 
 typedef struct {
 	size_t       * num;
-	size_t       * total;
 	unsigned int * found;
 } statistics;
 

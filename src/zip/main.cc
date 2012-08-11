@@ -3,7 +3,7 @@
  * \file main.cc
  * \brief ZIP module for Cracker-ng.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2012.08.09
+ * \date 2012.08.11
  * 
  * See http://www.pkware.com/documents/casestudies/APPNOTE.TXT for
  * more details about ZIP specifications.
@@ -72,9 +72,9 @@ void Cracker::crack() {
 	stringstream compressed;
 	boost::iostreams::zlib_params p;
 	boost::iostreams::filtering_streambuf<boost::iostreams::input> in;
-	size_t num = 0, total = 0;
+	size_t num = 0;
 	unsigned int found = 0;
-	functions_ng::statistics s = { &num, &total, &found };
+	functions_ng::statistics s = { &num, &found };
 	pthread_t stat;
 	
 	if ( this->lfh.good_crc_32 == 0 ) {
@@ -160,7 +160,6 @@ void Cracker::crack() {
 			}
 		}
 		++num;
-		++total;
 	}
 	delete[] encryption_header;
 	delete[] buf;
