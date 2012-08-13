@@ -13,9 +13,9 @@ modules: title $(MODULES)
 
 title:
 	@echo " ~ Cracker-ng, a multiple file password finder."
-	@mkdir -p bin
 
 $(MODULES):
 	@echo " + Building $@ module ..."
+	[ -d bin ] || mkdir bin
 	make -C src/$@/ $@$(NAME) clean
 	mv src/$@/$@$(NAME) bin/
