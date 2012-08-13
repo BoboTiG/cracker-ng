@@ -3,7 +3,7 @@
  * \file main.cc
  * \brief ZIP module for Cracker-ng.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2012.08.11
+ * \date 2012.08.13
  * 
  * See http://www.pkware.com/documents/casestudies/APPNOTE.TXT for
  * more details about ZIP specifications.
@@ -98,17 +98,7 @@ void Cracker::crack() {
 	// Let's go!
 	cout << " . Working ..." << endl;
 	pthread_create(&stat, NULL, functions_ng::stats, (void*)&s);
-	pthread_detach(stat);
 	while ( (password = functions_ng::read_stdin(pwd_buffer, PWD_MAX)) != NULL ) {
-		#if 0
-			cout
-				<< endl
-				<< "----"
-				<< endl
-				<< "password = " << password
-				<< endl;
-		#endif
-		
 		// 1) Initialize the three 32-bit keys with the password.
 		init_keys(password);
 		
