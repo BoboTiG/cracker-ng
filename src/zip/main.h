@@ -49,19 +49,14 @@ private:
 	end_central_directory ecd;
 	
 	/*!
-	 * \fn static inline create_crc32(uint8_t * buf, const uint32_t & crc_32, uint32_t len)
+	 * \fn static inline create_crc32(uint8_t * buf, uint32_t len)
 	 * \brief Calculate the CRC-32 of the decrypted data.
 	 * \param but Pointer to the decrypted data.
-	 * \param crc_32 CRC-32 from the Local File header.
 	 * \param len Length of the decrypted data.
 	 * \return \li 0 if CRC-32 are \b not equals;
 	 * \return \li 1 otherwise.
 	 */
-	static inline unsigned int create_crc32(
-		char           * buf,
-		const uint32_t * crc_32,
-		unsigned int     len
-	) {
+	inline unsigned int create_crc32(char *buf, unsigned int len) {
 		uint32_t c = 0xffffffffL;
 		
 		#if 0
@@ -97,7 +92,7 @@ private:
 		#if 0
 			cout << "     c = " << (int*)c << endl;
 		#endif
-		return c == *crc_32;
+		return c == this->lfh.good_crc_32;
 	}
 
 	/*!

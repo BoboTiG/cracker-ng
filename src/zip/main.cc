@@ -127,8 +127,9 @@ void Cracker::crack() {
 			
 			// The file is stored (no compression)
 			if ( this->lfh.compression_method == 0 ) {
-				if ( this->create_crc32(data, &this->lfh.good_crc_32, len) ) {
+				if ( this->create_crc32(data, len) ) {
 					chosen_one = password;
+					found = 1;
 					break;
 				}
 			}
@@ -139,8 +140,9 @@ void Cracker::crack() {
 					in.push(boost::iostreams::zlib_decompressor(p));
 					in.push(compressed);
 					boost::iostreams::copy(in, boost::iostreams::back_inserter(decompressed));
-					if ( this->create_crc32((char*)decompressed.c_str(), &this->lfh.good_crc_32, len) ) {
+					if ( this->create_crc32((char*)decompressed.c_str(), len) ) {
 						chosen_one = password;
+						found = 1;
 						break;
 					}
 				} catch ( boost::iostreams::zlib_error & e ) {}
