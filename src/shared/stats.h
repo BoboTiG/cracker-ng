@@ -3,12 +3,12 @@
  * \file stats.h
  * \brief Statistics headers.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2012.08.11
+ * \date 2012.08.14
  */
 
 
-#ifndef HEADER_STATS
-#define HEADER_STATS
+#ifndef STATS_H
+#define STATS_H
 
 #include <iostream>
 #include <cstdio>

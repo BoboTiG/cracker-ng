@@ -3,7 +3,7 @@
  * \file rijndael.h
  * \brief Part of CPT Cracker-ng.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2011.08.09
+ * \date 2011.08.14
  *
  * Copyright (C) 2000-2009 Peter Selinger.
  * Copyright (C) 2012 Mickaël 'Tiger-222' Schoentgen.
@@ -21,8 +21,8 @@
  */
 
 
-#ifndef __RIJNDAEL_H
-#define __RIJNDAEL_H
+#ifndef RIJNDAEL_H
+#define RIJNDAEL_H
 
 typedef unsigned char word8;
 typedef int word32;
@@ -61,4 +61,4 @@ int xrijndaelKeySched(word32 key[], roundkey *rkk);
 void xrijndaelEncrypt(word32 block[], roundkey *rkk);
 void xrijndaelDecrypt(word32 block[], roundkey *rkk);
 
-#endif /* __RIJNDAEL_H */
+#endif /* RIJNDAEL_H */
