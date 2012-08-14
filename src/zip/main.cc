@@ -3,7 +3,7 @@
  * \file main.cc
  * \brief ZIP module for Cracker-ng.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2012.08.13
+ * \date 2012.08.14
  * 
  * See http://www.pkware.com/documents/casestudies/APPNOTE.TXT for
  * more details about ZIP specifications.
@@ -61,6 +61,7 @@ void Cracker::crack() {
 	unsigned int len        = this->lfh.good_length;
 	unsigned int check1     = this->lfh.last_mod_file_time >> 8;
 	unsigned int check2     = this->lfh.good_crc_32 >> 24;
+	unsigned int i;
 	bool least_ver          = this->lfh.version_needed_to_extract <= 20;
 	char *encryption_header = new char[12];
 	char *buf               = new char[len];
@@ -71,6 +72,7 @@ void Cracker::crack() {
 	string chosen_one, decompressed;
 	stringstream compressed;
 	boost::iostreams::zlib_params p;
+	boost::iostreams::zlib_decompressor zdec;
 	boost::iostreams::filtering_streambuf<boost::iostreams::input> in;
 	size_t num = 0;
 	unsigned int found = 0;
@@ -94,6 +96,7 @@ void Cracker::crack() {
 	// Adjust decompression options
 	// The ZLIB header and trailing ADLER-32 checksum should be omitted
 	p.noheader = true;
+	zdec = boost::iostreams::zlib_decompressor(p);
 	
 	// Let's go!
 	cout << " . Working ..." << endl;
@@ -105,7 +108,7 @@ void Cracker::crack() {
 		// 2) Read and decrypt the 12-byte encryption header,
 		//    further initializing the encryption keys.
 		memcpy(buffer, encryption_header, 12);
-		for ( register unsigned int i = 0; i < 12; ++i ) {
+		for ( i = 0; i < 12; ++i ) {
 			zdecode(buffer[i]);
 			#if 0
 				cout
@@ -121,7 +124,7 @@ void Cracker::crack() {
 			// 3) Read and decrypt the compressed data stream using
 			//    the encryption keys.
 			memcpy(data, buf, len);
-			for ( register unsigned int i = 0; i < len; ++i ) {
+			for ( i = 0; i < len; ++i ) {
 				zdecode(data[i]);
 			}
 			
@@ -137,7 +140,7 @@ void Cracker::crack() {
 			else if ( this->lfh.compression_method == 8 ) {
 				try {
 					compressed.write(data, len);
-					in.push(boost::iostreams::zlib_decompressor(p));
+					in.push(zdec);
 					in.push(compressed);
 					boost::iostreams::copy(in, boost::iostreams::back_inserter(decompressed));
 					if ( this->create_crc32((char*)decompressed.c_str(), len) ) {
@@ -147,7 +150,7 @@ void Cracker::crack() {
 					}
 				} catch ( boost::iostreams::zlib_error & e ) {}
 				in.reset();
-				compressed.clear();
+				compressed.str(string());
 				decompressed = "";
 			}
 		}
