@@ -3,7 +3,7 @@
  * \file read.cc
  * \brief Cracker-ng (optimized) functions.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2012.08.10
+ * \date 2012.08.15
  */
 
 
@@ -76,28 +76,28 @@ void read_central_directory(
 	#if 0
 		cout << endl;
 		cout << "--- Central Directory" << endl;
-		cout << "header_signature ...........= " << (int*)cd.header_signature << endl;
-		cout << "version_made_by ............= " << cd.version_made_by << endl;
-		cout << "version_needed_to_extract ..= " << cd.version_needed_to_extract << endl;
-		cout << "general_purpose_bit_flag ...= " << cd.general_purpose_bit_flag << endl;
-		cout << "compression_method .........= " << cd.compression_method << endl;
-		cout << "last_mod_file_time .........= " << cd.last_mod_file_time << endl;
-		cout << "last_mod_file_date .........= " << cd.last_mod_file_date << endl;
-		cout << "crc_32 .....................= " << (int*)cd.crc_32 << endl;
-		cout << "compressed_size ............= " << cd.compressed_size << endl;
-		cout << "uncompressed_size ..........= " << cd.uncompressed_size << endl;
+		cout << "header_signature ...........= " << reinterpret_cast<unsigned int*>(cd->header_signature) << endl;
+		cout << "version_made_by ............= " << cd->version_made_by << endl;
+		cout << "version_needed_to_extract ..= " << cd->version_needed_to_extract << endl;
+		cout << "general_purpose_bit_flag ...= " << cd->general_purpose_bit_flag << endl;
+		cout << "compression_method .........= " << cd->compression_method << endl;
+		cout << "last_mod_file_time .........= " << cd->last_mod_file_time << endl;
+		cout << "last_mod_file_date .........= " << cd->last_mod_file_date << endl;
+		cout << "crc_32 .....................= " << reinterpret_cast<unsigned int*>(cd->crc_32) << endl;
+		cout << "compressed_size ............= " << cd->compressed_size << endl;
+		cout << "uncompressed_size ..........= " << cd->uncompressed_size << endl;
 		cout << "file_name_length ...........= " << cd->file_name_length << endl;
-		cout << "extra_field_length .........= " << cd.extra_field_length << endl;
+		cout << "extra_field_length .........= " << cd->extra_field_length << endl;
 		cout << "file_comment_length ........= " << cd->file_comment_length << endl;
-		cout << "disk_number_part ...........= " << cd.disk_number_part << endl;
-		cout << "internal_file_attributes ...= " << (int*)cd.internal_file_attributes << endl;
-		cout << "external_file_attributes ...= " << (int*)cd.external_file_attributes << endl;
-		cout << "relative_offset_of_local_hd = " << (int*)cd.relative_offset_of_local_fh << endl;
+		cout << "disk_number_part ...........= " << cd->disk_number_part << endl;
+		cout << "internal_file_attributes ...= " << reinterpret_cast<unsigned int*>(cd->internal_file_attributes) << endl;
+		cout << "external_file_attributes ...= " << reinterpret_cast<unsigned int*>(cd->external_file_attributes) << endl;
+		cout << "relative_offset_of_local_hd = " << reinterpret_cast<unsigned int*>(cd->relative_offset_of_local_fh) << endl;
 		if ( cd->file_name_length > 0 ) {
 			cout << "file_name ..................= " << cd->file_name << endl;
 		}
-		if ( cd.extra_field_length > 0 ) {
-			cout << "extra_field ................= " << cd.extra_field << endl;
+		if ( cd->extra_field_length > 0 ) {
+			cout << "extra_field ................= " << cd->extra_field << endl;
 		}
 		if ( cd->file_comment_length > 0 ) {
 			cout << "file_comment ...............= " << cd->file_comment << endl;
@@ -137,16 +137,16 @@ void read_end_central_directory(
 	#if 0
 		cout << endl;
 		cout << "--- End of Central Directory" << endl;
-		cout << "header_signature ...........= " << (int*)ecd.header_signature << endl;
-		cout << "number_of_disk .............= " << ecd.number_of_disk << endl;
-		cout << "number_of_disk_with_cd .....= " << ecd.number_of_disk_with_cd << endl;
-		cout << "cd_on_this_disk ............= " << ecd.cd_on_this_disk << endl;
-		cout << "total_entries ..............= " << ecd.total_entries << endl;
-		cout << "cd_size ....................= " << ecd.cd_size << endl;
-		cout << "offset .....................= " << ecd.offset << endl;
-		cout << "zip_file_comment_length ....= " << ecd.zip_file_comment_length << endl;
+		cout << "header_signature ...........= " << reinterpret_cast<unsigned int*>(ecd->header_signature) << endl;
+		cout << "number_of_disk .............= " << ecd->number_of_disk << endl;
+		cout << "number_of_disk_with_cd .....= " << ecd->number_of_disk_with_cd << endl;
+		cout << "cd_on_this_disk ............= " << ecd->cd_on_this_disk << endl;
+		cout << "total_entries ..............= " << ecd->total_entries << endl;
+		cout << "cd_size ....................= " << ecd->cd_size << endl;
+		cout << "offset .....................= " << ecd->offset << endl;
+		cout << "zip_file_comment_length ....= " << ecd->zip_file_comment_length << endl;
 		if ( ecd->zip_file_comment_length > 0 ) {
-			cout << "zip_file_comment ...........= " << ecd.zip_file_comment << endl;
+			cout << "zip_file_comment ...........= " << ecd->zip_file_comment << endl;
 		}
 	#endif
 	
@@ -236,35 +236,35 @@ void read_local_file_header(
 	#if 0
 		cout << endl;
 		cout << "--- Local File Header" << endl;
-		cout << "header_signature ...........= " << (int*)local_lfh.header_signature << endl;
+		cout << "header_signature ...........= " << reinterpret_cast<unsigned int*>(local_lfh.header_signature) << endl;
 		cout << "version_needed_to_extract ..= " << local_lfh.version_needed_to_extract << endl;
 		cout << "general_purpose_bit_flag ...= " << local_lfh.general_purpose_bit_flag << endl;
 		cout << "compression_method .........= " << local_lfh.compression_method << endl;
 		cout << "last_mod_file_time .........= " << local_lfh.last_mod_file_time << endl;
 		cout << "last_mod_file_date .........= " << local_lfh.last_mod_file_date << endl;
-		cout << "crc_32 .....................= " << (int*)local_lfh.crc_32 << endl;
+		cout << "crc_32 .....................= " << reinterpret_cast<unsigned int*>(local_lfh.crc_32) << endl;
 		cout << "compressed_size ............= " << local_lfh.compressed_size << endl;
 		cout << "uncompressed_size ..........= " << local_lfh.uncompressed_size << endl;
 		cout << "file_name_length ...........= " << local_lfh.file_name_length << endl;
 		cout << "extra_field_length .........= " << local_lfh.extra_field_length << endl;
-		if ( local_lfh->file_name_length > 0 ) {
+		if ( local_lfh.file_name_length > 0 ) {
 			cout << "file_name ..................= " << local_lfh.file_name << endl;
 		}
 		if ( local_lfh.extra_field_length > 0 ) {
-			cout << "extra_field ................= " << (int*)local_lfh.extra_field << endl;
+			cout << "extra_field ................= " << reinterpret_cast<unsigned int*>(local_lfh.extra_field) << endl;
 		}
 		cout << "---" << endl;
 		cout << "start_byte .................= " << local_lfh.start_byte << endl;
 		cout << "is_encrypted ...............= " << local_lfh.is_encrypted << endl;
 		cout << "strong_encryption ..........= " << local_lfh.strong_encryption << endl;
 		cout << "has_data_descriptor ........= " << local_lfh.has_data_descriptor << endl;
-		if ( local_lfh->has_data_descriptor ) {
-			cout << "data_desc_signature ........= " << (int*)local_lfh.data_desc_signature << endl;
-			cout << "data_desc_crc_32 ...........= " << (int*)local_lfh.data_desc_crc_32 << endl;
+		if ( local_lfh.has_data_descriptor ) {
+			cout << "data_desc_signature ........= " << reinterpret_cast<unsigned int*>(local_lfh.data_desc_signature) << endl;
+			cout << "data_desc_crc_32 ...........= " << reinterpret_cast<unsigned int*>(local_lfh.data_desc_crc_32) << endl;
 			cout << "data_desc_compressed_size ..= " << local_lfh.data_desc_compressed_size << endl;
 			cout << "data_desc_uncompressed_size = " << local_lfh.data_desc_uncompressed_size << endl;
 		}
-		cout << "good_crc_32 ................= " << (int*)local_lfh.good_crc_32 << endl;
+		cout << "good_crc_32 ................= " << reinterpret_cast<unsigned int*>(local_lfh.good_crc_32) << endl;
 		cout << "good_length ................= " << local_lfh.good_length << endl;
 		cout << endl;
 	#endif

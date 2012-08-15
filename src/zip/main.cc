@@ -112,9 +112,9 @@ void Cracker::crack() {
 			zdecode(buffer[i]);
 			#if 0
 				cout
-					<< "encryption_header[] = " << (int*)(encryption_header[i] & 0xFF)
+					<< "encryption_header[] = " << reinterpret_cast<unsigned int*>(encryption_header[i] & 0xFF)
 					<< "  |  "
-					<< "buffer[] = " << (int*)buffer[i]
+					<< "buffer[] = " << reinterpret_cast<unsigned int*>(buffer[i])
 					<< endl;
 			#endif
 		}
@@ -263,7 +263,7 @@ void Cracker::determine_chosen_one() {
 		cout << "start_byte .................= " << this->lfh.start_byte << endl;
 		cout << "is_encrypted ...............= " << this->lfh.is_encrypted << endl;
 		cout << "strong_encryption ..........= " << this->lfh.strong_encryption << endl;
-		cout << "good_crc_32 ................= " << (int*)this->lfh.good_crc_32 << endl;
+		cout << "good_crc_32 ................= " << reinterpret_cast<unsigned int*>(this->lfh.good_crc_32) << endl;
 		cout << "good_length ................= " << this->lfh.good_length << endl;
 		cout << endl;
 	#endif

@@ -57,13 +57,13 @@ private:
 	 * \return \li 1 otherwise.
 	 */
 	inline unsigned int create_crc32(char *buf, unsigned int len) {
-		uint32_t c = 0xffffffffL;
+		register uint32_t c = 0xffffffffL;
 		
 		#if 0
 			cout << "\n--- Create CRC-32" << endl;
 			cout
-				<< "     c = " << (int*)c
-				<< " | buf = " << (int*)(*buf & 0xFF)
+				<< "     c = " << reinterpret_cast<unsigned int*>(c)
+				<< " | buf = " << reinterpret_cast<unsigned int*>(*buf & 0xFF)
 				<< " | len = " << len
 			<< endl;
 		#endif
@@ -72,8 +72,8 @@ private:
 			len -= 8;
 			#if 0
 				cout
-					<< "do08 c = " << (int*)c
-					<< " | buf = " << (int*)(*buf & 0xFF)
+					<< "do08 c = " << reinterpret_cast<unsigned int*>(c)
+					<< " | buf = " << reinterpret_cast<unsigned int*>(*buf & 0xFF)
 					<< " | len = " << len
 				<< endl;
 			#endif
@@ -82,15 +82,15 @@ private:
 			DO1(c, buf);
 			#if 0
 				cout
-					<< "do01 c = " << (int*)c
-					<< " | buf = " << (int*)(*buf & 0xFF)
+					<< "do01 c = " << reinterpret_cast<unsigned int*>(c)
+					<< " | buf = " << reinterpret_cast<unsigned int*>(*buf & 0xFF)
 					<< " | len = " << len
 				<< endl;
 			#endif
 		} while ( --len );
-		c ^= 0xffffffffL;
+		c = ~c;
 		#if 0
-			cout << "     c = " << (int*)c << endl;
+			cout << "     c = " << reinterpret_cast<unsigned int*>(c) << endl;
 		#endif
 		return c == this->lfh.good_crc_32;
 	}

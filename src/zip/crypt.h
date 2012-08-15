@@ -3,7 +3,7 @@
  * \file crypt.h
  * \brief ZIP Cracker-ng headers for the Traditional PKWARE Encryption.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2012.08.09
+ * \date 2012.08.15
  * 
  * Copyright (c) 1990-2007 Info-ZIP.  All rights reserved.
  * 
@@ -70,13 +70,7 @@ inline void init_keys(const char* passwd) {
 	keys[0] = 0x12345678;
 	keys[1] = 0x23456789;
 	keys[2] = 0x34567890;
-	for ( ;; ) {
-		if ( *passwd == '\0' ) {
-			break;
-		}
-		update_keys((int)*passwd);
-		++passwd;
-	}
+	while ( *passwd ) update_keys(*passwd++);
 }
 
 #endif // CRACK_CRYPT_H
