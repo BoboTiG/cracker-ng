@@ -39,14 +39,15 @@ string Stats::format_number(const size_t & num) {
 void Stats::start() {
 	for ( ; *this->found == 0 ; ) {
 		sleep(this->sleeping_time);
-		this->total += *this->num;
+		size_t n = *this->num;
+		*this->num = 0;
+		this->total += n;
 		cout << "\033[A"
 			 << " . Working at "
-			 << format_number(*this->num / this->sleeping_time).c_str()
+			 << format_number(n / this->sleeping_time).c_str()
 			 << " pwd/sec ["
 			 << format_number(this->total).c_str()
 			 << " tries]" << endl;
-		*this->num = 0;
 	}
 	stats_sumary();
 }
