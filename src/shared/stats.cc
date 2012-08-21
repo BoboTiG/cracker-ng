@@ -3,7 +3,7 @@
  * \file stats.cpp
  * \brief Statistics functions.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2012.08.13
+ * \date 2012.08.21
  */
 
 
@@ -11,7 +11,7 @@
 
 Stats::Stats(size_t *num, unsigned int *found)
 	: num(num), found(found), 
-	  total(0), start_time(time(NULL)), sleeping_time(4)
+	  total(0), start_time(time(NULL)), sleeping_time(1)
 {}
 
 Stats::~Stats() {}
