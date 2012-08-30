@@ -3,7 +3,7 @@
  * \file functions.h
  * \brief Cracker-ng (optimized) functions headers.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2012.08.11
+ * \date 2012.08.21
  */
 
 
@@ -50,6 +50,7 @@ inline char *read_stdin(char *buffer, int len) {
 }
 
 unsigned int argz_traitment(int, char**, string, string);
+unsigned int get_cores();
 void help(const string);
 void result(const string);
 void *stats(void *argz);

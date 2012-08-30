@@ -42,7 +42,7 @@ private:
 	unsigned short int sleeping_time;
 	char _pad[6];
 
-	unsigned long elapsed_seconds();
+	time_t elapsed_seconds();
 	string format_number(const size_t &);
 
 };

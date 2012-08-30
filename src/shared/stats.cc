@@ -3,7 +3,7 @@
  * \file stats.cpp
  * \brief Statistics functions.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2012.08.21
+ * \date 2012.08.30
  */
 
 
@@ -16,7 +16,7 @@ Stats::Stats(size_t *num, unsigned int *found)
 
 Stats::~Stats() {}
 
-unsigned long Stats::elapsed_seconds() {
+time_t Stats::elapsed_seconds() {
 	return (time(NULL) - this->start_time);
 }
 
@@ -29,7 +29,7 @@ string Stats::format_number(const size_t & num) {
 	i = len + 1;
 	while ( --i ) {
 		if ( i < len && i % 3 == 0 ) {
-			format << ",";
+			format << ',';
 		}
 		format << str.str()[len - i];
 	}
@@ -43,23 +43,17 @@ void Stats::start() {
 		*this->num = 0;
 		this->total += n;
 		cout << "\033[A"
-			 << " . Working at "
-			 << format_number(n / this->sleeping_time).c_str()
-			 << " pwd/sec ["
-			 << format_number(this->total).c_str()
-			 << " tries]" << endl;
+			 << " . Working at " << format_number(n / this->sleeping_time).c_str()
+			 << " pwd/sec [" << format_number(this->total).c_str() << " tries]\n";
 	}
 	stats_sumary();
 }
 
 void Stats::stats_sumary() {
-	long unsigned int the_time = elapsed_seconds();
+	time_t the_time = elapsed_seconds();
 	if ( the_time > 0 ) {
 		size_t pwd = this->total / the_time;
-		cout << "\033[A . Worked at ~ "
-			 << format_number(pwd).c_str()
-			 << " pwd/sec for "
-			 << format_number(this->total).c_str()
-			 << " tries." << endl;
+		cout << "\033[A . Worked at ~ " << format_number(pwd).c_str()
+			 << " pwd/sec for " << format_number(this->total).c_str() << " tries.\n";
 	}
 }

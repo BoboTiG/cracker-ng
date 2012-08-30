@@ -3,7 +3,7 @@
  * \file functions.cc
  * \brief Cracker-ng (optimized) functions.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2012.08.11
+ * \date 2012.08.30
  */
 
 
@@ -27,25 +27,45 @@ unsigned int argz_traitment(int argc, char**argv, string module, string version)
 	return okay;
 }
 
+unsigned int get_cores() {
+	unsigned int n = 0;
+	char buf[256];
+
+	FILE *f = fopen("/proc/cpuinfo", "r");
+	if ( f ) {
+		for ( ; ! feof(f) ; ) {
+			memset(buf, 0, sizeof(buf));
+			if ( fgets(buf, sizeof(buf), f) == NULL ) {
+				break;
+			}
+			if ( string(buf).find("processor") != string::npos ) {
+				++n;
+			}
+		}
+		fclose(f);
+	}
+	return n == 0 ? 1 : n;
+}
+
 void help(const string module) {
 	cout
-		<< "Copyright (C) 2011-2012 by Mickaël 'Tiger-222' Schoentgen." << endl << endl
-		<< "Cracker-ng comes with ABSOLUTELY NO WARRANTY." << endl
-		<< "This is free software, and you are welcome to redistribute it under" << endl
-		<< "certain conditions. See the GNU General Public Licence for details." << endl << endl
-		<< "Cracker-ng, a multiple file cracker." << endl << endl;
+		<< "Copyright (C) 2011-2012 by Mickaël 'Tiger-222' Schoentgen.\n\n"
+		<< "Cracker-ng comes with ABSOLUTELY NO WARRANTY.\n"
+		<< "This is free software, and you are welcome to redistribute it under\n"
+		<< "certain conditions. See the GNU General Public Licence for details.\n\n"
+		<< "Cracker-ng, a multiple file cracker.\n\n";
 	functions_ng::usage(module);
 	cout
-		<< endl << "<file> could be an option like:" << endl
-		<< "    -h, --help     display this message" << endl 
-		<< "    -v, --version  display module version" << endl << endl
-		<< "Do not hesitate to contact me at <tiger-222@matriux.com> for critics," << endl
-		<< "suggestions, contributions (or whatever you want!)." << endl;
+		<< "\n<file> could be an option like:\n"
+		<< "    -h, --help     display this message\n"
+		<< "    -v, --version  display module version\n\n"
+		<< "Do not hesitate to contact me at <tiger-222@matriux.com> for critics,\n"
+		<< "suggestions, contributions (or whatever you want!).\n";
 }
 
 void result(const string password) {
 	if ( password.empty() ) {
-		cout << " ! Password not found." << endl;
+		cout << " ! Password not found.\n";
 	} else {
 		cout << " + Password found: " << password << endl;
 	}
@@ -61,9 +81,8 @@ void *stats(void *argz) {
 void usage(string module) {
 	transform(module.begin(), module.end(), module.begin(), ::tolower);
 	cout 
-		<< "Usage: generator | " << module << "cracker-ng <file>" << endl
-		<< " Where generator could be cat, crunch, john, jot or whatever you want."
-		<< endl;
+		<< "Usage: generator | " << module << "cracker-ng <file>\n"
+		<< " Where generator could be cat, crunch, john, jot or whatever you want.\n";
 }
 
 void version(const string module, const string version) {
