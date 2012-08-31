@@ -14,8 +14,8 @@ What
 Cracker-ng, a multiple file cracker.
 For now, there are these modules:
 
-* zip cracker (zip, apm, ipa, ... ),
-* ccrypt cracker (cpt)
+* zip cracker (zip, winzip, apm, ipa, and all zip based files),
+* ccrypt cracker (cpt, antigift) [from the 2nd version (1.1) to the latest (1.9), 1.0 is buggy]
 
 What this tool does **not**:
 
@@ -35,7 +35,7 @@ What this tool does:
 Man
 ---
 
-Usage: **module**cracker-ng FILE
+Usage: **MODULE**cracker-ng FILE
 
 Examples with ZIP module:
 
