@@ -3,7 +3,7 @@
  * \file crc32.h
  * \brief ZIP Cracker-ng headers for the CRC-32 algorithme.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2012.08.09
+ * \date 2012.08.31
  * 
  * Copyright (c) 1990-2007 Info-ZIP.  All rights reserved.
  * 
@@ -36,7 +36,7 @@
  * \var pcrc_32_tab
  * \brief Table of CRC-32's of all single-byte values.
  */
-const long pcrc_32_tab[256] = {
+const long unsigned int pcrc_32_tab[256] = {
 	0x00000000L, 0x77073096L, 0xee0e612cL, 0x990951baL, 0x076dc419L,
 	0x706af48fL, 0xe963a535L, 0x9e6495a3L, 0x0edb8832L, 0x79dcb8a4L,
 	0xe0d5e91eL, 0x97d2d988L, 0x09b64c2bL, 0x7eb17cbdL, 0xe7b82d07L,
