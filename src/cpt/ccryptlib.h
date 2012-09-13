@@ -3,7 +3,7 @@
  * \file ccryptlib.h
  * \brief Part of CPT Cracker-ng.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2012.08.10
+ * \date 2012.09.13
  * 
  * Copyright (C) 2000-2009 Peter Selinger.
  * Copyright (C) 2012 Mickaël 'Tiger-222' Schoentgen.
@@ -45,9 +45,8 @@ typedef struct {
 /* some private functions dealing with hashes, keys, and nonces */
 
 /* hash a keystring into a 256-bit cryptographic random value. */
-inline void hashstring(const char *keystring, word32 *hash) {
+inline void hashstring(const char *keystring, word32 *hash, roundkey &rkk) {
 	register unsigned int i;
-	roundkey rkk;
 	word32 key[8] = {0};      /* rijndael key */
 	
 	for ( ;; ) {
@@ -66,21 +65,23 @@ inline void hashstring(const char *keystring, word32 *hash) {
 	}
 }
 
-inline void ccdecrypt_init(ccrypt_stream_s *b, ccrypt_state_s *st, const char *key) {
+inline void ccdecrypt_init(
+	ccrypt_stream_s *b, ccrypt_state_s *st,
+	const char *key, roundkey &rkk_hash
+) {
 	word32 keyblock[8] = {0};
-	
+
 	b->state = NULL;
 	/* generate the roundkeys */
-	hashstring(key, keyblock);
+	hashstring(key, keyblock, rkk_hash);
 	xrijndaelKeySched(keyblock, &st->rkks[0]);
 	/* Initialize rest of the state. */
 	st->bufindex = 0;
 	b->state = (void *)st;
 }
 
-inline unsigned int ccdecrypt(ccrypt_stream_s *b) {
+inline int ccdecrypt(ccrypt_stream_s *b) {
 	ccrypt_state_s *st = (ccrypt_state_s *)b->state;
-	word32 lbuf[8];
 	char *cbuf = (char *)st->buf;
 	
 	for ( ;; ) {
@@ -90,14 +91,8 @@ inline unsigned int ccdecrypt(ccrypt_stream_s *b) {
 		++st->bufindex;
 		if ( st->bufindex == 32 ) {
 			/* check the "magic number" */
-			memcpy(lbuf, st->buf, 32);
-			xrijndaelDecrypt(lbuf, &st->rkks[0]);
-			if ( functions_ng::memcmp_ng<char>((char *)lbuf, MAGIC, 4) == 0 ) {
-				/* key matches */
-				return 0;
-			}
-			/* not found */
-			return 2;
+			xrijndaelDecrypt(st->buf, &st->rkks[0]);
+			return memcmp(st->buf, MAGIC, 4);
 		}
 	}
 	return 1;

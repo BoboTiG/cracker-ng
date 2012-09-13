@@ -3,7 +3,7 @@
  * \file stats.h
  * \brief Statistics headers.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2012.08.14
+ * \date 2012.08.30
  */
 
 

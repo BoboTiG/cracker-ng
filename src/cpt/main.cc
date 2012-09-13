@@ -3,7 +3,7 @@
  * \file main.cc
  * \brief ccrypt module for Cracker-ng.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2012.08.14
+ * \date 2012.09.13
  */
 
 
@@ -24,6 +24,7 @@ void Cracker::crack() {
 	ccrypt_stream_s *b;
 	ccrypt_state_s *st;
 	roundkey *rkks;
+	roundkey rkk_hash;
 	string chosen_one;
 	size_t num = 0;
 	unsigned int found = 0;
@@ -44,11 +45,11 @@ void Cracker::crack() {
 	// Let's go!
 	pthread_create(&stat, NULL, functions_ng::stats, (void*)&s);
 	while ( (password = functions_ng::read_stdin(buffer, PWD_MAX)) != NULL ) {
-		ccdecrypt_init(b, st, password);
+		ccdecrypt_init(b, st, password, rkk_hash);
 		memcpy(inbuf, encryption_header, 32);
 		b->next_in = inbuf;
 		b->avail_in = 32;
-		if ( ! ccdecrypt(b) ) {
+		if ( ccdecrypt(b) == 0 ) {
 			chosen_one = password;
 			found = 1;
 			break;
