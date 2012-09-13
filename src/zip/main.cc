@@ -3,7 +3,7 @@
  * \file main.cc
  * \brief ZIP module for Cracker-ng.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2012.08.14
+ * \date 2012.09.13
  * 
  * See http://www.pkware.com/documents/casestudies/APPNOTE.TXT for
  * more details about ZIP specifications.
@@ -14,9 +14,11 @@
 
 
 // C'est parti mon kiki !
-Cracker::Cracker(ifstream & filei) :
-	filei(filei), start_byte(0), end_byte(0),
+Cracker::Cracker(string filename, string from) :
+	filename(filename), from(from),
+	start_byte(0), end_byte(0),
 	strong_encryption(false),
+	filei(filename.c_str(), ios::in | ios::binary),
 	lfh(lfh), cd(cd), ecd(ecd)
 {}
 
@@ -26,11 +28,11 @@ Cracker::~Cracker() {
 
 unsigned int Cracker::check() {
 	if ( ! check_headers() ) {
-		cout << " ! Bad ZIP file (wrong headers)." << endl;
+		cerr << " ! Bad ZIP file (wrong headers)." << endl;
 		return 0;
 	}
 	if ( ! find_central_directory() ) {
-		cout << " ! Unable to find Central Directory signatures." << endl;
+		cerr << " ! Unable to find Central Directory signatures." << endl;
 		return 0;
 	}
 	read_ng::read_central_directory(this->filei, &this->cd, this->start_byte);
@@ -69,6 +71,7 @@ void Cracker::crack() {
 	uint8_t *buffer         = new uint8_t[12];
 	char *password;
 	char pwd_buffer[PWD_MAX];
+	FILE *input;
 	string chosen_one, decompressed;
 	stringstream compressed;
 	boost::iostreams::zlib_params p;
@@ -86,6 +89,11 @@ void Cracker::crack() {
 			<< endl;
 		return;
 	}
+	if ( this->from == "stdin" ) {
+		input = stdin;
+	} else {
+		input = fopen(this->from.c_str(), "r");
+	}
 	
 	// Read encrypted data
 	this->filei.seekg(this->lfh.start_byte, ios::beg);
@@ -101,7 +109,7 @@ void Cracker::crack() {
 	// Let's go!
 	cout << " . Working ..." << endl;
 	pthread_create(&stat, NULL, functions_ng::stats, (void*)&s);
-	while ( (password = functions_ng::read_stdin(pwd_buffer, PWD_MAX)) != NULL ) {
+	while ( (password = functions_ng::read_stdin(pwd_buffer, PWD_MAX, input)) != NULL ) {
 		// 1) Initialize the three 32-bit keys with the password.
 		init_keys(password);
 		
@@ -160,6 +168,7 @@ void Cracker::crack() {
 	delete[] buf;
 	delete[] data;
 	delete[] buffer;
+	fclose(input);
 	if ( found == 0 ) {
 		found = 2;
 	}
@@ -168,24 +177,22 @@ void Cracker::crack() {
 }
 
 int main(int argc, char *argv[]) {
-	if ( ! functions_ng::argz_traitment(argc, argv, MODULE, VERSION) ) {
+	string filename, input;
+	functions_ng::arguments argz = 
+		{ MODULE, string(VERSION), filename, input, argc, {0}, argv };
+	
+	printf(" ~ %s Cracker-ng v.%s { Tiger-222 }\n", MODULE, VERSION);
+	if ( ! functions_ng::argz_traitment(argz) ) {
 		return 0;
 	}
-	printf(" ~ %s Cracker-ng v.%s { Tiger-222 }\n", MODULE, VERSION);
-	printf(" - File......: %s\n", argv[1]);
-	
-	ifstream filei(argv[1], ios::in | ios::binary);
-	if ( ! filei.is_open() ) {
-		cerr << " ! Could not open the file." << endl;
-		return 1;
-	}
+	cout << " - File......: " << argz.filename << endl;
+	cout << " - Input.....: " << argz.input << endl;
 	
 	// Who I am? I'm a champion!
-	Cracker zizi(filei);
+	Cracker zizi(argz.filename, argz.input);
 	if ( zizi.check() ) {
-		 zizi.crack();
+		zizi.crack();
 	} else {
-		filei.close();
 		return 1;
 	}
 	return 0;

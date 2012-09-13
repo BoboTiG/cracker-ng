@@ -3,7 +3,7 @@
  * \file main.h
  * \brief ZIP Cracker-ng headers.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2012.08.09
+ * \date 2012.09.13
  * 
  * See http://www.pkware.com/documents/casestudies/APPNOTE.TXT for
  * more details about ZIP specifications.
@@ -31,9 +31,9 @@
 class Cracker {
 
 public:
-	ifstream &filei;
+	string filename, from;
 	
-	Cracker(ifstream &);
+	Cracker(string, string);
 	~Cracker();
 	unsigned int check();
 	void crack();
@@ -44,6 +44,7 @@ private:
 	size_t start_byte, end_byte;
 	bool strong_encryption;
 	char _pad[7];
+	ifstream filei;
 	local_file_header_light lfh;
 	central_directory cd;
 	end_central_directory ecd;

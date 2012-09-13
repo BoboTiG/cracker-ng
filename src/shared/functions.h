@@ -3,7 +3,7 @@
  * \file functions.h
  * \brief Cracker-ng (optimized) functions headers.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2012.08.21
+ * \date 2012.09.13
  */
 
 
@@ -26,6 +26,16 @@ typedef struct {
 	unsigned int * found;
 } statistics;
 
+typedef struct {
+	string     module;
+	string     version;
+	string   & filename;
+	string   & input;
+	int argc;
+	char _pad[4];
+	char**argv;
+} arguments;
+
 // Optimized strncmp()/memcmp()
 template<class T>
 inline int memcmp_ng(const T *st, const T *nd, size_t n) {
@@ -37,10 +47,10 @@ inline int memcmp_ng(const T *st, const T *nd, size_t n) {
 	return 0;
 }
 
-// Optimized read from stdin
-inline char *read_stdin(char *buffer, int len) {
+// Optimized read from stdin or wordlist
+inline char *read_stdin(char *buffer, int len, FILE *input) {
 	char *result, *lf;
-	result = fgets(buffer, len, stdin);
+	result = fgets(buffer, len, input);
 	if ( result != NULL ) {
 		lf = strchr(buffer, '\n');
 		if ( lf != NULL )
@@ -49,7 +59,7 @@ inline char *read_stdin(char *buffer, int len) {
 	return result;
 }
 
-unsigned int argz_traitment(int, char**, string, string);
+unsigned int argz_traitment(arguments &);
 unsigned int get_cores();
 void help(const string);
 void result(const string);

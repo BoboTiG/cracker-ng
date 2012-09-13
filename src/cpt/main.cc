@@ -10,7 +10,10 @@
 #include "main.h"
 
 // C'est parti mon kiki !
-Cracker::Cracker(ifstream & filei) : filei(filei) {
+Cracker::Cracker(string filename, string from) :
+	filename(filename), from(from),
+	filei(filename.c_str(), ios::in | ios::binary
+) {
 	cout << " . Working ..." << endl;
 }
 
@@ -21,6 +24,7 @@ Cracker::~Cracker() {
 void Cracker::crack() {
 	char *password, *encryption_header = new char[32];
 	char buffer[32], inbuf[32];
+	FILE *input;
 	ccrypt_stream_s *b;
 	ccrypt_state_s *st;
 	roundkey *rkks;
@@ -38,13 +42,20 @@ void Cracker::crack() {
 	
 	// Initializing
 	b = (ccrypt_stream_s*)malloc(sizeof(ccrypt_stream_s));
-	rkks = (roundkey*)malloc(sizeof(roundkey));
 	st = (ccrypt_state_s*)malloc(sizeof(ccrypt_state_s));
+	rkks = (roundkey*)malloc(sizeof(roundkey));
 	st->rkks = rkks;
+	
+	// Read from input ...
+	if ( this->from == "stdin" ) {
+		input = stdin;
+	} else {
+		input = fopen(this->from.c_str(), "r");
+	}
 	
 	// Let's go!
 	pthread_create(&stat, NULL, functions_ng::stats, (void*)&s);
-	while ( (password = functions_ng::read_stdin(buffer, PWD_MAX)) != NULL ) {
+	while ( (password = functions_ng::read_stdin(buffer, PWD_MAX, input)) != NULL ) {
 		ccdecrypt_init(b, st, password, rkk_hash);
 		memcpy(inbuf, encryption_header, 32);
 		b->next_in = inbuf;
@@ -58,8 +69,8 @@ void Cracker::crack() {
 	}
 	delete[] encryption_header;
 	free(b);
-	free(rkks);
 	free(st);
+	free(rkks);
 	if ( found == 0 ) {
 		found = 2;
 	}
@@ -69,20 +80,19 @@ void Cracker::crack() {
 
 
 int main(int argc, char *argv[]) {
-	if ( ! functions_ng::argz_traitment(argc, argv, MODULE, VERSION) ) {
+	string filename, input;
+	functions_ng::arguments argz = 
+		{ MODULE, string(VERSION), filename, input, argc, {0}, argv };
+	
+	printf(" ~ %s Cracker-ng v.%s { Tiger-222 }\n", MODULE, VERSION);
+	if ( ! functions_ng::argz_traitment(argz) ) {
 		return 0;
 	}
-	printf(" ~ %s Cracker-ng v.%s { Tiger-222 }\n", MODULE, VERSION);
-	printf(" - File: %s\n", argv[1]);
-	
-	ifstream filei(argv[1], ios::in | ios::binary);
-	if ( ! filei.is_open() ) {
-		cerr << " ! Could not open the file." << endl;
-		return 1;
-	}
+	cout << " - File......: " << argz.filename << endl;
+	cout << " - Input.....: " << argz.input << endl;
 	
 	// Who I am? I'm a champion!
-	Cracker zizi(filei);
+	Cracker zizi(argz.filename, argz.input);
 	zizi.crack();
 	return 0;
 }

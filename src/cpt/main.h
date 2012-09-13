@@ -3,7 +3,7 @@
  * \file main.h
  * \brief ccrypt Cracker-ng headers.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2012.08.09
+ * \date 2012.09.13
  */
 
 
@@ -24,15 +24,16 @@
 class Cracker {
 
 public:
-	ifstream &filei;
+	string filename, from;
 	
-	Cracker(ifstream &);
+	Cracker(string, string);
 	~Cracker();
 	void crack();
 
 protected:
 
 private:
+	ifstream filei;
 
 };
 

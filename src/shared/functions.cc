@@ -3,7 +3,7 @@
  * \file functions.cc
  * \brief Cracker-ng (optimized) functions.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2012.08.30
+ * \date 2012.09.13
  */
 
 
@@ -12,19 +12,58 @@
 
 namespace functions_ng {
 
-unsigned int argz_traitment(int argc, char**argv, string module, string version) {
-	bool okay = 1;
-	if ( argc == 1 ) {
-		functions_ng::usage(module);
-		okay = 0;
-	} else if ( ! strcmp(argv[1], "-h") || ! strcmp(argv[1], "--help") ) {
-		functions_ng::help(module);
-		okay = 0;
-	} else if ( ! strcmp(argv[1], "-v") || ! strcmp(argv[1], "--version") ) {
-		functions_ng::version(module, version);
-		okay = 0;
+unsigned int argz_traitment(arguments &argz) {
+	if ( argz.argc == 1 ) {
+		functions_ng::usage(argz.module);
+		return 0;
+	} else if ( ! strcmp(argz.argv[1], "-h") || ! strcmp(argz.argv[1], "--help") ) {
+		functions_ng::help(argz.module);
+		return 0;
+	} else if ( ! strcmp(argz.argv[1], "-v") || ! strcmp(argz.argv[1], "--version") ) {
+		functions_ng::version(argz.module, argz.version);
+		return 0;
+	} else {
+		int i;
+		for ( i = 1; i < argz.argc; ++i ) {
+			if ( ! strcmp(argz.argv[i], "-f") || ! strcmp(argz.argv[i], "--file") ) {
+				if ( argz.argv[++i] ) {
+					ifstream filei(argz.argv[i], ios::in | ios::binary);
+					if ( filei.is_open() ) {
+						filei.close();
+						argz.filename = argz.argv[i];
+					} else {
+						cerr << " ! Could not open the file." << endl;
+						return 0;
+					}
+				} else {
+					cerr << " ! Please gimme a file." << endl;
+					return 0;
+				}
+			} else if ( ! strcmp(argz.argv[i], "-w") || ! strcmp(argz.argv[i], "--wordlist") ) {
+				if ( argz.argv[++i] ) {
+					if ( ! strcmp(argz.argv[i], "-") ) {
+						argz.input = "stdin";
+					} else {
+						ifstream in(argz.argv[i]);
+						if ( in.is_open() ) {
+							in.close();
+							argz.input = argz.argv[i];
+						} else {
+							cerr << " ! Could not open the wordlist." << endl;
+							return 0;
+						}
+					}
+				}
+			}
+		}
 	}
-	return okay;
+	if ( argz.filename.length() < 1 ) {
+		cerr << " ! Please gimme a file." << endl;
+		return 0;
+	} else if ( argz.input.length() < 1 ) {
+		argz.input = "stdin";
+	}
+	return 1;
 }
 
 unsigned int get_cores() {
