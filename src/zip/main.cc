@@ -168,7 +168,9 @@ void Cracker::crack() {
 	delete[] buf;
 	delete[] data;
 	delete[] buffer;
-	fclose(input);
+	if ( this->from != "stdin" ) {
+		fclose(input);
+	}
 	if ( found == 0 ) {
 		found = 2;
 	}

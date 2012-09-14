@@ -71,6 +71,9 @@ void Cracker::crack() {
 	free(b);
 	free(st);
 	free(rkks);
+	if ( this->from != "stdin" ) {
+		fclose(input);
+	}
 	if ( found == 0 ) {
 		found = 2;
 	}
