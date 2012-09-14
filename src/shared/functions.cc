@@ -3,7 +3,7 @@
  * \file functions.cc
  * \brief Cracker-ng (optimized) functions.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2012.09.13
+ * \date 2012.09.14
  */
 
 
@@ -95,7 +95,9 @@ void help(const string module) {
 		<< "Cracker-ng, a multiple file cracker.\n\n";
 	functions_ng::usage(module);
 	cout
-		<< "\n<file> could be an option like:\n"
+		<< "\nAvailable options:\n"
+		<< "    -f, --file     file to crack\n"
+		<< "    -w, --wordlist dictionnary tu use\n"
 		<< "    -h, --help     display this message\n"
 		<< "    -v, --version  display module version\n\n"
 		<< "Do not hesitate to contact me at <tiger-222@matriux.com> for critics,\n"
@@ -119,9 +121,12 @@ void *stats(void *argz) {
 
 void usage(string module) {
 	transform(module.begin(), module.end(), module.begin(), ::tolower);
+	string m = module + "cracker-ng";
 	cout 
-		<< "Usage: generator | " << module << "cracker-ng <file>\n"
-		<< " Where generator could be cat, crunch, john, jot or whatever you want.\n";
+		<< "Usages:\n"
+		<< m << " -f <file> [-w <wordlist>]\n"
+		<< "generator | " << m << " -f <file>\n"
+		<< "Where generator could be cat, crunch, john, jot or whatever you want.\n";
 }
 
 void version(const string module, const string version) {

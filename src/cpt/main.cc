@@ -3,7 +3,7 @@
  * \file main.cc
  * \brief ccrypt module for Cracker-ng.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2012.09.13
+ * \date 2012.09.14
  */
 
 
@@ -84,10 +84,10 @@ int main(int argc, char *argv[]) {
 	functions_ng::arguments argz = 
 		{ MODULE, string(VERSION), filename, input, argc, {0}, argv };
 	
-	printf(" ~ %s Cracker-ng v.%s { Tiger-222 }\n", MODULE, VERSION);
 	if ( ! functions_ng::argz_traitment(argz) ) {
 		return 0;
 	}
+	printf(" ~ %s Cracker-ng v.%s { Tiger-222 }\n", MODULE, VERSION);
 	cout << " - File......: " << argz.filename << endl;
 	cout << " - Input.....: " << argz.input << endl;
 	
