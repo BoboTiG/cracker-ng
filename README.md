@@ -11,7 +11,7 @@ certain conditions. See the GNU General Public Licence for details.
 What
 ----
 
-Cracker-ng, a multiple file cracker.
+Cracker-ng, a multiple file password finder.
 For now, there are these modules:
 
 * zip cracker (zip, winzip, apm, ipa, and all zip based files),
@@ -19,31 +19,30 @@ For now, there are these modules:
 
 What this tool does **not**:
 
-* call a tierce tool like unrar or unzip to check the password
+* call a tierce tool like unrar or unzip to check the password (and will never)
 * compute permutations (will change) or create wordlists
 
 What this tool does:
 
 * understand the data format (see src/*)
 * check the password using the way official tool does
-* eventually use optimized routines
-* read passwords from STDIN:
-	- john, crunch or whatever you want for bruteforce attacks
-	- cat (or whatever you want) for wordlist attack
+* use optimized routines
+* read passwords from a wordlist or STDIN:
+	- cat, john, crunch or whatever you want for wordlist attack
 
 
 Man
 ---
 
-Usage: **MODULE**cracker-ng FILE
+Usage: **MODULE**cracker-ng -f FILE
 
 Examples with ZIP module:
 
-* wordlist attack:  
-	cat wordlist.lst | zipcracker-ng FILE  
-* bruteforce attack:  
-	john --incremental --stdout | zipcracker-ng FILE  	
-	crunch 1 8 -f charset.lst lalpha | zipcracker-ng FILE  
+* wordlist attack: 
+	cat wordlist.lst | zipcracker-ng -f FILE  
+	john --incremental --stdout | zipcracker-ng -f FILE  	
+	crunch 1 8 -f charset.lst lalpha | zipcracker-ng -f FILE  
+	zipcracker-ng -f FILE -w wordlist.lst
 
 Why
 ---

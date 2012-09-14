@@ -6,11 +6,13 @@
 	. : information
 
 
-[ under devel ]
-	. Cracker-ng 2012.mm-dd released
+[ september 14 2012 ]
+	. Cracker-ng 2012.09-14 released
 	. all modules:
 		* each module has its own Makefile and there is a Makefile to build them all
 		^ Never use double underscores in C/C++
+		+ -f (--file) option to specify which file to crack
+		+ -w (--wordlist) option to specify a dictionnaty instead of using stdin
 	. CPT module:
 		. updated to version 0.1-3
 		. is now oriented-object
