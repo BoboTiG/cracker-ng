@@ -6,6 +6,13 @@
 	. : information
 
 
+[ under devel ]
+	. Cracker-ng 2012.mm-jj released
+	. CPT module:
+		. updated to version 0.1-4
+	. ZIP module:
+		. updated to version 0.1a-8
+
 [ september 14 2012 ]
 	. Cracker-ng 2012.09-14 released
 	. all modules:

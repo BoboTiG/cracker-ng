@@ -3,11 +3,13 @@
  * \file read.cc
  * \brief Cracker-ng (optimized) functions.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2012.08.15
+ * \date 2012.09.15
+ *
+ * Copyright (C) 2012 Mickaël 'Tiger-222' Schoentgen.
  */
 
 
-#include "read.h"
+#include "./read.h"
 
 
 void transpose_lfh(
@@ -26,30 +28,29 @@ void transpose_lfh(
 
 
 namespace read_ng {
-
 void read_central_directory(
-	ifstream & filei, 
-	struct central_directory * cd, 
+	std::ifstream & filei,
+	struct central_directory * cd,
 	unsigned int start_byte
 ) {
-	filei.seekg(start_byte, ios::beg);
-	filei.read((char*)&cd->header_signature,            4);
-	filei.read((char*)&cd->version_made_by,             2);
-	filei.read((char*)&cd->version_needed_to_extract,   2);
-	filei.read((char*)&cd->general_purpose_bit_flag,    2);
-	filei.read((char*)&cd->compression_method,          2);
-	filei.read((char*)&cd->last_mod_file_time,          2);
-	filei.read((char*)&cd->last_mod_file_date,          2);
-	filei.read((char*)&cd->crc_32,                      4);
-	filei.read((char*)&cd->compressed_size,             4);
-	filei.read((char*)&cd->uncompressed_size,           4);
-	filei.read((char*)&cd->file_name_length,            2);
-	filei.read((char*)&cd->extra_field_length,          2);
-	filei.read((char*)&cd->file_comment_length,         2);
-	filei.read((char*)&cd->disk_number_part,            2);
-	filei.read((char*)&cd->internal_file_attributes,    2);
-	filei.read((char*)&cd->external_file_attributes,    4);
-	filei.read((char*)&cd->relative_offset_of_local_fh, 4);
+	filei.seekg(start_byte, std::ios::beg);
+	filei.read(reinterpret_cast<char*>(&cd->header_signature),            4);
+	filei.read(reinterpret_cast<char*>(&cd->version_made_by),             2);
+	filei.read(reinterpret_cast<char*>(&cd->version_needed_to_extract),   2);
+	filei.read(reinterpret_cast<char*>(&cd->general_purpose_bit_flag),    2);
+	filei.read(reinterpret_cast<char*>(&cd->compression_method),          2);
+	filei.read(reinterpret_cast<char*>(&cd->last_mod_file_time),          2);
+	filei.read(reinterpret_cast<char*>(&cd->last_mod_file_date),          2);
+	filei.read(reinterpret_cast<char*>(&cd->crc_32),                      4);
+	filei.read(reinterpret_cast<char*>(&cd->compressed_size),             4);
+	filei.read(reinterpret_cast<char*>(&cd->uncompressed_size),           4);
+	filei.read(reinterpret_cast<char*>(&cd->file_name_length),            2);
+	filei.read(reinterpret_cast<char*>(&cd->extra_field_length),          2);
+	filei.read(reinterpret_cast<char*>(&cd->file_comment_length),         2);
+	filei.read(reinterpret_cast<char*>(&cd->disk_number_part),            2);
+	filei.read(reinterpret_cast<char*>(&cd->internal_file_attributes),    2);
+	filei.read(reinterpret_cast<char*>(&cd->external_file_attributes),    4);
+	filei.read(reinterpret_cast<char*>(&cd->relative_offset_of_local_fh), 4);
 	if ( cd->file_name_length > 0 ) {
 		cd->file_name = new char[cd->file_name_length + 1];
 		filei.read(cd->file_name, cd->file_name_length);
@@ -72,7 +73,7 @@ void read_central_directory(
 	if ( cd->general_purpose_bit_flag & (1 << 6) ) {
 		cd->strong_encryption = true;
 	}
-	
+
 	#if 0
 		cout << endl;
 		cout << "--- Central Directory" << endl;
@@ -103,6 +104,7 @@ void read_central_directory(
 			cout << "file_comment ...............= " << cd->file_comment << endl;
 		}
 	#endif
+
 	if ( cd->file_name_length > 0 ) {
 		delete[] cd->file_name;
 	}
@@ -115,25 +117,25 @@ void read_central_directory(
 }
 
 void read_end_central_directory(
-	ifstream & filei, 
-	struct end_central_directory * ecd, 
+	std::ifstream & filei,
+	struct end_central_directory * ecd,
 	unsigned int start_byte
 ) {
-	filei.seekg(start_byte, ios::beg);
-	filei.read((char*)&ecd->header_signature,            4);
-	filei.read((char*)&ecd->number_of_disk,              2);
-	filei.read((char*)&ecd->number_of_disk_with_cd,      2);
-	filei.read((char*)&ecd->cd_on_this_disk,             2);
-	filei.read((char*)&ecd->total_entries,               2);
-	filei.read((char*)&ecd->cd_size,                     4);
-	filei.read((char*)&ecd->offset,                      4);
-	filei.read((char*)&ecd->zip_file_comment_length,     2);
+	filei.seekg(start_byte, std::ios::beg);
+	filei.read(reinterpret_cast<char*>(&ecd->header_signature),            4);
+	filei.read(reinterpret_cast<char*>(&ecd->number_of_disk),              2);
+	filei.read(reinterpret_cast<char*>(&ecd->number_of_disk_with_cd),      2);
+	filei.read(reinterpret_cast<char*>(&ecd->cd_on_this_disk),             2);
+	filei.read(reinterpret_cast<char*>(&ecd->total_entries),               2);
+	filei.read(reinterpret_cast<char*>(&ecd->cd_size),                     4);
+	filei.read(reinterpret_cast<char*>(&ecd->offset),                      4);
+	filei.read(reinterpret_cast<char*>(&ecd->zip_file_comment_length),     2);
 	if ( ecd->zip_file_comment_length > 0 ) {
 		ecd->zip_file_comment = new char[ecd->zip_file_comment_length + 1];
 		filei.read(ecd->zip_file_comment, ecd->zip_file_comment_length);
 		ecd->zip_file_comment[ecd->zip_file_comment_length] = '\0';
 	}
-	
+
 	#if 0
 		cout << endl;
 		cout << "--- End of Central Directory" << endl;
@@ -149,30 +151,30 @@ void read_end_central_directory(
 			cout << "zip_file_comment ...........= " << ecd->zip_file_comment << endl;
 		}
 	#endif
-	
+
 	if ( ecd->zip_file_comment_length > 0 ) {
 		delete[] ecd->zip_file_comment;
 	}
 }
 
 void read_local_file_header(
-	ifstream & filei, 
-	struct local_file_header_light * lfh, 
+	std::ifstream & filei,
+	struct local_file_header_light * lfh,
 	bool several
 ) {
 	local_file_header local_lfh;
-	
-	filei.read((char*)&local_lfh.header_signature,            4);
-	filei.read((char*)&local_lfh.version_needed_to_extract,   2);
-	filei.read((char*)&local_lfh.general_purpose_bit_flag,    2);
-	filei.read((char*)&local_lfh.compression_method,          2);
-	filei.read((char*)&local_lfh.last_mod_file_time,          2);
-	filei.read((char*)&local_lfh.last_mod_file_date,          2);
-	filei.read((char*)&local_lfh.crc_32,                      4);
-	filei.read((char*)&local_lfh.compressed_size,             4);
-	filei.read((char*)&local_lfh.uncompressed_size,           4);
-	filei.read((char*)&local_lfh.file_name_length,            2);
-	filei.read((char*)&local_lfh.extra_field_length,          2);
+
+	filei.read(reinterpret_cast<char*>(&local_lfh.header_signature),            4);
+	filei.read(reinterpret_cast<char*>(&local_lfh.version_needed_to_extract),   2);
+	filei.read(reinterpret_cast<char*>(&local_lfh.general_purpose_bit_flag),    2);
+	filei.read(reinterpret_cast<char*>(&local_lfh.compression_method),          2);
+	filei.read(reinterpret_cast<char*>(&local_lfh.last_mod_file_time),          2);
+	filei.read(reinterpret_cast<char*>(&local_lfh.last_mod_file_date),          2);
+	filei.read(reinterpret_cast<char*>(&local_lfh.crc_32),                      4);
+	filei.read(reinterpret_cast<char*>(&local_lfh.compressed_size),             4);
+	filei.read(reinterpret_cast<char*>(&local_lfh.uncompressed_size),           4);
+	filei.read(reinterpret_cast<char*>(&local_lfh.file_name_length),            2);
+	filei.read(reinterpret_cast<char*>(&local_lfh.extra_field_length),          2);
 	if ( local_lfh.file_name_length > 0 ) {
 		local_lfh.file_name = new char[local_lfh.file_name_length + 1];
 		filei.read(local_lfh.file_name, local_lfh.file_name_length);
@@ -183,10 +185,10 @@ void read_local_file_header(
 		filei.read(local_lfh.extra_field, local_lfh.extra_field_length);
 		local_lfh.extra_field[local_lfh.extra_field_length] = '\0';
 	}
-	
+
 	// Save the compressed data start byte
 	local_lfh.start_byte = filei.tellg();
-	
+
 	// Data Descriptor
 	local_lfh.has_data_descriptor = false;
 	local_lfh.data_desc_crc_32 = 0;
@@ -194,25 +196,25 @@ void read_local_file_header(
 		local_lfh.has_data_descriptor = true;
 	}
 	if ( local_lfh.has_data_descriptor ) {
-		filei.seekg(local_lfh.compressed_size, ios::cur);
-		filei.read((char*)&local_lfh.data_desc_signature, 4);
+		filei.seekg(local_lfh.compressed_size, std::ios::cur);
+		filei.read(reinterpret_cast<char*>(&local_lfh.data_desc_signature), 4);
 		if ( local_lfh.data_desc_signature != 0x8074b50 ) {
 			local_lfh.data_desc_crc_32 = local_lfh.data_desc_signature;
 			local_lfh.data_desc_signature = 0;
 		} else {
-			filei.read((char*)&local_lfh.data_desc_crc_32, 4);
+			filei.read(reinterpret_cast<char*>(&local_lfh.data_desc_crc_32), 4);
 		}
-		filei.read((char*)&local_lfh.data_desc_compressed_size, 4);
-		filei.read((char*)&local_lfh.data_desc_uncompressed_size, 4);
+		filei.read(reinterpret_cast<char*>(&local_lfh.data_desc_compressed_size), 4);
+		filei.read(reinterpret_cast<char*>(&local_lfh.data_desc_uncompressed_size), 4);
 	}
-	
+
 	// Data length
 	local_lfh.good_length =
 	(
 		local_lfh.uncompressed_size > 0 ?
 			local_lfh.uncompressed_size : local_lfh.data_desc_uncompressed_size
 	);
-	
+
 	// CRC-32
 	local_lfh.good_crc_32 =
 	(
@@ -222,7 +224,7 @@ void read_local_file_header(
 				local_lfh.data_desc_crc_32 > 0 ? local_lfh.data_desc_crc_32 :	0
 			)
 	);
-	
+
 	// Check encryption
 	local_lfh.is_encrypted = false;
 	local_lfh.strong_encryption = false;
@@ -232,7 +234,7 @@ void read_local_file_header(
 	if ( local_lfh.general_purpose_bit_flag & (1 << 6) ) {
 		local_lfh.strong_encryption = true;
 	}
-	
+
 	#if 0
 		cout << endl;
 		cout << "--- Local File Header" << endl;
@@ -268,7 +270,7 @@ void read_local_file_header(
 		cout << "good_length ................= " << local_lfh.good_length << endl;
 		cout << endl;
 	#endif
-	
+
 	if ( local_lfh.file_name_length > 0 ) {
 		delete[] local_lfh.file_name;
 	}
@@ -288,7 +290,7 @@ void read_local_file_header(
 					transpose_lfh(local_lfh, lfh);
 				}
 				// Go to the next one
-				filei.seekg(local_lfh.start_byte, ios::beg);
+				filei.seekg(local_lfh.start_byte, std::ios::beg);
 				filei.seekg(local_lfh.compressed_size);
 			}
 		}
@@ -296,5 +298,4 @@ void read_local_file_header(
 		transpose_lfh(local_lfh, lfh);
 	}
 }
-
 }

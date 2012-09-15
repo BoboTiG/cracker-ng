@@ -3,20 +3,18 @@
  * \file functions.h
  * \brief Cracker-ng (optimized) functions headers.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2012.09.13
+ * \date 2012.09.15
+ *
+ * Copyright (C) 2012 Mickaël 'Tiger-222' Schoentgen.
  */
 
 
-#ifndef FUNCTIONS_NG_H
-#define FUNCTIONS_NG_H
+#ifndef SRC_SHARED_FUNCTIONS_H_
+#define SRC_SHARED_FUNCTIONS_H_
 
-#include <iostream>
-#include <cstring>
-#include <algorithm> // transform()
-#include <fstream>
-#include "stats.h"
-
-using namespace std;
+#include <algorithm>  // transform()
+#include <string>
+#include "./stats.h"
 
 
 namespace functions_ng {
@@ -27,10 +25,10 @@ typedef struct {
 } statistics;
 
 typedef struct {
-	string     module;
-	string     version;
-	string   & filename;
-	string   & input;
+	std::string     module;
+	std::string     version;
+	std::string   & filename;
+	std::string   & input;
 	int argc;
 	char _pad[4];
 	char**argv;
@@ -59,14 +57,13 @@ inline char *read_stdin(char *buffer, int len, FILE *input) {
 	return result;
 }
 
-unsigned int argz_traitment(arguments &);
+unsigned int argz_traitment(const arguments &);
 unsigned int get_cores();
-void help(const string);
-void result(const string);
+void help(const std::string);
+void result(const std::string);
 void *stats(void *argz);
-void usage(string);
-void version(const string, const string);
-
+void usage(std::string);
+void version(const std::string, const std::string);
 }
 
-#endif // FUNCTIONS_NG_H
+#endif  // SRC_SHARED_FUNCTIONS_H_

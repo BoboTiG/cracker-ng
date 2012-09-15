@@ -17,9 +17,6 @@ mrproper: clean
 $(NAME): $(OBJ)
 	$(CXX) $(CFLAGS) -o $@ $^ $(LDLIBS)
 
-%.o: %.c
-	$(CXX) $(CFLAGS) -c $*.c
-
 %.o: %.cc
 	$(CXX) $(CFLAGS) -c $*.cc
 
