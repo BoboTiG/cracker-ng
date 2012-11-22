@@ -8,8 +8,14 @@
 
 [ under devel ]
 	. Cracker-ng 2012.mm-jj released
+	. all modules:
+		* add -march=native, -mmmx, -mfpmath=sse and -mno-ieee-fp options to gcc CLFAGS
+		* code review to follow Google C++ Style Guide
+		* code check with Cppcheck
+		* speed-up process by ~280%
 	. CPT module:
 		. updated to version 0.1-4
+		* into main.cc
 	. ZIP module:
 		. updated to version 0.1a-8
 

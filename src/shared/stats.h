@@ -3,7 +3,7 @@
  * \file stats.h
  * \brief Statistics headers.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2012.09.15
+ * \date 2012.11.22
  *
  * Copyright (C) 2012 Mickaël 'Tiger-222' Schoentgen.
  */
@@ -21,8 +21,8 @@
 
 class Stats {
 public:
-	size_t *num;
-	unsigned int *found;
+	size_t       * num;
+	unsigned int * found;
 
 	Stats(size_t *, unsigned int *);
 	Stats(const Stats&);
@@ -34,9 +34,8 @@ public:
 protected:
 private:
 	size_t total;
+	size_t sleeping_time;
 	time_t start_time;
-	unsigned int sleeping_time;
-	char _pad[4];
 
 	time_t elapsed_seconds();
 	std::string format_number(const size_t &);

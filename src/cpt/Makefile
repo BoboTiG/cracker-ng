@@ -1,7 +1,7 @@
 
 CXX     = g++
-CFLAGS  = -O3 -s -fomit-frame-pointer -ffunction-sections -ffast-math
-CFLAGS += -Wall -W -pedantic -Wextra -Wunused -Wformat=2 -Weffc++ -Wpadded -fexceptions
+CFLAGS  = -march=native -O3 -mmmx -msse -msse2 -msse3 -m3dnow -ffast-math -mno-ieee-fp -s
+CFLAGS += -Wfatal-errors -Werror -Wall -W -pedantic -Wextra -Wunused -Wformat=2 -Weffc++ -Wpadded -fexceptions
 LDLIBS  = -lpthread
 OBJ     = rijndael.o tables.o functions.o stats.o main.o
 NAME    = cptcracker-ng

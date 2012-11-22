@@ -3,7 +3,7 @@
  * \file main.h
  * \brief ZIP Cracker-ng headers.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2012.09.15
+ * \date 2012.11.22
  * 
  * Copyright (C) 2012 Mickaël 'Tiger-222' Schoentgen.
  * See http://www.pkware.com/documents/casestudies/APPNOTE.TXT for
@@ -39,11 +39,8 @@ public:
 	unsigned int check();
 	void crack();
 
-protected:
 private:
-	size_t start_byte, end_byte;
-	bool strong_encryption;
-	char _pad[7];
+	size_t start_byte, end_byte, strong_encryption;
 	std::ifstream filei;
 	local_file_header_light lfh;
 	central_directory cd;
@@ -101,7 +98,7 @@ private:
 	 * \return \li 0 if \b not a ZIP file;
 	 * \return \li 1 otherwise.
 	 */
-	unsigned int check_headers();
+	bool check_headers();
 
 	/*!
 	 * \fn unsigned int check_method()
@@ -109,7 +106,7 @@ private:
 	 * \return \li 0 if \b not implemented;
 	 * \return \li 1 otherwise.
 	 */
-	unsigned int check_method();
+	bool check_method();
 
 	/*!
 	 * \fn determine_chosen_one()
@@ -126,7 +123,7 @@ private:
 	 * Signatures: start = 0x02014b50, end = 0x06054b50.
 	 * 
 	 */
-	unsigned int find_central_directory();
+	bool find_central_directory();
 
 	void init_lfh();
 };

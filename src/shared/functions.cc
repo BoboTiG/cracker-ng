@@ -3,7 +3,7 @@
  * \file functions.cc
  * \brief Cracker-ng (optimized) functions.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2012.09.15
+ * \date 2012.11.22
  *
  * Copyright (C) 2012 Mickaël 'Tiger-222' Schoentgen.
  */
@@ -26,7 +26,7 @@ unsigned int argz_traitment(const arguments &argz) {
 		functions_ng::version(argz.module, argz.version);
 		return 0;
 	} else {
-		int i;
+		size_t i;
 		for ( i = 1; i < argz.argc; ++i ) {
 			if ( !strcmp(argz.argv[i], "-f") || !strcmp(argz.argv[i], "--file") ) {
 				if ( argz.argv[++i] ) {
@@ -45,19 +45,17 @@ unsigned int argz_traitment(const arguments &argz) {
 			} else if ( !strcmp(argz.argv[i], "-w")
 					 || !strcmp(argz.argv[i], "--wordlist") ) {
 				if ( argz.argv[++i] ) {
-					if ( !strcmp(argz.argv[i], "-") || !strcmp(argz.argv[i], "--stdin") ) {
-						argz.input = "stdin";
+					FILE *in = fopen(argz.argv[i], "r");
+					if ( in != NULL ) {
+						fclose(in);
+						argz.input = argz.argv[i];
 					} else {
-						FILE *in = fopen(argz.argv[i], "r");
-						if ( in != NULL ) {
-							fclose(in);
-							argz.input = argz.argv[i];
-						} else {
-							fprintf(stderr, " ! Could not open the wordlist.\n");
-							return 0;
-						}
+						fprintf(stderr, " ! Could not open the wordlist.\n");
+						return 0;
 					}
 				}
+			} else if ( !strcmp(argz.argv[i], "-") || !strcmp(argz.argv[i], "--stdin") ) {
+				argz.input = "STDIN";
 			}
 		}
 	}
@@ -65,20 +63,20 @@ unsigned int argz_traitment(const arguments &argz) {
 		fprintf(stderr, " ! Please gimme a file.\n");
 		return 0;
 	} else if ( argz.input.empty() ) {
-		argz.input = "stdin";
+		argz.input = "STDIN";
 	}
 	return 1;
 }
 
 unsigned int get_cores() {
 	unsigned int n = 0;
-	char buf[256];
+	char *buf = new char[256];
 	FILE *f = fopen("/proc/cpuinfo", "r");
 
 	if ( f != NULL ) {
 		for ( ; !feof(f) ; ) {
-			memset(buf, 0, sizeof(buf));
-			if ( fgets(buf, sizeof(buf), f) == NULL ) {
+			memset(buf, 0, sizeof(*buf));
+			if ( fgets(buf, sizeof(*buf), f) == NULL ) {
 				break;
 			}
 			if ( std::string(buf).find("processor") != std::string::npos ) {
@@ -87,10 +85,11 @@ unsigned int get_cores() {
 		}
 		fclose(f);
 	}
+	delete[] buf;
 	return n == 0 ? 1 : n;
 }
 
-void help(const std::string module) {
+void help(const std::string& module) {
 	printf(
 		"Copyright (C) 2011-2012 by Mickaël 'Tiger-222' Schoentgen.\n\n"
 		"Cracker-ng comes with ABSOLUTELY NO WARRANTY.\n"
@@ -109,7 +108,7 @@ void help(const std::string module) {
 		"suggestions, contributions (or whatever you want!).\n");
 }
 
-void result(const std::string password) {
+void result(const std::string& password) {
 	if ( password.empty() ) {
 		printf(" ! Password not found.\n");
 	} else {
@@ -124,9 +123,10 @@ void *stats(void *argz) {
 	pthread_exit(NULL);
 }
 
-void usage(std::string module) {
-	transform(module.begin(), module.end(), module.begin(), ::tolower);
-	std::string m = module + "cracker-ng";
+void usage(const std::string& module) {
+	std::string mo = module;
+	transform(mo.begin(), mo.end(), mo.begin(), ::tolower);
+	std::string m = mo + "cracker-ng";
 	printf(
 		"Usages:\n"
 		"%s -f <file> [-w <wordlist>]\n"
@@ -135,14 +135,14 @@ void usage(std::string module) {
 		m.c_str(), m.c_str());
 }
 
-void version(const std::string module, const std::string version) {
+void version(const std::string& module, const std::string& version) {
 	printf("%s Cracker-ng version %s.\n", module.c_str(), version.c_str());
 	#if defined(ZIP)
 		#include <boost/version.hpp>
 		unsigned int sm = BOOST_VERSION % 100;
 		unsigned int m  = (BOOST_VERSION / 100) % 1000;
 		unsigned int M  = BOOST_VERSION / 100000;
-		printf("I use Boost C++ libraries version %d.%d.%d.\n", M, m, sm);
+		printf("I use Boost C++ libraries version %u.%u.%u.\n", M, m, sm);
 	#endif
 }
 }

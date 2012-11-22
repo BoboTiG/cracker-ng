@@ -59,7 +59,7 @@ struct end_central_directory {
 	uint16_t cd_on_this_disk;             //!< Total number of entries in the central directory on this disk on 2 bytes
 	uint16_t total_entries;               //!< Total number of entries in the central directory on 2 bytes
 	uint16_t zip_file_comment_length;     //!< ZIP file comment length on 2 bytes
-	char pad[2];                          //!< Padding to feet the good alignment
+	uint16_t _pad;                        //!< Padding to feet the good alignment
 	char * zip_file_comment;              //!< ZIP file comment (variable size)
 };
 
@@ -106,7 +106,7 @@ struct local_file_header_light {
 	uint16_t last_mod_file_time;          //!< Last mod file time on 2 bytes
 	bool strong_encryption;               //!< Use strong encryption? (bool)
 	bool is_encrypted;                    //!< Encryption enabled? (bool)
-	char pad[4];                          //!< Padding to feet the good alignment
+	uint32_t _pad;                        //!< Padding to feet the good alignment
 };
 
 

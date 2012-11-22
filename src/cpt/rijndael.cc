@@ -3,7 +3,7 @@
  * \file rijndael.c
  * \brief Part of CPT Cracker-ng.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2011.09.15
+ * \date 2011.09.17
  *
  * Copyright (C) 2000-2009 Peter Selinger.
  * Copyright (C) 2012 Mickaël 'Tiger-222' Schoentgen.
@@ -51,7 +51,7 @@ static inline void xKeyAddition(
    savings are even more dramatic - ccrypt runs between 55% and 65%
    faster on most platforms. */
 
-/* do ShiftRow and Substitution together. res must not be a. */
+// do ShiftRow and Substitution together. res must not be a.
 static inline void xShiftSubst(
 	word32 res[MAXBC], word32 a[MAXBC], int shift[4], word8 box[256]
 ) {
@@ -72,7 +72,7 @@ static inline void xShiftSubst(
 	}
 }
 
-/* do MixColumn and KeyAddition together */
+// do MixColumn and KeyAddition together
 static inline void xMixAdd(
 	word32 res[MAXBC], word32 a[MAXBC], word32 rk[MAXBC]
 ) {
@@ -90,8 +90,8 @@ static inline void xMixAdd(
 }
 
 /* Mix the four bytes of every column in a linear way
- * This is the opposite operation of xMixColumn */
-/* the result is written to res, which may equal a */
+ * This is the opposite operation of xMixColumn
+ * the result is written to res, which may equal a */
 static inline void xInvMixColumn(word32 res[MAXBC], word32 a[MAXBC]) {
 	int j;
 	word32 b;
@@ -191,7 +191,7 @@ void xrijndaelDecrypt(word32 block[], roundkey *rkk) {
 	rp -= 8;
 
 	// ROUNDS-1 ordinary rounds
-	for (/*r = ROUNDS -*/; r > 0; r--, rp -= 8) {
+	for ( ; r > 0; r--, rp -= 8 ) {
 		xKeyAddition(block, block, rp);
 		xInvMixColumn(block2, block);
 		xShiftSubst(block, block2, shift, xSi);

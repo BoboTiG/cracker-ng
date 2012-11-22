@@ -7,9 +7,6 @@
  * ZIP module based on Info-ZIP sources
 	URL: http://www.info-zip.org/
 
- * functions_ng::memcmp_ng() based on the work of acidzombie24 and Rocso
-	URL: http://stackoverflow.com/questions/1684898/whats-the-most-efficient-way-to-compare-two-blocks-of-memory
-
  * functions_ng::get_cores() inspired from the excellent lophttpd project by Sebastian Kramer:
     URL: https://github.com/stealth/lophttpd/blob/master/multicore.cc
 

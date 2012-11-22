@@ -3,7 +3,7 @@
  * \file main.cc
  * \brief ccrypt module for Cracker-ng.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2012.09.15
+ * \date 2012.11.22
  *
  * Copyright (C) 2012 Mickaël 'Tiger-222' Schoentgen.
  */
@@ -24,18 +24,20 @@ Cracker::~Cracker() {
 }
 
 void Cracker::crack() {
-	char *p, *encryption_header = new char[32];
-	char buffer[32], inbuf[32];
-	FILE *input;
-	ccrypt_stream_s *b;
-	ccrypt_state_s *st;
-	roundkey *rkks;
-	roundkey rkk_hash;
 	std::string chosen_one;
 	size_t num = 0;
 	unsigned int found = 0;
 	functions_ng::statistics s = { &num, &found };
 	pthread_t stat;
+	ccrypt_stream_s *b = new ccrypt_stream_s;
+	ccrypt_state_s *st = new ccrypt_state_s;
+	roundkey *rkks     = new roundkey;
+	roundkey rkk_hash;
+	char *encryption_header = new char[32];
+	char *p                 = new char[PWD_MAX];
+	char *buffer            = new char[PWD_MAX];
+	char *inbuf             = new char[32];
+	FILE *input;
 
 	// Read encrypted data
 	this->filei.seekg(0, std::ios::beg);
@@ -43,13 +45,10 @@ void Cracker::crack() {
 	this->filei.close();
 
 	// Initializing
-	b = reinterpret_cast<ccrypt_stream_s*>(malloc(sizeof(ccrypt_stream_s)));
-	st = reinterpret_cast<ccrypt_state_s*>(malloc(sizeof(ccrypt_state_s)));
-	rkks = reinterpret_cast<roundkey*>(malloc(sizeof(roundkey)));
 	st->rkks = rkks;
 
 	// Read from input ...
-	if ( this->from == "stdin" ) {
+	if ( this->from == "STDIN" ) {
 		input = stdin;
 	} else {
 		input = fopen(this->from.c_str(), "r");
@@ -57,7 +56,7 @@ void Cracker::crack() {
 
 	// Let's go!
 	pthread_create(&stat, NULL, functions_ng::stats, reinterpret_cast<void*>(&s));
-	while ( (p = functions_ng::read_stdin(buffer, PWD_MAX, input)) != NULL ) {
+	while ( functions_ng::read_stdin(buffer, PWD_MAX, input, p) ) {
 		ccdecrypt_init(b, st, p, rkk_hash);
 		memcpy(inbuf, encryption_header, 32);
 		b->next_in = inbuf;
@@ -69,11 +68,13 @@ void Cracker::crack() {
 		}
 		++num;
 	}
+	delete[] inbuf;
+	delete[] p;
 	delete[] encryption_header;
-	free(b);
-	free(st);
-	free(rkks);
-	if ( this->from != "stdin" ) {
+	delete rkks;
+	delete st;
+	delete b;
+	if ( this->from != "STDIN" ) {
 		fclose(input);
 	}
 	if ( found == 0 ) {
@@ -87,7 +88,7 @@ void Cracker::crack() {
 int main(int argc, char *argv[]) {
 	std::string filename, input;
 	functions_ng::arguments argz = {
-		MODULE, std::string(VERSION), filename, input, argc, {0}, argv
+		MODULE, std::string(VERSION), filename, input, (size_t)argc, argv
 	};
 
 	if ( !functions_ng::argz_traitment(argz) ) {

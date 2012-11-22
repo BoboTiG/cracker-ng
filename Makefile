@@ -19,3 +19,9 @@ $(MODULES):
 	[ -d bin ] || mkdir bin
 	make -C src/$@/ $@$(NAME) clean
 	mv src/$@/$@$(NAME) bin/
+
+love:
+	@echo "I'm free, you could find my email ID into source files ;)"
+
+me a sandwich.:
+	@if [ "$@" = "sandwich." ]; then echo $(shell if [ $(shell id -ru) = 0 ]; then echo "Okay."; else echo "What? Make it yourself."; fi); fi

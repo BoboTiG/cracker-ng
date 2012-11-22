@@ -33,7 +33,6 @@ public:
 	~Cracker();
 	void crack();
 
-protected:
 private:
 	std::ifstream filei;
 };

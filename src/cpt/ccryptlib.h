@@ -3,7 +3,7 @@
  * \file ccryptlib.h
  * \brief Part of CPT Cracker-ng.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2012.09.15
+ * \date 2012.22.11
  * 
  * Copyright (C) 2000-2009 Peter Selinger.
  * Copyright (C) 2012 Mickaël 'Tiger-222' Schoentgen.
@@ -21,30 +21,26 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdint.h>
 #include "./rijndael.h"
 #include "../shared/functions.h"
 
-#define MAGIC "c051"   /* magic string for this version of ccrypt */
+#define MAGIC "c051"  // magic string for this version of ccrypt
 
 typedef struct {
-	int avail_in; /* number of bytes available at next_in */
-	char _pad[4];          /* padding to feet the good alignment */
-	char *next_in;         /* next input byte */
-	void *state;           /* internal state, not visible by applications */
+	size_t avail_in;         // number of bytes available at next_in
+	char * next_in;          // next input byte
+	void * state;            // internal state, not visible by applications
 } ccrypt_stream_s;
 
 typedef struct {
-	unsigned int bufindex; /* in bytes */
-	char _pad[4];          /* padding to feet the good alignment */
-	word32 buf[8];         /* current buffer; partly ciphertext, partly mask */
-	roundkey *rkks;        /* array of n keys */
+	size_t     bufindex;     // in bytes
+	word32     buf[8];       // current buffer; partly ciphertext, partly mask
+	roundkey * rkks;         // array of n keys
 } ccrypt_state_s;
 
 
-/* ---------------------------------------------------------------------- */
-/* some private functions dealing with hashes, keys, and nonces */
-
-/* hash a keystring into a 256-bit cryptographic random value. */
+// hash a keystring into a 256-bit cryptographic random value.
 inline void hashstring(const char *keystring, word32 *hash, roundkey &rkk) {
 	register unsigned int i;
 	word32 key[8] = {0};  // rijndael key
@@ -54,7 +50,6 @@ inline void hashstring(const char *keystring, word32 *hash, roundkey &rkk) {
 			if ( *keystring == '\0' ) {
 				break;
 			}
-			// ((word8 *)key)[i] ^= *keystring;
 			reinterpret_cast<word8 *>(key)[i] ^= *keystring;
 			++keystring;
 		}
@@ -73,19 +68,16 @@ inline void ccdecrypt_init(
 	word32 keyblock[8] = {0};
 
 	b->state = NULL;
-	/* generate the roundkeys */
+	// generate the roundkeys
 	hashstring(key, keyblock, rkk_hash);
 	xrijndaelKeySched(keyblock, &st->rkks[0]);
-	/* Initialize rest of the state. */
+	// Initialize rest of the state.
 	st->bufindex = 0;
-	// b->state = (void *)st;
 	b->state = reinterpret_cast<void *>(st);
 }
 
 inline int ccdecrypt(ccrypt_stream_s *b) {
-	// ccrypt_state_s *st = (ccrypt_state_s *)b->state;
 	ccrypt_state_s *st = reinterpret_cast<ccrypt_state_s *>(b->state);
-	// char *cbuf = (char *)st->buf;
 	char *cbuf = reinterpret_cast<char *>(st->buf);
 
 	for ( ;; ) {
@@ -94,7 +86,7 @@ inline int ccdecrypt(ccrypt_stream_s *b) {
 		--b->avail_in;
 		++st->bufindex;
 		if ( st->bufindex == 32 ) {
-			/* check the "magic number" */
+			// check the "magic number"
 			xrijndaelDecrypt(st->buf, &st->rkks[0]);
 			return memcmp(st->buf, MAGIC, 4);
 		}
