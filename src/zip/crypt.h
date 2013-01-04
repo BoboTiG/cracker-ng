@@ -6,7 +6,7 @@
  * \date 2012.09.15
  * 
  * Copyright (c) 1990-2007 Info-ZIP.  All rights reserved.
- * Copyright (C) 2012 Mickaël 'Tiger-222' Schoentgen.
+ * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
  * 
  * See the accompanying file LICENSE, version 2005-Feb-10 or later for 
  * terms of use. If, for some reason, all these files are missing, the

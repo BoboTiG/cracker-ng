@@ -3,9 +3,9 @@
  * \file main.h
  * \brief ZIP Cracker-ng headers.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2012.11.22
+ * \date 2013.01.04
  * 
- * Copyright (C) 2012 Mickaël 'Tiger-222' Schoentgen.
+ * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
  * See http://www.pkware.com/documents/casestudies/APPNOTE.TXT for
  * more details about ZIP specifications.
  */
@@ -34,13 +34,15 @@ class Cracker {
 public:
 	std::string filename, from;
 
-	Cracker(std::string, std::string);
+	Cracker(const std::string&, const std::string&);
 	~Cracker();
 	unsigned int check();
 	void crack();
+	bool is_ok();
+	void set_debug(bool);
 
 private:
-	size_t start_byte, end_byte, strong_encryption;
+	size_t debug, start_byte, end_byte, strong_encryption;
 	std::ifstream filei;
 	local_file_header_light lfh;
 	central_directory cd;
@@ -56,40 +58,17 @@ private:
 	 */
 	inline unsigned int create_crc32(const char *buf, unsigned int len) {
 		register uint32_t c = 0xffffffffL;
-		#if 0
-			cout << "\n--- Create CRC-32" << endl;
-			cout
-				<< "     c = " << reinterpret_cast<unsigned int*>(c)
-				<< " | buf = " << reinterpret_cast<unsigned int*>(*buf & 0xFF)
-				<< " | len = " << len
-			<< endl;
-		#endif
 		while ( len >= 8 ) {
 			DO8(c, buf);
 			len -= 8;
-			#if 0
-				cout
-					<< "do08 c = " << reinterpret_cast<unsigned int*>(c)
-					<< " | buf = " << reinterpret_cast<unsigned int*>(*buf & 0xFF)
-					<< " | len = " << len
-				<< endl;
-			#endif
 		}
-		if ( len ) do {
+		/*if ( len ) do {
 			DO1(c, buf);
-			#if 0
-				cout
-					<< "do01 c = " << reinterpret_cast<unsigned int*>(c)
-					<< " | buf = " << reinterpret_cast<unsigned int*>(*buf & 0xFF)
-					<< " | len = " << len
-				<< endl;
-			#endif
-		} while ( --len );
-		c = ~c;
-		#if 0
-			cout << "     c = " << reinterpret_cast<unsigned int*>(c) << endl;
-		#endif
-		return c == this->lfh.good_crc_32;
+		} while ( --len );*/
+		for ( ; len; --len ) {
+			DO1(c, buf);
+		};
+		return ~c == this->lfh.good_crc_32;
 	}
 
 	/*!
@@ -125,6 +104,12 @@ private:
 	 */
 	bool find_central_directory();
 
+
+	/*!
+	 * \fn init_lfh()
+	 * \brief Initialize the light Local File Header.
+	 * Contains useful informations about file to crack.
+	 */
 	void init_lfh();
 };
 

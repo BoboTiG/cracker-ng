@@ -3,9 +3,9 @@
  * \file main.cc
  * \brief ZIP module for Cracker-ng.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2012.11.22
+ * \date 2013.01.04
  * 
- * Copyright (C) 2012 Mickaël 'Tiger-222' Schoentgen.
+ * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
  * See http://www.pkware.com/documents/casestudies/APPNOTE.TXT for
  * more details about ZIP specifications.
  */
@@ -15,19 +15,19 @@
 
 
 // C'est parti mon kiki !
-Cracker::Cracker(std::string filename, std::string from) :
+Cracker::Cracker(const std::string& filename, const std::string& from) :
 	filename(filename), from(from),
-	start_byte(0), end_byte(0), strong_encryption(0),
+	debug(0), start_byte(0), end_byte(0), strong_encryption(0),
 	filei(filename.c_str(), std::ios::in | std::ios::binary),
 	lfh(lfh), cd(cd), ecd(ecd)
 {}
 
 Cracker::~Cracker() {
-	printf(" ^ Ex(c)iting.\n");
+	printf(" ^ Ex(c)iting.\n\n");
 }
 
 unsigned int Cracker::check() {
-	if ( ! check_headers() ) {
+	if ( !check_headers() ) {
 		fprintf(stderr, " ! Bad ZIP file (wrong headers).\n");
 		return 0;
 	}
@@ -35,8 +35,8 @@ unsigned int Cracker::check() {
 		fprintf(stderr, " ! Unable to find Central Directory signatures.\n");
 		return 0;
 	}
-	read_ng::read_central_directory(this->filei, &this->cd, this->start_byte);
-	read_ng::read_end_central_directory(this->filei, &this->ecd, this->end_byte);
+	read_ng::read_central_directory(this->filei, &this->cd, this->start_byte, this->debug);
+	read_ng::read_end_central_directory(this->filei, &this->ecd, this->end_byte, this->debug);
 	init_lfh();
 	determine_chosen_one();
 	if ( cd.is_encrypted && lfh.is_encrypted ) {
@@ -45,15 +45,22 @@ unsigned int Cracker::check() {
 			strong_encryption = true;
 		} else {
 			printf(" - Encryption: standard (traditional PKWARE)\n");
+			if ( this->lfh.good_crc_32 == 0 ) {
+				fprintf(stderr, "\033[A ! CRC-32 empty, cannot work without it on this encryption scheme.\n");
+				return 0;
+			}
 		}
 	} else {
 		printf(" + The file is not protected.\n");
 		return 0;
 	}
-	if ( ! check_method() ) {
+	if ( !check_method() ) {
 		return 0;
 	}
 	if ( strong_encryption ) {
+		return 0;
+	}
+	if ( this->debug ) {
 		return 0;
 	}
 	return 1;
@@ -74,36 +81,25 @@ void Cracker::crack() {
 	char *buf               = new char[len];
 	char *data              = new char[len];
 	char *p                 = new char[PWD_MAX];
-	char *pwd_buffer        = new char[PWD_MAX];
 	uint8_t *buffer         = new uint8_t[12];
-	FILE *input;
+	FILE *input             = NULL;
 	std::stringstream compressed;
 	std::string decompressed;
 	boost::iostreams::zlib_params params;
 	boost::iostreams::zlib_decompressor zdec;
 	boost::iostreams::filtering_streambuf<boost::iostreams::input> in;
 
-	if ( this->lfh.good_crc_32 == 0 ) {
-		fprintf(stderr, "\033[A ! CRC-32 empty, cannot work without it on this encryption scheme.\n");
-		delete[] pwd_buffer;
-		delete[] buffer;
-		delete[] p;
-		delete[] data;
-		delete[] buf;
-		delete[] encryption_header;
-		return;
-	}
 	if ( this->from == "STDIN" ) {
 		input = stdin;
 	} else {
-		input = fopen(this->from.c_str(), "r");
+		input = fopen(from.c_str(), "r");
 	}
 
 	// Read encrypted data
-	this->filei.seekg(this->lfh.start_byte, std::ios::beg);
-	this->filei.read(encryption_header, 12);
-	this->filei.read(buf, len);
-	this->filei.close();
+	filei.seekg(this->lfh.start_byte, std::ios::beg);
+	filei.read(encryption_header, 12);
+	filei.read(buf, len);
+	filei.close();
 
 	// Adjust decompression options
 	// The ZLIB header and trailing ADLER-32 checksum should be omitted
@@ -113,7 +109,7 @@ void Cracker::crack() {
 	// Let's go!
 	printf(" . Working ...\n");
 	pthread_create(&stat, NULL, functions_ng::stats, reinterpret_cast<void*>(&s));
-	while ( functions_ng::read_stdin(pwd_buffer, PWD_MAX, input, p) ) {
+	while ( functions_ng::read_input(input, p, PWD_MAX) ) {
 		// 1) Initialize the three 32-bit keys with the password.
 		init_keys(p);
 		// 2) Read and decrypt the 12-byte encryption header,
@@ -121,13 +117,6 @@ void Cracker::crack() {
 		memcpy(buffer, encryption_header, 12);
 		for ( i = 0; i < 12; ++i ) {
 			zdecode(buffer[i]);
-			#if 0
-				cout
-					<< "encryption_header[] = " << reinterpret_cast<unsigned int*>(encryption_header[i] & 0xFF)
-					<< "  |  "
-					<< "buffer[] = " << reinterpret_cast<unsigned int*>(buffer[i])
-					<< endl;
-			#endif
 		}
 
 		// First verification ...
@@ -164,11 +153,11 @@ void Cracker::crack() {
 		}
 		++num;
 	}
-	delete[] buffer;
-	delete[] p;
-	delete[] data;
-	delete[] buf;
-	delete[] encryption_header;
+	delete[] buffer;            buffer = 0;
+	delete[] p;                 p = 0;
+	delete[] data;              data = 0;
+	delete[] buf;               buf = 0;
+	delete[] encryption_header; encryption_header = 0;
 	if ( this->from != "STDIN" ) {
 		fclose(input);
 	}
@@ -181,23 +170,27 @@ void Cracker::crack() {
 
 int main(int argc, char *argv[]) {
 	std::string filename, input;
+	size_t flag = functions_ng::NONE;
 	functions_ng::arguments argz = {
-		MODULE, std::string(VERSION), filename, input, (size_t)argc, argv };
+		MODULE, std::string(VERSION), filename, input, flag, (size_t)argc, argv };
 
 	if ( !functions_ng::argz_traitment(argz) ) {
 		return 0;
 	}
-	printf(" ~ %s Cracker-ng v.%s { Tiger-222 }\n", MODULE, VERSION);
-	printf(" - File......: %s\n", argz.filename.c_str());
-	printf(" - Input.....: %s\n", argz.input.c_str());
+	printf("\n ~ %s Cracker-ng v.%s { Tiger-222 }\n", MODULE, VERSION);
+	printf(" - Generator.: %s\n", functions_ng::get_filename(argz.input).c_str());
+	printf(" - File......: %s\n", functions_ng::get_filename(argz.filename).c_str());
 
 	// Who I am? I'm a champion!
 	Cracker zizi(argz.filename, argz.input);
-	if ( zizi.check() ) {
-		zizi.crack();
-	} else {
+	if ( !zizi.is_ok() ) {
 		return 1;
 	}
+	zizi.set_debug(argz.flag == functions_ng::DEBUG);
+	if ( !zizi.check() ) {
+		return 1;
+	}
+	zizi.crack();
 	return 0;
 }
 
@@ -255,24 +248,28 @@ void Cracker::determine_chosen_one() {
 	this->filei.seekg(this->lfh.start_byte, std::ios::beg);
 	if ( this->ecd.total_entries > 1 ) {
 		for ( unsigned int i = 1; i <= this->ecd.total_entries; ++i ) {
-			read_ng::read_local_file_header(this->filei, &this->lfh, true);
+			read_ng::read_local_file_header(this->filei, &this->lfh, true, this->debug);
 		}
 	} else {
-		read_ng::read_local_file_header(this->filei, &this->lfh, false);
+		read_ng::read_local_file_header(this->filei, &this->lfh, false, this->debug);
 	}
-	#if 0
-		cout << endl;
-		cout << "--- The chosen one" << endl;
-		cout << "version_needed_to_extract ..= " << this->lfh.version_needed_to_extract << endl;
-		cout << "compression_method .........= " << this->lfh.compression_method << endl;
-		cout << "last_mod_file_time .........= " << this->lfh.last_mod_file_time << endl;
-		cout << "start_byte .................= " << this->lfh.start_byte << endl;
-		cout << "is_encrypted ...............= " << this->lfh.is_encrypted << endl;
-		cout << "strong_encryption ..........= " << this->lfh.strong_encryption << endl;
-		cout << "good_crc_32 ................= " << reinterpret_cast<unsigned int*>(this->lfh.good_crc_32) << endl;
-		cout << "good_length ................= " << this->lfh.good_length << endl;
-		cout << endl;
-	#endif
+	if ( this->debug ) {
+		std::cout << std::endl;
+		std::cout << "--- The chosen one" << std::endl;
+		std::cout << "version_needed_to_extract ..= " << this->lfh.version_needed_to_extract << std::endl;
+		std::cout << "compression_method .........= " << this->lfh.compression_method << std::endl;
+		std::cout << "last_mod_file_time .........= " << this->lfh.last_mod_file_time << std::endl;
+		std::cout << "start_byte .................= " << this->lfh.start_byte << std::endl;
+		std::cout << "is_encrypted ...............= " << this->lfh.is_encrypted << std::endl;
+		std::cout << "strong_encryption ..........= " << this->lfh.strong_encryption << std::endl;
+		std::cout << "good_crc_32 ................= " << reinterpret_cast<unsigned int*>(this->lfh.good_crc_32) << std::endl;
+		std::cout << "good_length ................= " << this->lfh.good_length << std::endl;
+		std::cout << "file_name ..................= " << this->lfh.file_name << std::endl;
+		std::cout << std::endl;
+	}
+	printf(" > Chosen one: \"%s\" (%s bytes)\n",
+		this->lfh.file_name,
+		functions_ng::format_number(this->lfh.good_length).c_str());
 }
 
 bool Cracker::find_central_directory() {
@@ -321,4 +318,16 @@ void Cracker::init_lfh() {
 	this->lfh.last_mod_file_time        = 0;
 	this->lfh.strong_encryption         = true;
 	this->lfh.is_encrypted              = true;
+}
+
+bool Cracker::is_ok() {
+	if ( !filei.is_open() ) {
+		fprintf(stderr, " ! I cannot open the file.\n");
+		return false;
+	}
+	return true;
+}
+
+void Cracker::set_debug(bool yesno) {
+	this->debug = yesno;
 }

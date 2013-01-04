@@ -7,17 +7,27 @@
 
 
 [ under devel ]
-	. Cracker-ng 2012.mm-jj released
+	. Cracker-ng 2013.mm-jj released
 	. all modules:
 		* add -march=native, -mmmx, -mfpmath=sse and -mno-ieee-fp options to gcc CLFAGS
 		* code review to follow Google C++ Style Guide
 		* code check with Cppcheck
-		* speed-up process by ~280%
+		+ -i (--infos) option to get debug informations about a file to crack (only for ZIP)
+		. review printed informations and update copyright date
 	. CPT module:
 		. updated to version 0.1-4
-		* into main.cc
+		^ memory leaks into main.cc
+		. check crack against new ccrypt version (1.10): ok!
 	. ZIP module:
 		. updated to version 0.1a-8
+		* ability to select the best file to crack (check file size and compression method)
+		^ memory leaks into main.cc
+	. shared functions:
+		^ memory still reachable into functions.cc
+		^ memory leak  for read_stdin() into functions.h
+		+ get_filename() to get the file name only (without its directory)
+		. change read_stdin to read_input() into functions.h
+		. move Stats::format_number() to functions_ng namespace
 
 [ september 14 2012 ]
 	. Cracker-ng 2012.09-14 released

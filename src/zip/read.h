@@ -3,9 +3,9 @@
  * \file read.h
  * \brief Cracker-ng (optimized) functions headers.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2012.09.15
+ * \date 2013.01.03
  *
- * Copyright (C) 2012 Mickaël 'Tiger-222' Schoentgen.
+ * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
  */
 
 
@@ -13,8 +13,9 @@
 #define SRC_ZIP_READ_H_
 
 #include <stdint.h>
+#include <cstring>
 #include <fstream>
-
+#include <iostream>
 
 /*!
  * \struct central_directory
@@ -107,10 +108,11 @@ struct local_file_header_light {
 	bool strong_encryption;               //!< Use strong encryption? (bool)
 	bool is_encrypted;                    //!< Encryption enabled? (bool)
 	uint32_t _pad;                        //!< Padding to feet the good alignment
+	char file_name[512];                  //!< File name (custom fixed size)
 };
 
 
-void transpose_lfh(struct local_file_header &, struct local_file_header_light *);
+void swap_lfh(struct local_file_header &, struct local_file_header_light *);
 
 
 namespace read_ng {
@@ -121,8 +123,9 @@ namespace read_ng {
  * \param zip Reference to the ZIP handler.
  * \param cd Poiter to the struct where to stock informations.
  * \param start_byte Byte where starts the Central Directory.
+ * \param debug Print debug informations (for -i | --nfos option)?
  */
-void read_central_directory(std::ifstream &, struct central_directory *, unsigned int start_byte);
+void read_central_directory(std::ifstream &, struct central_directory *, unsigned int start_byte, bool);
 
 /*
  * \fn read_end_central_directory(ifstream & zip, struct end_central_directory * ecd, unsigned int start_byte)
@@ -130,8 +133,9 @@ void read_central_directory(std::ifstream &, struct central_directory *, unsigne
  * \param zip Reference to the ZIP handler.
  * \param ecd Poiter to the struct where to stock informations.
  * \param start_byte Byte where starts the Central Directory.
+ * \param debug Print debug informations (for -i | --nfos option)?
  */
-void read_end_central_directory(std::ifstream &, struct end_central_directory *, unsigned int);
+void read_end_central_directory(std::ifstream &, struct end_central_directory *, unsigned int, bool);
 
 /*!
  * \fn local_file_header(ifstream & zip, struct local_file_header * lfh, unsigned int start_byte, bool several)
@@ -139,8 +143,9 @@ void read_end_central_directory(std::ifstream &, struct end_central_directory *,
  * \param zip Reference to the ZIP handler.
  * \param lfh Poiter to the struct where to stock informations.
  * \param several Is there more than one file in the ZIP file?
+ * \param debug Print debug informations (for -i | --nfos option)?
  */
-void read_local_file_header(std::ifstream &, struct local_file_header_light *, bool);
+void read_local_file_header(std::ifstream &, struct local_file_header_light *, bool, bool);
 }
 
 #endif  // SRC_ZIP_READ_H_

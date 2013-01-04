@@ -3,9 +3,9 @@
  * \file functions.cc
  * \brief Cracker-ng (optimized) functions.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2012.11.22
+ * \date 2013.01.04
  *
- * Copyright (C) 2012 Mickaël 'Tiger-222' Schoentgen.
+ * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
  */
 
 
@@ -14,58 +14,104 @@
 
 namespace functions_ng {
 
-unsigned int argz_traitment(const arguments &argz) {
+bool argz_traitment(const arguments &argz) {
 	if ( argz.argc == 1 ) {
 		functions_ng::usage(argz.module);
-		return 0;
+		return false;
 	} else if ( !strcmp(argz.argv[1], "-h") || !strcmp(argz.argv[1], "--help") ) {
 		functions_ng::help(argz.module);
-		return 0;
+		return false;
 	} else if ( !strcmp(argz.argv[1], "-v")
 			 || !strcmp(argz.argv[1], "--version") ) {
 		functions_ng::version(argz.module, argz.version);
-		return 0;
+		return false;
 	} else {
 		size_t i;
+		bool filename = false;
+		bool wordlist = false;
 		for ( i = 1; i < argz.argc; ++i ) {
-			if ( !strcmp(argz.argv[i], "-f") || !strcmp(argz.argv[i], "--file") ) {
-				if ( argz.argv[++i] ) {
-					FILE *filei = fopen(argz.argv[i], "r");
-					if ( filei != NULL ) {
-						fclose(filei);
-						argz.filename = argz.argv[i];
-					} else {
-						fprintf(stderr, " ! Could not open the file.\n");
-						return 0;
-					}
-				} else {
+			
+			// -f | --file to set the file to crack
+			if ( !filename && 
+				(!strcmp(argz.argv[i], "-f") || !strcmp(argz.argv[i], "--file")) ) {
+				if ( !argz.argv[++i] ) {
 					fprintf(stderr, " ! Please gimme a file.\n");
-					return 0;
+					return false;
 				}
-			} else if ( !strcmp(argz.argv[i], "-w")
-					 || !strcmp(argz.argv[i], "--wordlist") ) {
-				if ( argz.argv[++i] ) {
-					FILE *in = fopen(argz.argv[i], "r");
-					if ( in != NULL ) {
-						fclose(in);
-						argz.input = argz.argv[i];
-					} else {
-						fprintf(stderr, " ! Could not open the wordlist.\n");
-						return 0;
-					}
+				if ( !functions_ng::file_exists(argz.argv[i]) ) {
+					fprintf(stderr, " ! Could not open the file.\n");
+					return false;
 				}
-			} else if ( !strcmp(argz.argv[i], "-") || !strcmp(argz.argv[i], "--stdin") ) {
-				argz.input = "STDIN";
+				argz.filename = argz.argv[i];
+			}
+			
+			// -i | --infos to get informations about a file
+			// Useful for the ZIP module, for others it will just do as -f | --file option
+			else if ( !filename && 
+				     (!strcmp(argz.argv[i], "-i") || !strcmp(argz.argv[i], "--infos")) ) {
+				if ( !argz.argv[++i] ) {
+					fprintf(stderr, " ! Please gimme a wordlist.\n");
+					return false;
+				}
+				if ( !functions_ng::file_exists(argz.argv[i]) ) {
+					fprintf(stderr, " ! Could not open the file.\n");
+					return false;
+				}
+				argz.filename = argz.argv[i];
+				argz.flag = functions_ng::DEBUG;
+			}
+			
+			// -w | --wordlist to set the wordlist file to use
+			else if ( !wordlist && 
+				    (!strcmp(argz.argv[i], "-w") || !strcmp(argz.argv[i], "--wordlist")) ) {
+				if ( !argz.argv[++i] ) {
+					fprintf(stderr, " ! Please gimme a wordlist.\n");
+					return false;
+				}
+				if ( !functions_ng::file_exists(argz.argv[i]) ) {
+					fprintf(stderr, " ! Could not open the wordlist.\n");
+					return false;
+				}
+				argz.input = argz.argv[i];
 			}
 		}
 	}
 	if ( argz.filename.empty() ) {
 		fprintf(stderr, " ! Please gimme a file.\n");
-		return 0;
+		return false;
 	} else if ( argz.input.empty() ) {
 		argz.input = "STDIN";
 	}
-	return 1;
+	return true;
+}
+
+bool file_exists(char *filename) {
+	FILE *test = NULL;
+	
+	if ( filename != NULL ) {
+		test = fopen(filename, "r");
+		if ( test != NULL ) {
+			fclose(test);
+			return true;
+		}
+	}
+	return false;
+}
+
+std::string format_number(const size_t & num) {
+	std::stringstream str, format;
+	unsigned int i, len;
+
+	str << num;
+	len = str.str().size();
+	i = len + 1;
+	while ( --i ) {
+		if ( i < len && i % 3 == 0 ) {
+			format << ',';
+		}
+		format << str.str()[len - i];
+	}
+	return format.str();
 }
 
 unsigned int get_cores() {
@@ -75,8 +121,8 @@ unsigned int get_cores() {
 
 	if ( f != NULL ) {
 		for ( ; !feof(f) ; ) {
-			memset(buf, 0, sizeof(*buf));
-			if ( fgets(buf, sizeof(*buf), f) == NULL ) {
+			memset(buf, 0, sizeof(buf));
+			if ( fgets(buf, sizeof(buf), f) == NULL ) {
 				break;
 			}
 			if ( std::string(buf).find("processor") != std::string::npos ) {
@@ -89,9 +135,20 @@ unsigned int get_cores() {
 	return n == 0 ? 1 : n;
 }
 
+std::string get_filename(const std::string& str) {
+	size_t pos = str.find_last_of("/");
+	
+	if ( pos == std::string::npos ) {
+		pos = 0;
+	} else {
+		++pos;
+	}
+	return str.substr(pos);
+}
+
 void help(const std::string& module) {
 	printf(
-		"Copyright (C) 2011-2012 by Mickaël 'Tiger-222' Schoentgen.\n\n"
+		"Copyright (C) 2011-2013 by Mickaël 'Tiger-222' Schoentgen.\n\n"
 		"Cracker-ng comes with ABSOLUTELY NO WARRANTY.\n"
 		"This is free software, and you are welcome to redistribute it under\n"
 		"certain conditions. See the GNU General Public Licence for details.\n\n"
@@ -100,6 +157,7 @@ void help(const std::string& module) {
 	printf(
 		"\nAvailable options:\n"
 		"    -f, --file     file to crack\n"
+		"    -i, --infos    print informations about a file to crack (only for ZIP)\n"
 		"    -,  --stdin    read from STDIN\n"
 		"    -w, --wordlist dictionnary tu use\n"
 		"    -h, --help     display this message\n"
@@ -120,19 +178,18 @@ void *stats(void *argz) {
 	functions_ng::statistics *s = (functions_ng::statistics *)argz;
 	Stats statistics(s->num, s->found);
 	statistics.start();
-	pthread_exit(NULL);
+	return NULL;
 }
 
 void usage(const std::string& module) {
 	std::string mo = module;
 	transform(mo.begin(), mo.end(), mo.begin(), ::tolower);
-	std::string m = mo + "cracker-ng";
 	printf(
-		"Usages:\n"
-		"%s -f <file> [-w <wordlist>]\n"
-		"generator | %s -f <file>\n"
+		"Usage:\n"
+		"\t%scracker-ng -f <file> [-w <wordlist>]\n"
+		"\tgenerator | %scracker-ng -f <file> -\n"
 		"Where generator could be cat, crunch, john, jot or whatever you want.\n",
-		m.c_str(), m.c_str());
+		mo.c_str(), mo.c_str());
 }
 
 void version(const std::string& module, const std::string& version) {

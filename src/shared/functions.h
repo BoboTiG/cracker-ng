@@ -3,9 +3,9 @@
  * \file functions.h
  * \brief Cracker-ng (optimized) functions headers.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2012.11.22
+ * \date 2013.01.04
  *
- * Copyright (C) 2012 Mickaël 'Tiger-222' Schoentgen.
+ * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
  */
 
 
@@ -14,10 +14,17 @@
 
 #include <algorithm>  // transform()
 #include <string>
+#include <cstdio>
+#include <cstring>
 #include "./stats.h"
 
 
 namespace functions_ng {
+
+enum FLAG {
+	NONE  = 0x0,
+	DEBUG = 0x1
+};
 
 typedef struct {
 	size_t       * num;
@@ -29,14 +36,14 @@ typedef struct {
 	std::string   version;
 	std::string & filename;
 	std::string & input;
+	size_t      & flag;
 	size_t        argc;
 	char**        argv;
 } arguments;
 
 // Optimized read from stdin or wordlist
-inline bool read_stdin(char *tmp_buffer, size_t len, FILE *input, char *&output) {
-	output = fgets(tmp_buffer, len, input);
-	if ( output != NULL ) {
+inline bool read_input(FILE *input, char *&output, const size_t &len) {
+	if ( fgets(output, len, input) != NULL ) {
 		char *lf = strchr(output, '\n');
 		if ( lf != NULL ) {
 			*lf = '\0';
@@ -46,8 +53,11 @@ inline bool read_stdin(char *tmp_buffer, size_t len, FILE *input, char *&output)
 	return false;
 }
 
-unsigned int argz_traitment(const arguments &);
+bool argz_traitment(const arguments &);
+bool file_exists(char *);
+std::string format_number(const size_t &);
 unsigned int get_cores();
+std::string get_filename(const std::string&);
 void help(const std::string&);
 void result(const std::string&);
 void *stats(void *argz);
