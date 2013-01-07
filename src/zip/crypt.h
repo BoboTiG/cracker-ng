@@ -3,9 +3,10 @@
  * \file crypt.h
  * \brief ZIP Cracker-ng headers for the Traditional PKWARE Encryption.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2012.08.15
+ * \date 2013.01.04
  * 
  * Copyright (c) 1990-2007 Info-ZIP.  All rights reserved.
+ * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
  * 
  * See the accompanying file LICENSE, version 2005-Feb-10 or later for 
  * terms of use. If, for some reason, all these files are missing, the
@@ -14,16 +15,16 @@
  */
 
 
-#ifndef CRACK_CRYPT_H
-#define CRACK_CRYPT_H
- 
-#include "crc32.h"
+#ifndef SRC_ZIP_CRYPT_H_
+#define SRC_ZIP_CRYPT_H_
+
+#include "./crc32.h"
 
 /*!
  * \var keys
  * \brief Three 32-bit keys for CRC-32 calculus.
  */
-unsigned long keys[3];
+uint32_t keys[3];
 
 /*!
  * \def zdecode(c)
@@ -42,8 +43,7 @@ unsigned long keys[3];
  * so far, though.
  */
 inline unsigned char decrypt_byte(void) {
-    static unsigned short temp;
-    temp = keys[2] | 2;
+    register uint16_t temp = keys[2] | 2;
     return (temp * (temp ^ 1)) >> 8;
 }
 
@@ -55,10 +55,7 @@ inline unsigned char decrypt_byte(void) {
 inline void update_keys(int c) {
 	keys[0] = crc32(keys[0], c);
 	keys[1] = (keys[1] + (keys[0] & 0xff)) * 134775813 + 1;
-	{
-		register int keyshift = (int)(keys[1] >> 24);
-		keys[2] = crc32(keys[2], keyshift);
-    }
+	keys[2] = crc32(keys[2], keys[1] >> 24);
 }
 
 /*!
@@ -70,7 +67,7 @@ inline void init_keys(const char* passwd) {
 	keys[0] = 0x12345678;
 	keys[1] = 0x23456789;
 	keys[2] = 0x34567890;
-	while ( *passwd ) update_keys(*passwd++);
+	while (*passwd) update_keys(*passwd++);
 }
 
-#endif // CRACK_CRYPT_H
+#endif  // SRC_ZIP_CRYPT_H_

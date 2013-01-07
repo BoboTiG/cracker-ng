@@ -3,9 +3,10 @@
  * \file crc32.h
  * \brief ZIP Cracker-ng headers for the CRC-32 algorithme.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2012.08.31
+ * \date 2013.01.07
  * 
  * Copyright (c) 1990-2007 Info-ZIP.  All rights reserved.
+ * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
  * 
  * See the accompanying file LICENSE, version 2005-Feb-10 or later for 
  * terms of use. If, for some reason, all these files are missing, the
@@ -14,8 +15,8 @@
  */
 
 
-#ifndef CRACK_CRC32_H
-#define CRACK_CRC32_H
+#ifndef SRC_ZIP_CRC32_H_
+#define SRC_ZIP_CRC32_H_
 
 /*!
  * \def crc32(c, b)
@@ -25,7 +26,7 @@
  * \param b The byte with which update the old CRC-32 value.
  * \return CRC-32 updated.
  */
-#define crc32(c, b) ((pcrc_32_tab[(int)(c ^ b) & 0xff]) ^ ((c) >> 8))
+#define crc32(c, b) ((pcrc_32_tab[(c ^ b) & 0xff]) ^ ((c) >> 8))
 
 #define DO1(crc, buf)  crc = crc32(crc, *buf++)
 #define DO2(crc, buf)  DO1(crc, buf); DO1(crc, buf)
@@ -36,7 +37,7 @@
  * \var pcrc_32_tab
  * \brief Table of CRC-32's of all single-byte values.
  */
-const long unsigned int pcrc_32_tab[256] = {
+const uint32_t pcrc_32_tab[256] = {
 	0x00000000L, 0x77073096L, 0xee0e612cL, 0x990951baL, 0x076dc419L,
 	0x706af48fL, 0xe963a535L, 0x9e6495a3L, 0x0edb8832L, 0x79dcb8a4L,
 	0xe0d5e91eL, 0x97d2d988L, 0x09b64c2bL, 0x7eb17cbdL, 0xe7b82d07L,
@@ -91,4 +92,4 @@ const long unsigned int pcrc_32_tab[256] = {
 	0x2d02ef8dL
 };
 
-#endif // CRACK_CRC32_H
+#endif  // SRC_ZIP_CRC32_H_
