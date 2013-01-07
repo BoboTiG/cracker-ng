@@ -3,7 +3,7 @@
  * \file read.cc
  * \brief Cracker-ng (optimized) functions.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2013.01.04
+ * \date 2013.01.06
  *
  * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
  */
@@ -21,6 +21,7 @@ void swap_lfh(
 	lfh->compression_method        = local_lfh.compression_method;
 	lfh->start_byte                = local_lfh.start_byte;
 	lfh->good_length               = local_lfh.good_length;
+	lfh->uncompressed_size         = local_lfh.uncompressed_size;
 	lfh->last_mod_file_time        = local_lfh.last_mod_file_time;
 	lfh->strong_encryption         = local_lfh.strong_encryption;
 	lfh->is_encrypted              = local_lfh.is_encrypted;
@@ -271,9 +272,6 @@ void read_local_file_header(
 			std::cout << "extra_field ................= " << reinterpret_cast<unsigned int*>(local_lfh.extra_field) << std::endl;
 		}
 		std::cout << "---" << std::endl;
-		std::cout << "start_byte .................= " << local_lfh.start_byte << std::endl;
-		std::cout << "is_encrypted ...............= " << local_lfh.is_encrypted << std::endl;
-		std::cout << "strong_encryption ..........= " << local_lfh.strong_encryption << std::endl;
 		std::cout << "has_data_descriptor ........= " << local_lfh.has_data_descriptor << std::endl;
 		if ( local_lfh.has_data_descriptor ) {
 			std::cout << "data_desc_signature ........= " << reinterpret_cast<unsigned int*>(local_lfh.data_desc_signature) << std::endl;
@@ -281,6 +279,10 @@ void read_local_file_header(
 			std::cout << "data_desc_compressed_size ..= " << local_lfh.data_desc_compressed_size << std::endl;
 			std::cout << "data_desc_uncompressed_size = " << local_lfh.data_desc_uncompressed_size << std::endl;
 		}
+		std::cout << "---" << std::endl;
+		std::cout << "start_byte .................= " << local_lfh.start_byte << std::endl;
+		std::cout << "is_encrypted ...............= " << local_lfh.is_encrypted << std::endl;
+		std::cout << "strong_encryption ..........= " << local_lfh.strong_encryption << std::endl;
 		std::cout << "good_crc_32 ................= " << reinterpret_cast<unsigned int*>(local_lfh.good_crc_32) << std::endl;
 		std::cout << "good_length ................= " << local_lfh.good_length << std::endl;
 		std::cout << std::endl;

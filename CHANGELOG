@@ -6,8 +6,8 @@
 	. : information
 
 
-[ under devel ]
-	. Cracker-ng 2013.mm-jj released
+[ january 07 2013 ]
+	. Cracker-ng 2013.01-07 released
 	. all modules:
 		* add -march=native, -mmmx, -mfpmath=sse and -mno-ieee-fp options to gcc CLFAGS
 		* code review to follow Google C++ Style Guide
@@ -19,9 +19,10 @@
 		^ memory leaks into main.cc
 		. check crack against new ccrypt version (1.10): ok!
 	. ZIP module:
-		. updated to version 0.1a-8
+		. updated to version 0.1a-9
 		* ability to select the best file to crack (check file size and compression method)
 		^ memory leaks into main.cc
+		^ segfault with some files, into main.cc
 	. shared functions:
 		^ memory still reachable into functions.cc
 		^ memory leak  for read_stdin() into functions.h

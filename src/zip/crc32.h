@@ -3,7 +3,7 @@
  * \file crc32.h
  * \brief ZIP Cracker-ng headers for the CRC-32 algorithme.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2012.09.15
+ * \date 2013.01.07
  * 
  * Copyright (c) 1990-2007 Info-ZIP.  All rights reserved.
  * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
@@ -26,7 +26,7 @@
  * \param b The byte with which update the old CRC-32 value.
  * \return CRC-32 updated.
  */
-#define crc32(c, b) ((pcrc_32_tab[static_cast<int>(c ^ b) & 0xff]) ^ ((c) >> 8))
+#define crc32(c, b) ((pcrc_32_tab[(c ^ b) & 0xff]) ^ ((c) >> 8))
 
 #define DO1(crc, buf)  crc = crc32(crc, *buf++)
 #define DO2(crc, buf)  DO1(crc, buf); DO1(crc, buf)

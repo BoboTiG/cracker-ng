@@ -138,11 +138,12 @@ unsigned int get_cores() {
 std::string get_filename(const std::string& str) {
 	size_t pos = str.find_last_of("/");
 	
-	if ( pos == std::string::npos ) {
+	/*if ( pos == std::string::npos ) {
 		pos = 0;
 	} else {
 		++pos;
-	}
+	}*/
+	++pos;
 	return str.substr(pos);
 }
 

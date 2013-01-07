@@ -3,7 +3,7 @@
  * \file crypt.h
  * \brief ZIP Cracker-ng headers for the Traditional PKWARE Encryption.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2012.09.15
+ * \date 2013.01.04
  * 
  * Copyright (c) 1990-2007 Info-ZIP.  All rights reserved.
  * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
@@ -43,8 +43,7 @@ uint32_t keys[3];
  * so far, though.
  */
 inline unsigned char decrypt_byte(void) {
-    static uint16_t temp;
-    temp = keys[2] | 2;
+    register uint16_t temp = keys[2] | 2;
     return (temp * (temp ^ 1)) >> 8;
 }
 
@@ -56,10 +55,7 @@ inline unsigned char decrypt_byte(void) {
 inline void update_keys(int c) {
 	keys[0] = crc32(keys[0], c);
 	keys[1] = (keys[1] + (keys[0] & 0xff)) * 134775813 + 1;
-	 {
-		register int keyshift = static_cast<int>(keys[1] >> 24);
-		keys[2] = crc32(keys[2], keyshift);
-    }
+	keys[2] = crc32(keys[2], keys[1] >> 24);
 }
 
 /*!

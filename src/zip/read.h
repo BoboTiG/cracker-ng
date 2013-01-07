@@ -3,7 +3,7 @@
  * \file read.h
  * \brief Cracker-ng (optimized) functions headers.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2013.01.03
+ * \date 2013.01.07
  *
  * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
  */
@@ -102,12 +102,12 @@ struct local_file_header_light {
 	uint32_t good_crc_32;                 //!< If crc_32 is 0, then check data_desc_crc_32 on 4 bytes
 	uint16_t version_needed_to_extract;   //!< Version needed to extract on 2 bytes
 	uint16_t compression_method;          //!< compression method on 2 bytes
-	unsigned int start_byte;              //!< Start byte of compressed data (unsigned int)
-	unsigned int good_length;             //!< If uncompressed_size is 0, then check data_desc_uncompressed_size (unsigned int)
+	uint32_t start_byte;                  //!< Start byte of compressed data on 4 bytes
+	uint32_t good_length;                 //!< If uncompressed_size is 0, then check data_desc_uncompressed_size on 4 bytes
+	uint32_t uncompressed_size;           //!< Uncompressed size, we need it to reserve the good space to prevent segfault on few files on 4 bytes
 	uint16_t last_mod_file_time;          //!< Last mod file time on 2 bytes
 	bool strong_encryption;               //!< Use strong encryption? (bool)
 	bool is_encrypted;                    //!< Encryption enabled? (bool)
-	uint32_t _pad;                        //!< Padding to feet the good alignment
 	char file_name[512];                  //!< File name (custom fixed size)
 };
 

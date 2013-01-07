@@ -3,7 +3,7 @@
  * \file main.h
  * \brief ZIP Cracker-ng headers.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2013.01.04
+ * \date 2013.01.07
  * 
  * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
  * See http://www.pkware.com/documents/casestudies/APPNOTE.TXT for
@@ -15,7 +15,7 @@
 #define SRC_ZIP_MAIN_H_
 
 #define MODULE  "ZIP"     //!< Module name.
-#define VERSION "0.1a-8"  //!< Module version.
+#define VERSION "0.1a-9"  //!< Module version.
 #define PWD_MAX  80       //!< Maximum password length
 
 // For inflate (decompression)
@@ -58,13 +58,9 @@ private:
 	 */
 	inline unsigned int create_crc32(const char *buf, unsigned int len) {
 		register uint32_t c = 0xffffffffL;
-		while ( len >= 8 ) {
+		for ( ; len >= 8; len -= 8 ) {
 			DO8(c, buf);
-			len -= 8;
 		}
-		/*if ( len ) do {
-			DO1(c, buf);
-		} while ( --len );*/
 		for ( ; len; --len ) {
 			DO1(c, buf);
 		};

@@ -34,7 +34,7 @@ void Cracker::crack() {
 	roundkey *rkks     = new roundkey;
 	roundkey rkk_hash;
 	char *encryption_header = new char[32];
-	char *p                 = new char[PWD_MAX];
+	char *password          = new char[PWD_MAX];
 	char *inbuf             = new char[32];
 	FILE *input             = NULL;
 
@@ -55,20 +55,20 @@ void Cracker::crack() {
 
 	// Let's go!
 	pthread_create(&stat, NULL, functions_ng::stats, reinterpret_cast<void*>(&s));
-	while ( functions_ng::read_input(input, p, PWD_MAX) ) {
-		ccdecrypt_init(b, st, p, rkk_hash);
+	while ( functions_ng::read_input(input, password, PWD_MAX) ) {
+		ccdecrypt_init(b, st, password, rkk_hash);
 		memcpy(inbuf, encryption_header, 32);
 		b->next_in = inbuf;
 		b->avail_in = 32;
 		if ( ccdecrypt(b) == 0 ) {
-			chosen_one = p;
+			chosen_one = password;
 			found = 1;
 			break;
 		}
 		++num;
 	}
 	delete[] inbuf;             inbuf = 0;
-	delete[] p;                 p = 0;
+	delete[] password;          password = 0;
 	delete[] encryption_header; encryption_header = 0;
 	delete rkks;                rkks = 0;
 	delete st;                  st = 0;

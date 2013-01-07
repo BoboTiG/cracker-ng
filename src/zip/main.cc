@@ -67,12 +67,11 @@ unsigned int Cracker::check() {
 }
 
 void Cracker::crack() {
-	size_t num = 0;
+	size_t num = 0, i = 0;
 	unsigned int found = 0;
 	functions_ng::statistics s = { &num, &found };
 	pthread_t stat;
 	std::string chosen_one;
-	unsigned int i;
 	unsigned int len        = this->lfh.good_length;
 	unsigned int check1     = this->lfh.last_mod_file_time >> 8;
 	unsigned int check2     = this->lfh.good_crc_32 >> 24;
@@ -80,7 +79,7 @@ void Cracker::crack() {
 	char *encryption_header = new char[12];
 	char *buf               = new char[len];
 	char *data              = new char[len];
-	char *p                 = new char[PWD_MAX];
+	char *password          = new char[PWD_MAX];
 	uint8_t *buffer         = new uint8_t[12];
 	FILE *input             = NULL;
 	std::stringstream compressed;
@@ -105,20 +104,24 @@ void Cracker::crack() {
 	// The ZLIB header and trailing ADLER-32 checksum should be omitted
 	params.noheader = true;
 	zdec = boost::iostreams::zlib_decompressor(params);
+	
+	// Reserve needed bytes to not end on a segfault, it happened with some files.
+	decompressed.reserve(this->lfh.uncompressed_size);
 
 	// Let's go!
 	printf(" . Working ...\n");
 	pthread_create(&stat, NULL, functions_ng::stats, reinterpret_cast<void*>(&s));
-	while ( functions_ng::read_input(input, p, PWD_MAX) ) {
+	while ( functions_ng::read_input(input, password, PWD_MAX) ) {
 		// 1) Initialize the three 32-bit keys with the password.
-		init_keys(p);
+		init_keys(password);
+		
 		// 2) Read and decrypt the 12-byte encryption header,
 		//    further initializing the encryption keys.
 		memcpy(buffer, encryption_header, 12);
 		for ( i = 0; i < 12; ++i ) {
 			zdecode(buffer[i]);
 		}
-
+		
 		// First verification ...
 		if ( buffer[11] == check2 || (least_ver && buffer[11] == check1) ) {
 			// 3) Read and decrypt the compressed data stream using
@@ -130,7 +133,7 @@ void Cracker::crack() {
 
 			if ( this->lfh.compression_method == 0 ) {  // The file is stored (no compression)
 				if ( this->create_crc32(data, len) ) {
-					chosen_one = p;
+					chosen_one = password;
 					found = 1;
 					break;
 				}
@@ -141,22 +144,23 @@ void Cracker::crack() {
 					in.push(compressed);
 					boost::iostreams::copy(in, boost::iostreams::back_inserter(decompressed));
 					if ( this->create_crc32(decompressed.c_str(), len) ) {
-						chosen_one = p;
+						chosen_one = password;
 						found = 1;
 						break;
 					}
-				} catch(boost::iostreams::zlib_error &e) {}
+				}
+				catch(const boost::iostreams::zlib_error& e) {}
 				in.reset();
-				compressed.str(std::string());
 				decompressed = "";
+				compressed.str(std::string());
 			}
 		}
 		++num;
 	}
-	delete[] buffer;            buffer = 0;
-	delete[] p;                 p = 0;
-	delete[] data;              data = 0;
-	delete[] buf;               buf = 0;
+	delete[] buffer;                       buffer = 0;
+	delete[] password;                   password = 0;
+	delete[] data;                           data = 0;
+	delete[] buf;                             buf = 0;
 	delete[] encryption_header; encryption_header = 0;
 	if ( this->from != "STDIN" ) {
 		fclose(input);
@@ -315,13 +319,14 @@ void Cracker::init_lfh() {
 	this->lfh.compression_method        = 99;
 	this->lfh.start_byte                = 0;
 	this->lfh.good_length               = 1024*1024*1024;
+	this->lfh.uncompressed_size         = 0;
 	this->lfh.last_mod_file_time        = 0;
 	this->lfh.strong_encryption         = true;
 	this->lfh.is_encrypted              = true;
 }
 
 bool Cracker::is_ok() {
-	if ( !filei.is_open() ) {
+	if ( !this->filei.is_open() ) {
 		fprintf(stderr, " ! I cannot open the file.\n");
 		return false;
 	}
