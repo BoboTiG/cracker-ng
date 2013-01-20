@@ -112,7 +112,7 @@ struct local_file_header_light {
 };
 
 
-void swap_lfh(struct local_file_header &, struct local_file_header_light *);
+void swap_lfh(const struct local_file_header&, struct local_file_header_light*);
 
 
 namespace read_ng {
@@ -125,7 +125,7 @@ namespace read_ng {
  * \param start_byte Byte where starts the Central Directory.
  * \param debug Print debug informations (for -i | --nfos option)?
  */
-void read_central_directory(std::ifstream &, struct central_directory *, unsigned int start_byte, bool);
+void read_central_directory(std::ifstream&, struct central_directory*, const unsigned int, const bool);
 
 /*
  * \fn read_end_central_directory(ifstream & zip, struct end_central_directory * ecd, unsigned int start_byte)
@@ -135,7 +135,7 @@ void read_central_directory(std::ifstream &, struct central_directory *, unsigne
  * \param start_byte Byte where starts the Central Directory.
  * \param debug Print debug informations (for -i | --nfos option)?
  */
-void read_end_central_directory(std::ifstream &, struct end_central_directory *, unsigned int, bool);
+void read_end_central_directory(std::ifstream&, struct end_central_directory*, const unsigned int, const bool);
 
 /*!
  * \fn local_file_header(ifstream & zip, struct local_file_header * lfh, unsigned int start_byte, bool several)
@@ -145,7 +145,8 @@ void read_end_central_directory(std::ifstream &, struct end_central_directory *,
  * \param several Is there more than one file in the ZIP file?
  * \param debug Print debug informations (for -i | --nfos option)?
  */
-void read_local_file_header(std::ifstream &, struct local_file_header_light *, bool, bool);
+void read_local_file_header(std::ifstream&, struct local_file_header_light*, const bool, const bool);
+
 }
 
 #endif  // SRC_ZIP_READ_H_

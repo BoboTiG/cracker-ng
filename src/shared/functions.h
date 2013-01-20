@@ -3,7 +3,7 @@
  * \file functions.h
  * \brief Cracker-ng (optimized) functions headers.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2013.01.04
+ * \date 2013.01.18
  *
  * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
  */
@@ -16,6 +16,7 @@
 #include <string>
 #include <cstdio>
 #include <cstring>
+#include <csignal>
 #include "./stats.h"
 
 
@@ -42,27 +43,29 @@ typedef struct {
 } arguments;
 
 // Optimized read from stdin or wordlist
-inline bool read_input(FILE *input, char *&output, const size_t &len) {
+inline bool read_input(FILE* input, char*& output, const size_t& len) {
 	if ( fgets(output, len, input) != NULL ) {
 		char *lf = strchr(output, '\n');
 		if ( lf != NULL ) {
-			*lf = '\0';
+			 *lf = '\0';
 		}
 		return true;
 	}
 	return false;
 }
 
-bool argz_traitment(const arguments &);
-bool file_exists(char *);
-std::string format_number(const size_t &);
+bool argz_traitment(const arguments&);
+std::string basename(const std::string&);
+bool file_exists(const char*);
+std::string format_number(const size_t&);
 unsigned int get_cores();
-std::string get_filename(const std::string&);
 void help(const std::string&);
 void result(const std::string&);
-void *stats(void *argz);
+void *stats(void*);
+std::string substr(const std::string&, unsigned int);
 void usage(const std::string&);
 void version(const std::string&, const std::string&);
+
 }
 
 #endif  // SRC_SHARED_FUNCTIONS_H_

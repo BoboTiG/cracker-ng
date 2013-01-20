@@ -41,7 +41,7 @@ typedef struct {
 
 
 // hash a keystring into a 256-bit cryptographic random value.
-inline void hashstring(const char *keystring, word32 *hash, roundkey &rkk) {
+inline void hashstring(const char* keystring, word32* hash, roundkey& rkk) {
 	register unsigned int i;
 	word32 key[8] = {0};  // rijndael key
 
@@ -50,7 +50,7 @@ inline void hashstring(const char *keystring, word32 *hash, roundkey &rkk) {
 			if ( *keystring == '\0' ) {
 				break;
 			}
-			reinterpret_cast<word8 *>(key)[i] ^= *keystring;
+			reinterpret_cast<word8*>(key)[i] ^= *keystring;
 			++keystring;
 		}
 		xrijndaelKeySched(key, &rkk);
@@ -62,13 +62,15 @@ inline void hashstring(const char *keystring, word32 *hash, roundkey &rkk) {
 }
 
 inline void ccdecrypt_init(
-	ccrypt_stream_s *b, ccrypt_state_s *st,
-	const char *key, roundkey &rkk_hash
+	ccrypt_stream_s* b,
+	ccrypt_state_s*  st,
+	const char*      key,
+	roundkey&        rkk_hash
 ) {
 	word32 keyblock[8] = {0};
 
 	b->state = NULL;
-	// generate the roundkeys
+	// Generate the roundkeys
 	hashstring(key, keyblock, rkk_hash);
 	xrijndaelKeySched(keyblock, &st->rkks[0]);
 	// Initialize rest of the state.
@@ -76,9 +78,9 @@ inline void ccdecrypt_init(
 	b->state = reinterpret_cast<void *>(st);
 }
 
-inline int ccdecrypt(ccrypt_stream_s *b) {
-	ccrypt_state_s *st = reinterpret_cast<ccrypt_state_s *>(b->state);
-	char *cbuf = reinterpret_cast<char *>(st->buf);
+inline int ccdecrypt(ccrypt_stream_s* b) {
+	ccrypt_state_s* st = reinterpret_cast<ccrypt_state_s*>(b->state);
+	char* cbuf = reinterpret_cast<char*>(st->buf);
 
 	for ( ;; ) {
 		cbuf[st->bufindex] = *b->next_in;

@@ -11,7 +11,7 @@
 
 #include "./stats.h"
 
-Stats::Stats(size_t *num, unsigned int *found)
+Stats::Stats(size_t* num, unsigned int* found)
 	: num(num), found(found),
 	  total(0), sleeping_time(1), start_time(time(NULL))
 {}

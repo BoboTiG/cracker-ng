@@ -20,12 +20,12 @@
 
 class Stats {
 public:
-	size_t       * num;
-	unsigned int * found;
+	size_t*       num;
+	unsigned int* found;
 
-	Stats(size_t *, unsigned int *);
+	Stats(size_t*, unsigned int*);
 	Stats(const Stats&);
-	Stats & operator=(const Stats&);
+	Stats& operator=(const Stats&);
 	~Stats();
 	void start();
 	void stats_sumary();

@@ -3,7 +3,7 @@
  * \file main.h
  * \brief ZIP Cracker-ng headers.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2013.01.07
+ * \date 2013.01.20
  * 
  * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
  * See http://www.pkware.com/documents/casestudies/APPNOTE.TXT for
@@ -14,49 +14,56 @@
 #ifndef SRC_ZIP_MAIN_H_
 #define SRC_ZIP_MAIN_H_
 
-#define MODULE  "ZIP"     //!< Module name.
-#define VERSION "0.1a-9"  //!< Module version.
-#define PWD_MAX  80       //!< Maximum password length
-
-// For inflate (decompression)
-#include <boost/iostreams/copy.hpp>
-#include <boost/iostreams/device/back_inserter.hpp>
-#include <boost/iostreams/filter/zlib.hpp>
-#include <boost/iostreams/filtering_stream.hpp>
-
-#include <string>
-#include "../shared/functions.h"
+#include <stdint.h>
+#include "./../shared/functions.h"
+#include "./../shared/gui.h"
 #include "./crypt.h"
+#include "./puff.h"
 #include "./read.h"
 
 
+static const char*  MODULE = "ZIP";      //!< Module name.
+static const char*  VERSION = "0.1-1";   //!< Module version.
+static const size_t PWD_MAX = 80;        //!< Maximum password length
+static bool this_is_now_we_fight = true;
+
+
+void signal_handler(int);
+
 class Cracker {
+
 public:
-	std::string filename, from;
+	const std::string filename, from;
 
 	Cracker(const std::string&, const std::string&);
 	~Cracker();
-	unsigned int check();
 	void crack();
 	bool is_ok();
-	void set_debug(bool);
+	void set_debug(const bool yesno)     { this->debug      = yesno; };
+	void set_title(const char* str)      { this->title      = str; };
+	void set_file(const char* str)       { this->file       = str; };
+	void set_chosen_one(const char* str) { this->chosen_one = str; };
+	void set_encryption(const char* str) { this->encryption = str; };
+	void set_method(const char* str)     { this->method     = str; };
+	void set_generator(const char* str)  { this->generator  = str; };
 
 private:
-	size_t debug, start_byte, end_byte, strong_encryption;
 	std::ifstream filei;
+	size_t debug, start_byte, end_byte, strong_encryption;
 	local_file_header_light lfh;
 	central_directory cd;
 	end_central_directory ecd;
-
+	std::string title, file, chosen_one, encryption, method, generator;
+	
 	/*!
-	 * \fn static inline create_crc32(uint8_t * buf, uint32_t len)
+	 * \fn create_crc32(const unsigned char* buf, size_t len)
 	 * \brief Calculate the CRC-32 of the decrypted data.
 	 * \param but Pointer to the decrypted data.
 	 * \param len Length of the decrypted data.
 	 * \return \li 0 if CRC-32 are \b not equals;
 	 * \return \li 1 otherwise.
 	 */
-	inline unsigned int create_crc32(const char *buf, unsigned int len) {
+	inline bool create_crc32(const unsigned char* buf, size_t len) {
 		register uint32_t c = 0xffffffffL;
 		for ( ; len >= 8; len -= 8 ) {
 			DO8(c, buf);
@@ -68,16 +75,24 @@ private:
 	}
 
 	/*!
+	 * \fn check()
+	 * \brief Launch all checks to see if we can go to work.
+	 * \return \li 0 if \b it is good;
+	 * \return \li 1 otherwise.
+	 */
+	bool check();
+	
+	/*!
 	 * \fn check_headers()
-	 * \brief Check first 4 bytes to verify file is a valid ZIP.
-	 * \return \li 0 if \b not a ZIP file;
+	 * \brief Check first bytes to verify file is a valid one to crack.
+	 * \return \li 0 if \b not a good file;
 	 * \return \li 1 otherwise.
 	 */
 	bool check_headers();
 
 	/*!
 	 * \fn unsigned int check_method()
-	 * \brief Check if the compression method is implemented.
+	 * \brief Check if the compression/encryption method is implemented.
 	 * \return \li 0 if \b not implemented;
 	 * \return \li 1 otherwise.
 	 */
@@ -99,7 +114,6 @@ private:
 	 * 
 	 */
 	bool find_central_directory();
-
 
 	/*!
 	 * \fn init_lfh()

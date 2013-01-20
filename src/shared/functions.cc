@@ -3,7 +3,7 @@
  * \file functions.cc
  * \brief Cracker-ng (optimized) functions.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2013.01.04
+ * \date 2013.01.20
  *
  * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
  */
@@ -14,7 +14,7 @@
 
 namespace functions_ng {
 
-bool argz_traitment(const arguments &argz) {
+bool argz_traitment(const arguments& argz) {
 	if ( argz.argc == 1 ) {
 		functions_ng::usage(argz.module);
 		return false;
@@ -43,6 +43,7 @@ bool argz_traitment(const arguments &argz) {
 					return false;
 				}
 				argz.filename = argz.argv[i];
+				filename = true;
 			}
 			
 			// -i | --infos to get informations about a file
@@ -59,6 +60,7 @@ bool argz_traitment(const arguments &argz) {
 				}
 				argz.filename = argz.argv[i];
 				argz.flag = functions_ng::DEBUG;
+				filename = true;
 			}
 			
 			// -w | --wordlist to set the wordlist file to use
@@ -73,6 +75,7 @@ bool argz_traitment(const arguments &argz) {
 					return false;
 				}
 				argz.input = argz.argv[i];
+				wordlist = true;
 			}
 		}
 	}
@@ -85,7 +88,12 @@ bool argz_traitment(const arguments &argz) {
 	return true;
 }
 
-bool file_exists(char *filename) {
+std::string basename(const std::string& str) {
+	size_t pos = str.find_last_of("/");
+	return str.substr(++pos);
+}
+
+bool file_exists(const char* filename) {
 	FILE *test = NULL;
 	
 	if ( filename != NULL ) {
@@ -98,7 +106,7 @@ bool file_exists(char *filename) {
 	return false;
 }
 
-std::string format_number(const size_t & num) {
+std::string format_number(const size_t& num) {
 	std::stringstream str, format;
 	unsigned int i, len;
 
@@ -135,18 +143,6 @@ unsigned int get_cores() {
 	return n == 0 ? 1 : n;
 }
 
-std::string get_filename(const std::string& str) {
-	size_t pos = str.find_last_of("/");
-	
-	/*if ( pos == std::string::npos ) {
-		pos = 0;
-	} else {
-		++pos;
-	}*/
-	++pos;
-	return str.substr(pos);
-}
-
 void help(const std::string& module) {
 	printf(
 		"Copyright (C) 2011-2013 by Mickaël 'Tiger-222' Schoentgen.\n\n"
@@ -171,15 +167,33 @@ void result(const std::string& password) {
 	if ( password.empty() ) {
 		printf(" ! Password not found.\n");
 	} else {
-		printf(" + Password found: %s\n", password.c_str());
+		const char *p = password.c_str();
+		printf(" + Password found: %s [ HEX: ", p);
+		for ( size_t i = 0; i < strlen(p); ++i ) {
+			printf("%02X ", p[i] & 0xff);
+		}
+		printf("]\n");
 	}
 }
 
-void *stats(void *argz) {
+void *stats(void* argz) {
 	functions_ng::statistics *s = (functions_ng::statistics *)argz;
 	Stats statistics(s->num, s->found);
 	statistics.start();
 	return NULL;
+}
+
+std::string substr(const std::string& str, unsigned int max) {
+    size_t len = str.length();
+    bool need_sub = len > max;
+    
+    if ( !need_sub ) {
+        return str;
+    }
+    unsigned int shift = (len - max) / 2;
+    unsigned int part1 = len / 2 - shift - 2;
+    unsigned int part2 = len / 2 + shift + 1;
+    return str.substr(0, part1) + std::string("...") + str.substr(part2);
 }
 
 void usage(const std::string& module) {
@@ -203,4 +217,5 @@ void version(const std::string& module, const std::string& version) {
 		printf("I use Boost C++ libraries version %u.%u.%u.\n", M, m, sm);
 	#endif
 }
+
 }

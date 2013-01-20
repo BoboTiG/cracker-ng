@@ -3,7 +3,7 @@
  * \file read.cc
  * \brief Cracker-ng (optimized) functions.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2013.01.06
+ * \date 2013.01.07
  *
  * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
  */
@@ -13,8 +13,8 @@
 
 
 void swap_lfh(
-	struct local_file_header & local_lfh,
-	struct local_file_header_light * lfh
+	const struct local_file_header&       local_lfh,
+	struct local_file_header_light* lfh
 ) {
 	lfh->good_crc_32               = local_lfh.good_crc_32;
 	lfh->version_needed_to_extract = local_lfh.version_needed_to_extract;
@@ -33,10 +33,10 @@ void swap_lfh(
 
 namespace read_ng {
 void read_central_directory(
-	std::ifstream & filei,
-	struct central_directory * cd,
-	unsigned int start_byte,
-	bool debug
+	std::ifstream&      filei,
+	struct central_directory* cd,
+	const unsigned int        start_byte,
+	const bool                debug
 ) {
 	filei.seekg(start_byte, std::ios::beg);
 	filei.read(reinterpret_cast<char*>(&cd->header_signature),            4);
@@ -122,10 +122,10 @@ void read_central_directory(
 }
 
 void read_end_central_directory(
-	std::ifstream & filei,
-	struct end_central_directory * ecd,
-	unsigned int start_byte,
-	bool debug
+	std::ifstream&                filei,
+	struct end_central_directory* ecd,
+	const unsigned int            start_byte,
+	const bool                    debug
 ) {
 	filei.seekg(start_byte, std::ios::beg);
 	filei.read(reinterpret_cast<char*>(&ecd->header_signature),            4);
@@ -164,10 +164,10 @@ void read_end_central_directory(
 }
 
 void read_local_file_header(
-	std::ifstream & filei,
-	struct local_file_header_light * lfh,
-	bool several,
-	bool debug
+	std::ifstream&                  filei,
+	struct local_file_header_light* lfh,
+	const bool                      several,
+	const bool                      debug
 ) {
 	local_file_header local_lfh;
 

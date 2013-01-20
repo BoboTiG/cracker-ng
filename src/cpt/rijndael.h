@@ -3,7 +3,7 @@
  * \file rijndael.h
  * \brief Part of CPT Cracker-ng.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2011.09.15
+ * \date 2012.09.15
  *
  * Copyright (C) 2000-2009 Peter Selinger.
  * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
@@ -50,7 +50,7 @@ typedef struct {
    by keyBits. keyBits and blockBits may only be 128, 196, or
    256. Returns non-zero if arguments are invalid. */
 
-int xrijndaelKeySched(word32 key[], roundkey *rkk);
+int xrijndaelKeySched(word32 key[], roundkey* rkk);
 
 /* encrypt, resp. decrypt, block using rijndael roundkey rkk. rkk must
    have been created with xrijndaelKeySched. Size of block, in bits,
@@ -58,7 +58,7 @@ int xrijndaelKeySched(word32 key[], roundkey *rkk);
    all other cases, behavior is undefined - for reasons of speed, no
    check for error conditions is done. */
 
-void xrijndaelEncrypt(word32 block[], roundkey *rkk);
-void xrijndaelDecrypt(word32 block[], roundkey *rkk);
+void xrijndaelEncrypt(word32 block[], roundkey* rkk);
+void xrijndaelDecrypt(word32 block[], roundkey* rkk);
 
 #endif  // SRC_CPT_RIJNDAEL_H_

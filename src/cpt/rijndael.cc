@@ -3,7 +3,7 @@
  * \file rijndael.c
  * \brief Part of CPT Cracker-ng.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2011.09.17
+ * \date 2012.09.17
  *
  * Copyright (C) 2000-2009 Peter Selinger.
  * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
@@ -23,7 +23,7 @@
 
 #include "./rijndael.h"
 
-static int xshifts[3][2][4] = {
+static const int xshifts[3][2][4] = {
 	 {{0, 1, 2, 3},
 	 {0, 3, 2, 1}},
 	 {{0, 1, 2, 3},
@@ -105,7 +105,7 @@ static inline void xInvMixColumn(word32 res[MAXBC], word32 a[MAXBC]) {
 	}
 }
 
-int xrijndaelKeySched(word32 key[], roundkey *rkk) {
+int xrijndaelKeySched(word32 key[], roundkey* rkk) {
 	// Calculate the necessary round keys
 	int ROUNDS = 15, i, j, t = 0, rconpointer = 0;
 	word8 (*k8)[4] = (word8 (*)[4]) key;
@@ -146,7 +146,7 @@ int xrijndaelKeySched(word32 key[], roundkey *rkk) {
 }
 
 // Encryption of one block.
-void xrijndaelEncrypt(word32 block[], roundkey *rkk) {
+void xrijndaelEncrypt(word32 block[], roundkey* rkk) {
 	word32 block2[MAXBC];  // hold intermediate result
 	int *shift = rkk->shift[0];
 	int r, ROUNDS = 14;
@@ -167,7 +167,7 @@ void xrijndaelEncrypt(word32 block[], roundkey *rkk) {
 	xKeyAddition(block, block2, rp);
 }
 
-void xrijndaelDecrypt(word32 block[], roundkey *rkk) {
+void xrijndaelDecrypt(word32 block[], roundkey* rkk) {
 	word32 block2[MAXBC];  // hold intermediate result
 	int *shift = rkk->shift[1];
 	int r = 13, ROUNDS = 14;

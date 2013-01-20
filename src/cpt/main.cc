@@ -3,7 +3,7 @@
  * \file main.cc
  * \brief ccrypt module for Cracker-ng.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2013.01.04
+ * \date 2013.01.18
  *
  * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
  */
@@ -39,18 +39,18 @@ void Cracker::crack() {
 	FILE *input             = NULL;
 
 	// Read encrypted data
-	filei.seekg(0, std::ios::beg);
-	filei.read(encryption_header, 32);
-	filei.close();
+	this->filei.seekg(0, std::ios::beg);
+	this->filei.read(encryption_header, 32);
+	this->filei.close();
 
 	// Initializing
 	st->rkks = rkks;
 
 	// Read from input ...
-	if ( from == "STDIN" ) {
+	if ( this->from == "STDIN" ) {
 		input = stdin;
 	} else {
-		input = fopen(from.c_str(), "r");
+		input = fopen(this->from.c_str(), "r");
 	}
 
 	// Let's go!
@@ -67,12 +67,12 @@ void Cracker::crack() {
 		}
 		++num;
 	}
-	delete[] inbuf;             inbuf = 0;
-	delete[] password;          password = 0;
+	delete b;                                   b = 0;
+	delete st;                                 st = 0;
+	delete rkks;                             rkks = 0;
+	delete[] inbuf;                         inbuf = 0;
+	delete[] password;                   password = 0;
 	delete[] encryption_header; encryption_header = 0;
-	delete rkks;                rkks = 0;
-	delete st;                  st = 0;
-	delete b;                   b = 0;
 	if ( this->from != "STDIN" ) {
 		fclose(input);
 	}
@@ -95,8 +95,8 @@ int main(int argc, char *argv[]) {
 		return 0;
 	}
 	printf(" ~ %s Cracker-ng v.%s { Tiger-222 }\n", MODULE, VERSION);
-	printf(" - Generator.: %s\n", functions_ng::get_filename(argz.input).c_str());
-	printf(" - File......: %s\n", functions_ng::get_filename(argz.filename).c_str());
+	printf(" - Generator.: %s\n", functions_ng::basename(argz.input).c_str());
+	printf(" - File......: %s\n", functions_ng::basename(argz.filename).c_str());
 
 	// Who I am? I'm a champion!
 	Cracker zizi(argz.filename, argz.input);
