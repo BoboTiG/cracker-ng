@@ -14,6 +14,7 @@
 		* more const, always more const
     	+ add HEX representation of the password
         + substr(), a special to cut too long strings, adding "..." at the middle
+        . change the way numbers are printed
 		. rename get_filename() to basename()
 	. ZIP module:
 		. updated to version 0.1-1

@@ -30,13 +30,14 @@
 
 
 #include "./puff.h"
+#include <cstdio>
 
 
 static int bits(struct state *s, int need)
 {
     int val = s->bitbuf;  // load at least need bits into val
 
-	for (; s->bitcnt < need ; s->bitcnt += 8) {
+	for ( ; s->bitcnt < need ; s->bitcnt += 8 ) {
         if (s->incnt == s->inlen)
             longjmp(s->env, 1);  // out of input
         val |= s->in[s->incnt++] << s->bitcnt;  // load eight bits
@@ -314,7 +315,7 @@ static int dynamic(struct state *s)
     }
 
     // check for end-of-block code -- there better be one!
-    if (lengths[256] == 0)
+    if (lengths[256] <= 0)
         return -9;
 
     // build huffman table for literal/length codes
@@ -368,9 +369,10 @@ int puff(
             else if ( type == 0 )
             	err = stored(&s);
             else {
-            	err = -1;
-            	break;  // return with error
+            	err = -1;  // return with error
             }
+            if ( err != 0 )
+            	break;
         } while (!last);
     }
     return err;

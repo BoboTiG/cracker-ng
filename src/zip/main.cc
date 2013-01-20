@@ -80,33 +80,37 @@ void signal_handler(int s) {
 
 bool Cracker::check() {
 	if ( !this->check_headers() ) {
-		printf(" ! Bad ZIP file (wrong headers).\n");
+		fprintf(stderr, " ! Bad ZIP file (wrong headers).\n");
 		return 0;
 	}
 	if ( !this->find_central_directory() ) {
-		printf(" ! Unable to find Central Directory signatures.\n");
+		fprintf(stderr, " ! Unable to find Central Directory signatures.\n");
 		return 0;
 	}
 	read_ng::read_central_directory(this->filei, &this->cd, this->start_byte, this->debug);
 	read_ng::read_end_central_directory(this->filei, &this->ecd, this->end_byte, this->debug);
 	this->init_lfh();
 	this->determine_chosen_one();
+	if ( !this->check_method() ) {
+		fprintf(stderr, "Method not implemented (%d).\n", this->lfh.compression_method);
+		return 0;
+	}
 	if ( this->cd.is_encrypted && this->lfh.is_encrypted ) {
 		if ( this->cd.strong_encryption && this->lfh.strong_encryption ) {
-			this->set_encryption("Encryption: strong");
+			fprintf(stderr, " ! Encryption: strong (no implemented).\n");
 			this->strong_encryption = true;
 		} else {
 			this->set_encryption("Encryption: standard (traditional PKWARE)");
 			if ( this->lfh.good_crc_32 == 0 ) {
-				printf(" ! CRC-32 empty, cannot work without it on this encryption scheme.\n");
+				fprintf(stderr, " ! CRC-32 empty, cannot work without it on this encryption scheme.\n");
 				return 0;
 			}
 		}
 	} else {
-		//this->set_encryption("none");
+		fprintf(stderr, " + This file is not encrypted.\n");
 		return 0;
 	}
-	if ( !this->check_method() || this->debug ) {
+	if ( this->debug ) {
 		return 0;
 	}
 	return 1;
@@ -160,8 +164,6 @@ void Cracker::crack() {
 	//int c;
 	//char* str = new char[MAXLEN];  // String from "Try a word" input
 	
-	
-	printf("\n");
 	while ( this_is_now_we_fight ) {
 		if ( !functions_ng::read_input(input, password, PWD_MAX) ) {
 			break;
@@ -204,19 +206,20 @@ void Cracker::crack() {
 			for ( i = 0; i < len; ++i ) {
 				zdecode(data[i]);
 			}
-			if ( this->lfh.compression_method == 0 ) {  // The file is stored (no compression)
-				if ( this->create_crc32(data, len) ) {
-					chosen_one = password;
-					found = 1;
-					break;
-				}
-			} else if ( this->lfh.compression_method == 8 ) {  // The file is deflated
+			
+			if ( this->lfh.compression_method == 8 ) {  // The file is deflated
 				if ( puff(dest, destlen, data, sourcelen, io_state) == 0 ) {
 					if ( this->create_crc32(dest, len) ) {
 						chosen_one = password;
 						found = 1;
 						break;
 					}
+				}
+			} else {  // The file is stored (no compression)
+				if ( this->create_crc32(data, len) ) {
+					chosen_one = password;
+					found = 1;
+					break;
 				}
 			}
 		}
@@ -274,10 +277,6 @@ bool Cracker::check_method() {
 		case 97:
 		case 98:
 		case 99:
-			char* str = new char[40];
-			snprintf(str, 40, "Method....: still not implemented (%d)", this->lfh.compression_method);
-			this->set_method(str);
-			delete[] str;
 			break;
 	}
 	return okay;
@@ -371,7 +370,6 @@ bool Cracker::is_ok() {
 		res = false;
 	}
 	if ( !this->check() ) {
-		fprintf(stderr, " ! I cannot open the file.\n");
 		res = false;
 	}
 	return res;

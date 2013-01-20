@@ -3,7 +3,7 @@
  * \file gui.cc
  * \brief GUI management.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2013.01.18
+ * \date 2013.01.20
  *
  * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
  */
@@ -25,14 +25,14 @@ GUI::GUI(
 	method(method),
 	generator(generator)
 {
-	init();
+	this->init();
 }
 
 GUI::~GUI() {
 	/*move(HEIGHT, 0);
 	refresh();
 	printf("\r\n");*/
-	printf("\n");
+	printf(" ^ Ex(c)iting.\n\n");
 }
 
 void GUI::init() {
@@ -124,9 +124,10 @@ void GUI::run() const {
 	
 	printf("\n %s\n", this->title.c_str());
 	printf(" - %s\n", this->file.c_str());
-	printf(" + %s\n", this->chosen_one.c_str());
+	printf(" * %s\n", this->chosen_one.c_str());
 	printf(" - %s\n", this->encryption.c_str());
 	printf(" - %s\n", this->method.c_str());
+	printf(" . Working ...\n");
 
 
 	//

@@ -28,9 +28,10 @@ void Stats::start() {
 		size_t n = *this->num;
 		*this->num = 0;
 		this->total += n;
-		printf("\033[A . Working at %s pwd/sec [%s tries]\n",
-			functions_ng::format_number(n / this->sleeping_time).c_str(),
-			functions_ng::format_number(this->total).c_str());
+		printf("\033[A . Working at %.02fK pwd/sec [%.02fM tries]\n",
+			(n / 1000.0 / this->sleeping_time),
+			(this->total / 1000.0 / 1000.0)
+		);
 	}
 	stats_sumary();
 }
@@ -38,9 +39,9 @@ void Stats::start() {
 void Stats::stats_sumary() {
 	time_t the_time = elapsed_seconds();
 	if ( the_time > 0 ) {
-		size_t pwd = this->total / the_time;
-		printf("\033[A . Worked at ~ %s pwd/sec for %s tries.\n",
-			functions_ng::format_number(pwd).c_str(),
-			functions_ng::format_number(this->total).c_str());
+		printf("\033[A . Worked at ~ %.02fK pwd/sec for %.02fM tries.\n",
+			(this->total / 1000.0 / the_time),
+			(this->total / 1000.0 / 1000.0)
+		);
 	}
 }

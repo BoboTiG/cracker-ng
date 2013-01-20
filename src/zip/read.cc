@@ -3,7 +3,7 @@
  * \file read.cc
  * \brief Cracker-ng (optimized) functions.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2013.01.07
+ * \date 2013.01.20
  *
  * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
  */
@@ -13,7 +13,7 @@
 
 
 void swap_lfh(
-	const struct local_file_header&       local_lfh,
+	const struct local_file_header& local_lfh,
 	struct local_file_header_light* lfh
 ) {
 	lfh->good_crc_32               = local_lfh.good_crc_32;
@@ -33,7 +33,7 @@ void swap_lfh(
 
 namespace read_ng {
 void read_central_directory(
-	std::ifstream&      filei,
+	std::ifstream&            filei,
 	struct central_directory* cd,
 	const unsigned int        start_byte,
 	const bool                debug
@@ -246,9 +246,9 @@ void read_local_file_header(
 	local_lfh.strong_encryption = false;
 	if ( local_lfh.general_purpose_bit_flag & 1 ) {
 		local_lfh.is_encrypted = true;
-	}
-	if ( local_lfh.general_purpose_bit_flag & (1 << 6) ) {
-		local_lfh.strong_encryption = true;
+		if ( local_lfh.general_purpose_bit_flag & (1 << 6) ) {
+			local_lfh.strong_encryption = true;
+		}
 	}
 
 	if ( debug ) {
