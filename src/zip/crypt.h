@@ -24,7 +24,7 @@
  * \var keys
  * \brief Three 32-bit keys for CRC-32 calculus.
  */
-uint32_t keys[3];
+extern uint32_t keys[3];
 
 /*!
  * \def zdecode(c)

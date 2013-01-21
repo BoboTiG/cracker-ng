@@ -14,122 +14,19 @@
 #ifndef SRC_ZIP_MAIN_H_
 #define SRC_ZIP_MAIN_H_
 
-#include <stdint.h>
-#include <limits>
 #include "./../shared/functions.h"
-#include "./../shared/gui.h"
-#include "./crypt.h"
-#include "./puff.h"
-#include "./read.h"
+#include "./cracker.h"
 
 
-static const char*  MODULE = "ZIP";      //!< Module name.
-static const char*  VERSION = "0.1-1";   //!< Module version.
-static const size_t PWD_MAX = 80;        //!< Maximum password length
-static bool this_is_now_we_fight = true;
+static const char* MODULE = "ZIP";     //!< Module name.
+static const char* VERSION = "0.1-1";  //!< Module version.
 
 
+/*!
+ * \fn signal_handler(int s)
+ * \brief Action to do when CTRL + C raises.
+ * \param s Signal number.
+ */
 void signal_handler(int);
-
-class Cracker {
-
-public:
-	const std::string filename, from;
-
-	Cracker(const std::string&, const std::string&);
-	~Cracker();
-	void crack();
-	bool is_ok();
-	void set_debug(const bool yesno)     { this->debug      = yesno; };
-	void set_title(const char* str)      { this->title      = str; };
-	void set_file(const char* str)       { this->file       = str; };
-	void set_chosen_one(const char* str) { this->chosen_one = str; };
-	void set_encryption(const char* str) { this->encryption = str; };
-	void set_method(const char* str)     { this->method     = str; };
-	void set_generator(const char* str)  { this->generator  = str; };
-
-private:
-	std::ifstream filei;
-	size_t debug, start_byte, end_byte, strong_encryption;
-	local_file_header_light lfh;
-	central_directory cd;
-	end_central_directory ecd;
-	std::string title, file, chosen_one, encryption, method, generator;
-	
-	/*!
-	 * \fn create_crc32(const unsigned char* buf, size_t len)
-	 * \brief Calculate the CRC-32 of the decrypted data.
-	 * \param but Pointer to the decrypted data.
-	 * \param len Length of the decrypted data.
-	 * \return \li 0 if CRC-32 are \b not equals;
-	 * \return \li 1 otherwise.
-	 */
-	inline bool create_crc32(const unsigned char* buf, size_t len) {
-		register uint32_t c = 0xffffffffL;
-		for ( ; len >= 8; len -= 8 ) {
-			DO8(c, buf);
-		}
-		for ( ; len; --len ) {
-			DO1(c, buf);
-		};
-		return ~c == this->lfh.good_crc_32;
-	}
-
-	/*!
-	 * \fn check()
-	 * \brief Launch all checks to see if we can go to work.
-	 * \return \li 0 if \b it is good;
-	 * \return \li 1 otherwise.
-	 */
-	bool check();
-	
-	/*!
-	 * \fn check_headers()
-	 * \brief Check first bytes to verify file is a valid one to crack.
-	 * \return \li 0 if \b not a good file;
-	 * \return \li 1 otherwise.
-	 */
-	bool check_headers();
-	
-	/*!
-	 * \fn check_lfh()
-	 * \brief Check all variables of the LFH struct.
-	 * \return \li 0 if \b not a good LFH;
-	 * \return \li 1 otherwise.
-	 */
-	int check_lfh();
-
-	/*!
-	 * \fn unsigned int check_method()
-	 * \brief Check if the compression/encryption method is implemented.
-	 * \return \li 0 if \b not implemented;
-	 * \return \li 1 otherwise.
-	 */
-	bool check_method();
-
-	/*!
-	 * \fn determine_chosen_one()
-	 * \brief Determine the best file to try the crack process against.
-	 */
-	void determine_chosen_one();
-
-	/*!
-	 * \fn find_central_directory()
-	 * \brief Try to find the Central Directory Headers start and end.
-	 * \return \li 0 if signatures \b not found;
-	 * \return \li 1 otherwise.
-	 * 
-	 * Signatures: start = 0x02014b50, end = 0x06054b50.
-	 * 
-	 */
-	bool find_central_directory();
-
-	/*!
-	 * \fn init_lfh()
-	 * \brief Initialize the light Local File Header.
-	 * Contains useful informations about file to crack.
-	 */
-	void init_lfh();
-};
 
 #endif  // SRC_ZIP_MAIN_H_

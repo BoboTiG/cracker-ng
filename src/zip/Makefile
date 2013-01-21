@@ -5,7 +5,7 @@ CFLAGS  = -march=native -O3 -mmmx -msse -msse2 -msse3 -m3dnow -ffast-math -mno-i
 CFLAGS += -Wfatal-errors -Werror -Wall -W -pedantic -Wextra -Wunused -Wformat=2 -Weffc++ -Wpadded -fexceptions
 LDLIBS  = -lpthread
 #LDLIBS += -lcurses
-OBJ     = functions.o stats.o gui.o read.o puff.o main.o
+OBJ     = functions.o stats.o gui.o read.o puff.o cracker.o main.o
 NAME    = zipcracker-ng
 
 all: $(NAME)

@@ -19,6 +19,7 @@
 	. ZIP module:
 		. updated to version 0.1-1
 		* avoid use of boost libraries; speed gain of about 50% for deflated files (use of puff.c from zlib project)
+		* decrease iterations number into find_central_directory()
 
 [ january 07 2013 ]
 	. Cracker-ng 2013.01-07 released
