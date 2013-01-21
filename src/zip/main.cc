@@ -336,10 +336,11 @@ void Cracker::determine_chosen_one() {
 bool Cracker::find_central_directory() {
 	char* tmp = new char[4];
 	bool found_end = false, found = false;
+	size_t i;
 
 	this->filei.seekg(-4, std::ios::end);
-	size_t i = this->filei.tellg();
-	while ( i > 3 && !found ) {
+	i = this->filei.tellg();
+	for ( ; i > 3 && !found; --i ) {
 		this->filei.seekg(i, std::ios::beg);
 		this->filei.read(tmp, 4);
 		if ( !found_end ) {
@@ -348,6 +349,14 @@ bool Cracker::find_central_directory() {
 				this->end_byte = i;
 				found_end = true;
 				i -= 3;
+			} else if ( tmp[2] != 0x06 ) {
+				--i;
+				if ( tmp[1] != 0x06 ) {
+					--i;
+					if ( tmp[0] != 0x06 ) {
+						--i;
+					}
+				}
 			}
 		} else {
 			if ( tmp[0] == 0x50 && tmp[1] == 0x4b &&
@@ -364,7 +373,6 @@ bool Cracker::find_central_directory() {
 				}
 			}
 		}
-		--i;
 	}
 	delete[] tmp;
 	return found;
