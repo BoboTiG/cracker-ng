@@ -89,7 +89,7 @@
 #define SRC_ZIP_PUFF_H_
 
 
-#include <setjmp.h>  // for setjmp(), longjmp(), and jmp_buf */
+#include <setjmp.h>  // for setjmp(), longjmp(), and jmp_buf
 
 
 /*
