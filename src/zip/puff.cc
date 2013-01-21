@@ -1,9 +1,9 @@
 
 /*!
  * \file puff.cc
- * \brief ZIP Cracker-ng headers for the deflate algorithm.
+ * \brief ZIP Cracker-ng deflate algorithm (optimized for the project).
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2013.01.20
+ * \date 2013.01.21
  * 
  * Copyright (C) 2002-2010 Mark Adler
  * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
@@ -30,7 +30,6 @@
 
 
 #include "./puff.h"
-#include <cstdio>
 
 
 static int bits(struct state *s, int need)

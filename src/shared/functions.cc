@@ -3,7 +3,7 @@
  * \file functions.cc
  * \brief Cracker-ng (optimized) functions.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2013.01.20
+ * \date 2013.01.21
  *
  * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
  */
@@ -168,7 +168,8 @@ void result(const std::string& password) {
 		printf(" ! Password not found.\n");
 	} else {
 		const char *p = password.c_str();
-		printf(" + Password found: %s [ HEX: ", p);
+		printf(" + Password found: %s\n", p);
+		printf("   HEXA[ ");
 		for ( size_t i = 0; i < strlen(p); ++i ) {
 			printf("%02X ", p[i] & 0xff);
 		}
@@ -183,17 +184,24 @@ void *stats(void* argz) {
 	return NULL;
 }
 
-std::string substr(const std::string& str, unsigned int max) {
+std::string substr(const std::string& str, unsigned int max, bool middle) {
     size_t len = str.length();
     bool need_sub = len > max;
     
     if ( !need_sub ) {
         return str;
     }
-    unsigned int shift = (len - max) / 2;
-    unsigned int part1 = len / 2 - shift - 2;
-    unsigned int part2 = len / 2 + shift + 1;
-    return str.substr(0, part1) + std::string("...") + str.substr(part2);
+    if ( middle) {
+    	// File: azert...yuiop
+	    unsigned int shift = (len - max) / 2;
+	    unsigned int part1 = len / 2 - shift - 2;
+	    unsigned int part2 = len / 2 + shift + 1;
+	    return str.substr(0, part1) + std::string("...") + str.substr(part2);
+	} else {
+    	// File: ...azertyuiop
+	    unsigned int part  = len - max + 3;
+	    return std::string("...") + str.substr(part);
+	}
 }
 
 void usage(const std::string& module) {
@@ -209,13 +217,6 @@ void usage(const std::string& module) {
 
 void version(const std::string& module, const std::string& version) {
 	printf("%s Cracker-ng version %s.\n", module.c_str(), version.c_str());
-	#if defined(ZIP)
-		#include <boost/version.hpp>
-		unsigned int sm = BOOST_VERSION % 100;
-		unsigned int m  = (BOOST_VERSION / 100) % 1000;
-		unsigned int M  = BOOST_VERSION / 100000;
-		printf("I use Boost C++ libraries version %u.%u.%u.\n", M, m, sm);
-	#endif
 }
 
 }

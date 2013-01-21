@@ -3,7 +3,7 @@
  * \file functions.h
  * \brief Cracker-ng (optimized) functions headers.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2013.01.18
+ * \date 2013.01.21
  *
  * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
  */
@@ -62,7 +62,7 @@ unsigned int get_cores();
 void help(const std::string&);
 void result(const std::string&);
 void *stats(void*);
-std::string substr(const std::string&, unsigned int);
+std::string substr(const std::string&, unsigned int, bool = false);
 void usage(const std::string&);
 void version(const std::string&, const std::string&);
 

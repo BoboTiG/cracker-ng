@@ -3,7 +3,7 @@
  * \file main.h
  * \brief ZIP Cracker-ng headers.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2013.01.20
+ * \date 2013.01.21
  * 
  * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
  * See http://www.pkware.com/documents/casestudies/APPNOTE.TXT for
@@ -15,6 +15,7 @@
 #define SRC_ZIP_MAIN_H_
 
 #include <stdint.h>
+#include <limits>
 #include "./../shared/functions.h"
 #include "./../shared/gui.h"
 #include "./crypt.h"
@@ -89,6 +90,14 @@ private:
 	 * \return \li 1 otherwise.
 	 */
 	bool check_headers();
+	
+	/*!
+	 * \fn check_lfh()
+	 * \brief Check all variables of the LFH struct.
+	 * \return \li 0 if \b not a good LFH;
+	 * \return \li 1 otherwise.
+	 */
+	int check_lfh();
 
 	/*!
 	 * \fn unsigned int check_method()

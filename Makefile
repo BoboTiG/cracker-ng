@@ -16,7 +16,7 @@ title:
 
 $(MODULES):
 	@echo " + Building $@ module ..."
-	[ -d bin ] || mkdir bin
+	@[ -d bin ] || mkdir bin
 	make -C src/$@/ $@$(NAME) clean
 	mv src/$@/$@$(NAME) bin/
 

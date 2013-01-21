@@ -9,11 +9,11 @@
 [ devel ]
 	. Cracker-ng 2013.mm-jj released
 	. shared functions:
-		^ avoid multiple definition of an option into result()
+		^ avoid multiple definition of an option into argz_traitment()
 		^ multiple "Invalid read of size 1" for basename()
 		* more const, always more const
     	+ add HEX representation of the password
-        + substr(), a special to cut too long strings, adding "..." at the middle
+        + substr(), a special to cut too long strings, adding "..." at the beginning or into the middle
         . change the way numbers are printed
 		. rename get_filename() to basename()
 	. ZIP module:

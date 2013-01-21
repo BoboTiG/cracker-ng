@@ -3,7 +3,7 @@
  * \file main.cc
  * \brief ZIP module for Cracker-ng.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2013.01.20
+ * \date 2013.01.21
  *
  * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
  * See http://www.pkware.com/documents/casestudies/APPNOTE.TXT for
@@ -92,7 +92,12 @@ bool Cracker::check() {
 	this->init_lfh();
 	this->determine_chosen_one();
 	if ( !this->check_method() ) {
-		fprintf(stderr, "Method not implemented (%d).\n", this->lfh.compression_method);
+		fprintf(stderr, " ! Method not implemented (%d).\n", this->lfh.compression_method);
+		return 0;
+	}
+	int ret = this->check_lfh();
+	if ( ret != 1 ) {
+		fprintf(stderr, " ! I found a bad parameter (%d) into the LFH struct.\n", ret);
 		return 0;
 	}
 	if ( this->cd.is_encrypted && this->lfh.is_encrypted ) {
@@ -265,21 +270,36 @@ bool Cracker::check_method() {
 			this->set_method("Method....: deflated");
 			okay = 1;
 			break;
-		case 1 :
-		case 2 :
-		case 3 :
-		case 4 :
-		case 5 :
-		case 6 :
-		case 9 :
-		case 12:
-		case 14:
-		case 97:
-		case 98:
-		case 99:
-			break;
 	}
 	return okay;
+}
+
+int Cracker::check_lfh() {
+	size_t max16 = std::numeric_limits<uint16_t>::max();
+	size_t max32 = std::numeric_limits<uint32_t>::max();
+	
+	if ( this->lfh.good_crc_32 > max32 ) {
+		return -1;
+	}
+	if ( this->lfh.version_needed_to_extract > max16 ) {
+		return -2;
+	}
+	if ( this->lfh.compression_method > 99 ) {
+		return -3;
+	}
+	if ( this->lfh.start_byte > max32 ) {
+		return -4;
+	}
+	if ( this->lfh.good_length > max32 ) {
+		return -5;
+	}
+	if ( this->lfh.uncompressed_size > max32 ) {
+		return -6;
+	}
+	if ( this->lfh.last_mod_file_time > max16 ) {
+		return -7;
+	}
+	return 1;
 }
 
 void Cracker::determine_chosen_one() {

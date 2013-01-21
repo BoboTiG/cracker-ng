@@ -1,9 +1,9 @@
 
 /*!
  * \file puff.h
- * \brief ZIP Cracker-ng headers for the deflate algorithm.
+ * \brief ZIP Cracker-ng headers for the deflate algorithm (optimized for the project).
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2013.01.20
+ * \date 2013.01.21
  * 
  * Copyright (C) 2002-2010 Mark Adler
  * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
@@ -82,7 +82,6 @@
  *                      - Move NIL to puff.h
  *                      - Allow incomplete code only if single code length is 1
  *                      - Add full code coverage test to Makefile
- * 2.2  20 jan 2013     - Few optimizations for Cracker-ng [Tiger-222]
 */
 
 
