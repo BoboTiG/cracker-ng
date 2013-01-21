@@ -249,8 +249,8 @@ void Cracker::crack() {
 }
 
 bool Cracker::check_headers() {
-	uint32_t * header_signature = new uint32_t;
-	unsigned int zip_signature = 0x04034b50;
+	uint32_t* header_signature = new uint32_t;
+	uint32_t zip_signature = 0x04034b50;
 
 	this->filei.read(reinterpret_cast<char*>(header_signature), 4);
 	bool found = *header_signature == zip_signature;
