@@ -19,6 +19,8 @@
 #include <csignal>
 #include "./stats.h"
 
+#define UNUSED(s) (void)s
+
 
 namespace functions_ng {
 

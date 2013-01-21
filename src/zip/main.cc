@@ -74,7 +74,7 @@ int main(int argc, char *argv[]) {
 }
 
 void signal_handler(int s) {
-	fprintf(stderr, "Caught signal %d\n", s);
+	UNUSED(s);
 	this_is_now_we_fight = false;
 }
 
