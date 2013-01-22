@@ -3,7 +3,7 @@
  * \file crc32.h
  * \brief ZIP Cracker-ng headers for the CRC-32 algorithme.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2013.01.07
+ * \date 2013.01.22
  * 
  * Copyright (c) 1990-2007 Info-ZIP.  All rights reserved.
  * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
@@ -91,5 +91,25 @@ const uint32_t pcrc_32_tab[256] = {
 	0x5d681b02L, 0x2a6f2b94L, 0xb40bbe37L, 0xc30c8ea1L, 0x5a05df1bL,
 	0x2d02ef8dL
 };
+	
+/*!
+ * \fn create_crc32(const unsigned char* buf, size_t len, uint32_t& good)
+ * \brief Calculate the CRC-32 of the decrypted data.
+ * \param but Pointer to the decrypted data.
+ * \param len Length of the decrypted data.
+ * \param good CRC32 to match.
+ * \return \li 0 if CRC-32 are \b not equals;
+ * \return \li 1 otherwise.
+ */
+inline bool create_crc32(const unsigned char* buf, size_t len, uint32_t& good) {
+	register uint32_t c = 0xffffffffL;
+	for ( ; len >= 8; len -= 8 ) {
+		DO8(c, buf);
+	}
+	for ( ; len; --len ) {
+		DO1(c, buf);
+	};
+	return ~c == good;
+}
 
 #endif  // SRC_ZIP_CRC32_H_

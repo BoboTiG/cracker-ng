@@ -3,7 +3,7 @@
  * \file cracker.cc
  * \brief Cracker class for ZIP Cracker-ng.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2013.01.21
+ * \date 2013.01.22
  *
  * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
  * See http://www.pkware.com/documents/casestudies/APPNOTE.TXT for
@@ -179,14 +179,14 @@ void Cracker::crack() {
 			
 			if ( this->lfh.compression_method == 8 ) {  // The file is deflated
 				if ( puff(dest, destlen, data, sourcelen, io_state) == 0 ) {
-					if ( this->create_crc32(dest, len) ) {
+					if ( create_crc32(dest, len, this->lfh.good_crc_32) ) {
 						chosen_one = password;
 						found = 1;
 						break;
 					}
 				}
 			} else {  // The file is stored (no compression)
-				if ( this->create_crc32(data, len) ) {
+				if ( create_crc32(data, len, this->lfh.good_crc_32) ) {
 					chosen_one = password;
 					found = 1;
 					break;

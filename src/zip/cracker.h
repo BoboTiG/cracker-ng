@@ -3,7 +3,7 @@
  * \file cracker.h
  * \brief Cracker class header for ZIP Cracker-ng.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2013.01.21
+ * \date 2013.01.22
  * 
  * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
  * See http://www.pkware.com/documents/casestudies/APPNOTE.TXT for
@@ -50,25 +50,6 @@ private:
 	central_directory cd;
 	end_central_directory ecd;
 	std::string title, file, chosen_one, encryption, method, generator;
-	
-	/*!
-	 * \fn create_crc32(const unsigned char* buf, size_t len)
-	 * \brief Calculate the CRC-32 of the decrypted data.
-	 * \param but Pointer to the decrypted data.
-	 * \param len Length of the decrypted data.
-	 * \return \li 0 if CRC-32 are \b not equals;
-	 * \return \li 1 otherwise.
-	 */
-	inline bool create_crc32(const unsigned char* buf, size_t len) {
-		register uint32_t c = 0xffffffffL;
-		for ( ; len >= 8; len -= 8 ) {
-			DO8(c, buf);
-		}
-		for ( ; len; --len ) {
-			DO1(c, buf);
-		};
-		return ~c == this->lfh.good_crc_32;
-	}
 
 	/*!
 	 * \fn check()
