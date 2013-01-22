@@ -3,7 +3,7 @@
  * \file stats.h
  * \brief Statistics headers.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2013.01.03
+ * \date 2013.01.22
  *
  * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
  */
@@ -13,8 +13,6 @@
 #define SRC_SHARED_STATS_H_
 
 #include <unistd.h>  // sleep()
-#include <string>
-#include <sstream>
 #include "./functions.h"
 
 

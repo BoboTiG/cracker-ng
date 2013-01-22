@@ -3,7 +3,7 @@
  * \file functions.h
  * \brief Cracker-ng (optimized) functions headers.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2013.01.21
+ * \date 2013.01.22
  *
  * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
  */
@@ -14,6 +14,7 @@
 
 #include <algorithm>  // transform()
 #include <string>
+#include <sstream>
 #include <cstdio>
 #include <cstring>
 #include <csignal>
