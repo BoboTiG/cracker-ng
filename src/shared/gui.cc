@@ -3,7 +3,7 @@
  * \file gui.cc
  * \brief GUI management.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2013.01.20
+ * \date 2013.01.22
  *
  * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
  */
@@ -127,6 +127,7 @@ void GUI::run() const {
 	printf(" * %s\n", this->chosen_one.c_str());
 	printf(" - %s\n", this->encryption.c_str());
 	printf(" - %s\n", this->method.c_str());
+	printf(" - %s\n", this->generator.c_str());
 	printf(" . Working ...\n");
 
 
