@@ -3,7 +3,7 @@
  * \file functions.cc
  * \brief Cracker-ng (optimized) functions.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2013.01.21
+ * \date 2013.01.22
  *
  * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
  */
@@ -192,13 +192,13 @@ std::string substr(const std::string& str, unsigned int max, bool middle) {
         return str;
     }
     if ( middle) {
-    	// File: azert...yuiop
+    	// File: 012...6789
 	    unsigned int shift = (len - max) / 2;
 	    unsigned int part1 = len / 2 - shift - 2;
 	    unsigned int part2 = len / 2 + shift + 1;
 	    return str.substr(0, part1) + std::string("...") + str.substr(part2);
 	} else {
-    	// File: ...azertyuiop
+    	// File: ...3456789
 	    unsigned int part  = len - max + 3;
 	    return std::string("...") + str.substr(part);
 	}
