@@ -3,7 +3,7 @@
  * \file puff.cc
  * \brief ZIP Cracker-ng deflate algorithm (optimized for the project).
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2013.01.21
+ * \date 2013.01.22
  * 
  * Copyright (C) 2002-2010 Mark Adler
  * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
@@ -292,6 +292,8 @@ static int dynamic(struct state *s)
         int len;     // last length to repeat
 
         symbol = decode(s, &lencode);
+        if (symbol < 0)
+            return symbol;  // invalid symbol
         if (symbol < 16)  // length in 0..15
             lengths[index++] = symbol;
         else {  // repeat instruction
@@ -314,7 +316,7 @@ static int dynamic(struct state *s)
     }
 
     // check for end-of-block code -- there better be one!
-    if (lengths[256] <= 0)
+    if (lengths[256] == 0)
         return -9;
 
     // build huffman table for literal/length codes
