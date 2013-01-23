@@ -3,7 +3,7 @@
  * \file cracker.cc
  * \brief Cracker class for ZIP Cracker-ng.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2013.01.22
+ * \date 2013.01.23
  *
  * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
  * See http://www.pkware.com/documents/casestudies/APPNOTE.TXT for
@@ -41,12 +41,25 @@ Cracker::Cracker(const std::string& filename, const std::string& from) :
 	generator(std::string())
 {}
 
-Cracker::~Cracker() {}
+Cracker::~Cracker() {
+	if ( this->filei.is_open() ) {
+		this->filei.close();
+	}
+}
 
 bool Cracker::check() {
 	if ( !this->check_headers() ) {
 		fprintf(stderr, " ! Bad ZIP file (wrong headers).\n");
 		return 0;
+	}
+	this->filei.seekg(0, std::ios::end);
+	size_t size = this->filei.tellg();
+	if ( size < 22 ) {
+		fprintf(stderr, " ! The file size is %lu bytes, but the minimum size is 22 bytes.\n", size);
+		return false;
+	} else if ( size > 4294967295 ) {
+		fprintf(stderr, " ! The file size is %lu bytes, but the maximum size is 4294967295 bytes.\n", size);
+		return false;
 	}
 	if ( !this->find_central_directory() ) {
 		fprintf(stderr, " ! Unable to find Central Directory signatures.\n");
