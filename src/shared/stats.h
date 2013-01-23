@@ -3,7 +3,7 @@
  * \file stats.h
  * \brief Statistics headers.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2013.01.22
+ * \date 2013.01.23
  *
  * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
  */
@@ -16,21 +16,25 @@
 #include "./functions.h"
 
 
+typedef struct {
+	size_t* num;
+	bool* working;
+} statistics;
+
+void *stats(void*);
+
+
 class Stats {
 public:
-	size_t*       num;
-	unsigned int* found;
-
-	Stats(size_t*, unsigned int*);
-	Stats(const Stats&);
-	Stats& operator=(const Stats&);
+	statistics& s;
+	
+	Stats(statistics&);
 	~Stats();
 	void start();
 	void stats_sumary();
 
 protected:
 private:
-	size_t total;
 	size_t sleeping_time;
 	time_t start_time;
 

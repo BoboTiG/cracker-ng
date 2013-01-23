@@ -3,7 +3,7 @@
  * \file cracker.h
  * \brief Cracker class header for ZIP Cracker-ng.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2013.01.22
+ * \date 2013.01.23
  * 
  * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
  * See http://www.pkware.com/documents/casestudies/APPNOTE.TXT for
@@ -16,6 +16,7 @@
 
 #include <stdint.h>
 #include <limits>
+#include "./../shared/stats.h"
 #include "./../shared/gui.h"
 #include "./crypt.h"
 #include "./puff.h"

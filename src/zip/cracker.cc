@@ -104,13 +104,9 @@ void Cracker::crack() {
 		this->title, this->file, this->chosen_one,
 		this->encryption, this->method, this->generator
 	);
-	/*if ( !gui.is_ok() ) {
-		return;
-	}*/
 	
 	size_t num = 0, i = 0;
-	unsigned int found = 0;
-	functions_ng::statistics s = { &num, &found };
+	statistics s = { &num, &this_is_now_we_fight };
 	pthread_t stat;
 	std::string chosen_one;
 	size_t len              = this->lfh.good_length;
@@ -142,37 +138,13 @@ void Cracker::crack() {
 
 	// Let's go!
 	gui.run();
-	pthread_create(&stat, NULL, functions_ng::stats, reinterpret_cast<void*>(&s));
-	
-	//int c;
-	//char* str = new char[MAXLEN];  // String from "Try a word" input
+	pthread_create(&stat, NULL, stats, reinterpret_cast<void*>(&s));
 	
 	while ( this_is_now_we_fight ) {
 		if ( !functions_ng::read_input(input, password, PWD_MAX) ) {
+			this_is_now_we_fight = false;
 			break;
 		}
-		
-		/*move(9, SHIFT);
-		for ( i = 0; i < MAXLEN; ++i ) {
-			printw(" ");
-		}
-		move(9, SHIFT);
-		printw("%s", password);
-		refresh();*/
-		// Go to the manual entry area
-		/*move(9, SHIFT);
-		for ( i = 0; i < MAXLEN; ++i ) {
-			printw(" ");
-		}
-		i = 0;
-		do {
-			move(9, SHIFT + i);
-			c = wgetch(stdscr);
-			str[i] = c;
-			++i;
-		} while ( c != KEY_ESC && c != CTRL_C && c != '\n' && i < MAXLEN );
-		strcpy(password, str);*/
-		
 		// 1) Initialize the three 32-bit keys with the password.
 		init_keys(password);
 		// 2) Read and decrypt the 12-byte encryption header,
@@ -194,36 +166,31 @@ void Cracker::crack() {
 				if ( puff(dest, destlen, data, sourcelen, io_state) == 0 ) {
 					if ( create_crc32(dest, len, this->lfh.good_crc_32) ) {
 						chosen_one = password;
-						found = 1;
+						this_is_now_we_fight = false;
 						break;
 					}
 				}
 			} else {  // The file is stored (no compression)
 				if ( create_crc32(data, len, this->lfh.good_crc_32) ) {
 					chosen_one = password;
-					found = 1;
+					this_is_now_we_fight = false;
 					break;
 				}
 			}
 		}
 		++num;
 	}
-	/*move(HEIGHT, 0);
-	refresh();*/
+	if ( this->from != "STDIN" ) {
+		fclose(input);
+	}
+	pthread_join(stat, reinterpret_cast<void**>(NULL));
+	functions_ng::result(chosen_one);
 	delete[] buf;                             buf = 0;
 	delete[] dest;                           dest = 0;
 	delete[] data;                           data = 0;
 	delete[] buffer;                       buffer = 0;
 	delete[] password;                   password = 0;
 	delete[] encryption_header; encryption_header = 0;
-	if ( this->from != "STDIN" ) {
-		fclose(input);
-	}
-	if ( found == 0 ) {
-		found = 2;
-	}
-	pthread_join(stat, reinterpret_cast<void**>(NULL));
-	functions_ng::result(chosen_one);
 }
 
 bool Cracker::check_headers() {

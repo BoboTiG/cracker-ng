@@ -3,7 +3,7 @@
  * \file stats.cpp
  * \brief Statistics functions.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2013.01.20
+ * \date 2013.01.23
  *
  * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
  */
@@ -11,9 +11,19 @@
 
 #include "./stats.h"
 
-Stats::Stats(size_t* num, unsigned int* found)
-	: num(num), found(found),
-	  total(0), sleeping_time(1), start_time(time(NULL))
+
+void *stats(void* argz) {
+	statistics* s = (statistics*)argz;
+	Stats statistics(*s);
+	statistics.start();
+	return NULL;
+}
+
+
+Stats::Stats(statistics& stats) :
+	s(stats),
+	sleeping_time(1),
+	start_time(time(NULL))
 {}
 
 Stats::~Stats() {}
@@ -23,25 +33,23 @@ time_t Stats::elapsed_seconds() {
 }
 
 void Stats::start() {
-	for ( ; *this->found == 0 ; ) {
+	size_t n = 1;
+	for ( ; *this->s.working ; ++n ) {
 		sleep(this->sleeping_time);
-		size_t n = *this->num;
-		*this->num = 0;
-		this->total += n;
 		printf("\033[A . Working at %.02fK pwd/sec [%.02fM tries]\n",
-			(n / 1000.0 / this->sleeping_time),
-			(this->total / 1000.0 / 1000.0)
+			(*this->s.num / 1000.0 / (this->sleeping_time * n)),
+			(*this->s.num / 1000.0 / 1000.0)
 		);
 	}
-	stats_sumary();
+	this->stats_sumary();
 }
 
 void Stats::stats_sumary() {
-	time_t the_time = elapsed_seconds();
+	time_t the_time = this->elapsed_seconds();
 	if ( the_time > 0 ) {
 		printf("\033[A . Worked at ~ %.02fK pwd/sec for %.02fM tries.\n",
-			(this->total / 1000.0 / the_time),
-			(this->total / 1000.0 / 1000.0)
+			(*this->s.num / 1000.0 / the_time),
+			(*this->s.num / 1000.0 / 1000.0)
 		);
 	}
 }

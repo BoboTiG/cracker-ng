@@ -3,7 +3,7 @@
  * \file functions.cc
  * \brief Cracker-ng (optimized) functions.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2013.01.22
+ * \date 2013.01.23
  *
  * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
  */
@@ -175,13 +175,6 @@ void result(const std::string& password) {
 		}
 		printf("]\n");
 	}
-}
-
-void *stats(void* argz) {
-	functions_ng::statistics *s = (functions_ng::statistics *)argz;
-	Stats statistics(s->num, s->found);
-	statistics.start();
-	return NULL;
 }
 
 std::string substr(const std::string& str, unsigned int max, bool middle) {
