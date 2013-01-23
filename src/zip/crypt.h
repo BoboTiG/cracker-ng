@@ -53,9 +53,9 @@ inline unsigned char decrypt_byte(void) {
  * \param c The next byte.
  */
 inline void update_keys(int c) {
-	keys[0] = crc32(keys[0], c);
+	keys[0] = pcrc_32_tab[(keys[0] ^ c) & 0xff] ^ (keys[0] >> 8); //crc32(keys[0], c);
 	keys[1] = (keys[1] + (keys[0] & 0xff)) * 134775813 + 1;
-	keys[2] = crc32(keys[2], keys[1] >> 24);
+	keys[2] = pcrc_32_tab[(keys[2] ^ (keys[1] >> 24)) & 0xff] ^ (keys[2] >> 8); // crc32(keys[2], keys[1] >> 24);
 }
 
 /*!
