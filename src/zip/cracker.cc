@@ -50,7 +50,7 @@ Cracker::~Cracker() {
 bool Cracker::check() {
 	if ( !this->check_headers() ) {
 		fprintf(stderr, " ! Bad ZIP file (wrong headers).\n");
-		return 0;
+		return false;
 	}
 	this->filei.seekg(0, std::ios::end);
 	size_t size = this->filei.tellg();
@@ -63,7 +63,7 @@ bool Cracker::check() {
 	}
 	if ( !this->find_central_directory() ) {
 		fprintf(stderr, " ! Unable to find Central Directory signatures.\n");
-		return 0;
+		return false;
 	}
 	read_ng::read_central_directory(this->filei, &this->cd, this->start_byte, this->debug);
 	read_ng::read_end_central_directory(this->filei, &this->ecd, this->end_byte, this->debug);
@@ -71,12 +71,12 @@ bool Cracker::check() {
 	this->determine_chosen_one();
 	if ( !this->check_method() ) {
 		fprintf(stderr, " ! Method not implemented (%d).\n", this->lfh.compression_method);
-		return 0;
+		return false;
 	}
 	int ret = this->check_lfh();
 	if ( ret != 1 ) {
 		fprintf(stderr, " ! I found a bad parameter (%d) into the LFH struct.\n", ret);
-		return 0;
+		return false;
 	}
 	if ( this->cd.is_encrypted && this->lfh.is_encrypted ) {
 		if ( this->cd.strong_encryption && this->lfh.strong_encryption ) {
@@ -86,17 +86,17 @@ bool Cracker::check() {
 			this->set_encryption("Encryption: standard (traditional PKWARE)");
 			if ( this->lfh.good_crc_32 == 0 ) {
 				fprintf(stderr, " ! CRC-32 empty, cannot work without it on this encryption scheme.\n");
-				return 0;
+				return false;
 			}
 		}
 	} else {
 		fprintf(stderr, " + This file is not encrypted.\n");
-		return 0;
+		return false;
 	}
 	if ( this->debug ) {
-		return 0;
+		return false;
 	}
-	return 1;
+	return true;
 }
 
 void Cracker::crack() {
@@ -237,16 +237,16 @@ bool Cracker::check_headers() {
 }
 
 bool Cracker::check_method() {
-	bool okay = 0;
+	bool okay = false;
 
 	switch ( this->lfh.compression_method ) {
 		case 0 :
 			this->set_method("Method....: stored");
-			okay = 1;
+			okay = true;
 			break;
 		case 8 :
 			this->set_method("Method....: deflated");
-			okay = 1;
+			okay = true;
 			break;
 	}
 	return okay;
