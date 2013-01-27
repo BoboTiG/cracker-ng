@@ -28,25 +28,42 @@ extern uint32_t keys[3];
 /*!
  * \var pcrc_32_tab
  * \brief Table of CRC-32's of all single-byte values.
+ *
+ * Note: polynomial is 0xedb88320.
  */
-extern const uint32_t pcrc_32_tab[256];
+extern const uint32_t pcrc_32_tab[8][256];
 
 
 /*!
- * \fn create_crc32(const unsigned char* buf, size_t len, uint32_t& good)
+ * \fn create_crc32(const unsigned char* buf, size_t len)
  * \brief Calculate the CRC-32 of the decrypted data.
  * \param but Pointer to the decrypted data.
  * \param len Length of the decrypted data.
- * \param good CRC32 to match.
- * \return \li 0 if CRC-32 are \b not equals;
- * \return \li 1 otherwise.
+ * \return The calculated CRC32.
  */
-inline bool create_crc32(const unsigned char* buf, size_t len, uint32_t& good) {
-	register uint32_t c = 0xffffffff;
-	for ( ; len; --len ) {
-		c = pcrc_32_tab[(c ^ *buf++) & 0xff] ^ (c >> 8);
+inline uint32_t create_crc32(const unsigned char* buf, size_t len) {
+	uint32_t* current = (uint32_t*)buf;
+	uint32_t one, two;
+	register uint32_t crc = 0xffffffff;
+	
+	for ( ; len > 7; len -= 8 ) {
+		one = *current++ ^ crc;
+		two = *current++;
+		crc =
+			pcrc_32_tab[7][ one      & 0xff] ^
+			pcrc_32_tab[6][(one>> 8) & 0xff] ^
+			pcrc_32_tab[5][(one>>16) & 0xff] ^
+			pcrc_32_tab[4][ one>>24        ] ^
+			pcrc_32_tab[3][ two      & 0xff] ^
+			pcrc_32_tab[2][(two>> 8) & 0xff] ^
+			pcrc_32_tab[1][(two>>16) & 0xff] ^
+			pcrc_32_tab[0][ two>>24        ];
 	}
-	return c == good;
+	unsigned char* c = (unsigned char*)current;
+	for ( ; len; --len ) {
+		crc = (crc >> 8) ^ pcrc_32_tab[0][(crc ^ *c++) & 0xff];
+	}
+	return ~crc;
 }
 
 /*!
@@ -68,9 +85,9 @@ inline unsigned char decrypt_byte(void) {
  * \param c The next byte.
  */
 inline void update_keys(int c) {
-	keys[0] = pcrc_32_tab[(keys[0] ^ c) & 0xff] ^ (keys[0] >> 8);
+	keys[0] = (keys[0] >> 8) ^ pcrc_32_tab[0][(keys[0] ^ c) & 0xff];
 	keys[1] = (keys[1] + (keys[0] & 0xff)) * 134775813 + 1;
-	keys[2] = pcrc_32_tab[(keys[2] ^ (keys[1] >> 24)) & 0xff] ^ (keys[2] >> 8);
+	keys[2] = (keys[2] >> 8) ^ pcrc_32_tab[0][(keys[2] ^ (keys[1] >> 24)) & 0xff];
 }
 
 /*!

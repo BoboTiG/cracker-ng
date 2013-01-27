@@ -12,6 +12,7 @@
 	. ZIP module:
 		* use of the patch provided by Mark Adler for the segfault into puff.cc
 		* remove define into crypt.h
+		* huge optimizations of create_crc32() into crypt.h
 		. move crc32.h contents to crypt.h and shared/cracker.cc
 
 [ january 21 2013 ]
