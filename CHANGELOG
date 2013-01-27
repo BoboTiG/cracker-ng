@@ -6,6 +6,14 @@
 	. : information
 
 
+[ dev ]
+	. Cracker-ng 2013.mm-jj released
+	. code refactoring
+	. ZIP module:
+		* use of the patch provided by Mark Adler for the segfault into puff.cc
+		* remove define into crypt.h
+		. move crc32.h contents to crypt.h and shared/cracker.cc
+
 [ january 21 2013 ]
 	. Cracker-ng 2013.01-21 released
 	. shared functions:

@@ -17,8 +17,8 @@ title:
 $(MODULES):
 	@echo " + Building $@ module ..."
 	@[ -d bin ] || mkdir bin
-	make -C src/$@/ $@$(NAME) clean
-	mv src/$@/$@$(NAME) bin/
+	make -C src/ $@ clean
+	mv src/$@$(NAME) bin/
 
 love:
 	@echo "I'm free, you could find my email ID into source files ;)"

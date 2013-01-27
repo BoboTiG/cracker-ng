@@ -3,7 +3,7 @@
  * \file crypt.h
  * \brief ZIP Cracker-ng headers for the Traditional PKWARE Encryption.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2013.01.23
+ * \date 2013.01.27
  * 
  * Copyright (c) 1990-2007 Info-ZIP.  All rights reserved.
  * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
@@ -18,7 +18,6 @@
 #ifndef SRC_ZIP_CRYPT_H_
 #define SRC_ZIP_CRYPT_H_
 
-#include "./crc32.h"
 
 /*!
  * \var keys
@@ -27,12 +26,28 @@
 extern uint32_t keys[3];
 
 /*!
- * \def zdecode(c)
- * \brief Decode byte c in place.
- * \param c Byte de decode.
- * \return Decoded byte.
+ * \var pcrc_32_tab
+ * \brief Table of CRC-32's of all single-byte values.
  */
-#define zdecode(c) update_keys(c ^= decrypt_byte())
+extern const uint32_t pcrc_32_tab[256];
+
+
+/*!
+ * \fn create_crc32(const unsigned char* buf, size_t len, uint32_t& good)
+ * \brief Calculate the CRC-32 of the decrypted data.
+ * \param but Pointer to the decrypted data.
+ * \param len Length of the decrypted data.
+ * \param good CRC32 to match.
+ * \return \li 0 if CRC-32 are \b not equals;
+ * \return \li 1 otherwise.
+ */
+inline bool create_crc32(const unsigned char* buf, size_t len, uint32_t& good) {
+	register uint32_t c = 0xffffffff;
+	for ( ; len; --len ) {
+		c = pcrc_32_tab[(c ^ *buf++) & 0xff] ^ (c >> 8);
+	}
+	return c == good;
+}
 
 /*!
  * \fn decrypt_byte(void)

@@ -3,7 +3,7 @@
  * \file gui.cc
  * \brief GUI management.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2013.01.22
+ * \date 2013.01.27
  *
  * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
  */
@@ -13,8 +13,8 @@
 
 
 GUI::GUI(
-	std::string& title, std::string& file, std::string& chosen_one,
-	std::string& encryption, std::string& method, std::string& generator
+	const std::string& title, const std::string& file, const std::string& chosen_one,
+	const std::string& encryption, const std::string& method, const std::string& generator
 ):
 	row(0),
 	col(0),
@@ -59,11 +59,11 @@ void GUI::init() {
 }
 
 bool GUI::is_ok() const {
-	if ( this->col < WIDTH || this->row < HEIGHT + 2 ) {
+	/*if ( this->col < WIDTH || this->row < HEIGHT + 2 ) {
 		this->stop();
 		printf(" ! I need a terminal with a minimum size of %dx%d.\n", WIDTH, HEIGHT);
 		return false;
-	}
+	}*/
 	return true;
 }
 
@@ -124,9 +124,11 @@ void GUI::run() const {
 	
 	printf("\n %s\n", this->title.c_str());
 	printf(" - %s\n", this->file.c_str());
+#ifdef ZIP
 	printf(" * %s\n", this->chosen_one.c_str());
 	printf(" - %s\n", this->encryption.c_str());
 	printf(" - %s\n", this->method.c_str());
+#endif
 	printf(" - %s\n", this->generator.c_str());
 	printf(" . Working ...\n");
 

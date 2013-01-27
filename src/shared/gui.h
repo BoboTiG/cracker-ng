@@ -3,7 +3,7 @@
  * \file gui.h
  * \brief GUI management.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2013.01.18
+ * \date 2013.01.27
  *
  * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
  */
@@ -12,8 +12,7 @@
 #ifndef SRC_SHARED_GUI_H_
 #define SRC_SHARED_GUI_H_
 
-#include <iostream>
-#include <cstring>
+#include <string>
 //#include <curses.h>
 #include "./functions.h"
 
@@ -30,7 +29,10 @@ static const unsigned int MAXLEN = WIDTH - SHIFT;  //!< Maximum length for strin
 
 class GUI {
 public:
-	GUI(std::string&, std::string&, std::string&, std::string&, std::string&, std::string&);
+	GUI(
+		const std::string&, const std::string&, const std::string&,
+		const std::string&, const std::string&, const std::string&
+	);
 	~GUI();
 	
 	bool is_ok() const;
