@@ -3,7 +3,7 @@
  * \file ccryptlib.h
  * \brief Part of CPT Cracker-ng.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2012.22.11
+ * \date 2013.01.28
  * 
  * Copyright (C) 2000-2009 Peter Selinger.
  * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
@@ -25,7 +25,7 @@
 #include "./rijndael.h"
 #include "../shared/functions.h"
 
-#define MAGIC "c051"  // magic string for this version of ccrypt
+static const char* MAGIC = "c051";  // magic string for this version of ccrypt
 
 typedef struct {
 	size_t avail_in;         // number of bytes available at next_in
