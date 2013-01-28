@@ -8,24 +8,14 @@
  * Copyright (C) 2002-2010 Mark Adler
  * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
  * 
- * For conditions of distribution and use, see copyright notice in puff.h
- * version 2.2, 25 Apr 2010
+ * Why using puff() instead of optimized boost libraries?
+ * This is simple: puff() aborts early when there is one bad operation.
+ * Boost inflates all datas and then thows an error.
+ * So for this king of software, where there is only one matching password,
+ * we need to stop the inflate process the most early possible to save
+ * memory and increase number of tested passwords by seconds.
  *
- * puff.cc is a simple inflate written to be an unambiguous way to specify the
- * deflate format.  It is not written for speed but rather simplicity.  As a
- * side benefit, this code might actually be useful when small code is more
- * important than speed, such as bootstrap applications.  For typical deflate
- * data, zlib's inflate() is about four times as fast as puff().  zlib's
- * inflate compiles to around 20K on my machine, whereas puff.c compiles to
- * around 4K on my machine (a PowerPC using GNU cc).  If the faster decode()
- * function here is used, then puff() is only twice as slow as zlib's
- * inflate().
- *
- * All dynamically allocated memory comes from the stack.  The stack required
- * is less than 2K bytes.  This code is compatible with 16-bit int's and
- * assumes that long's are at least 32 bits.  puff.cc uses the short data type,
- * assumed to be 16 bits, for arrays in order to to conserve memory.  The code
- * works whether integers are stored big endian or little endian.
+ * BTW Boost is really more efficient to inflate datas with the good password.
 */
 
 
