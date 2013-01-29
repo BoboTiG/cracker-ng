@@ -3,7 +3,7 @@
  * \file cracker.cc
  * \brief Cracker class for ZIP Cracker-ng.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2013.01.27
+ * \date 2013.01.28
  *
  * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
  * See http://www.pkware.com/documents/casestudies/APPNOTE.TXT for
@@ -336,20 +336,14 @@ void Cracker::crack() {
 	char *password          = new char[PWD_MAX];
 	FILE *input             = NULL;
 #ifdef CPT
-	ccrypt_stream_s *b      = new ccrypt_stream_s;
-	ccrypt_state_s *st      = new ccrypt_state_s;
-	roundkey *rkks          = new roundkey;
-	char *inbuf             = new char[32];
-	char *encryption_header = new char[32];
+	unsigned int* encryption_header = new unsigned int[8];
+	unsigned int keyblock[8] = {0}, rijndaelkey[8] = {0};
 	roundkey rkk_hash;
 
 	// Read encrypted data
 	this->filei.seekg(0, std::ios::beg);
-	this->filei.read(encryption_header, 32);
+	this->filei.read((char*)encryption_header, 32);
 	this->filei.close();
-
-	// Initializing
-	st->rkks = rkks;
 #elif ZIP
 	size_t i                = 0;
 	size_t len              = this->lfh.good_length;
@@ -383,11 +377,7 @@ void Cracker::crack() {
 	pthread_create(&stat, NULL, stats, reinterpret_cast<void*>(&s));
 	for ( ; (this_is_now_we_fight = this->read_input(input, password, PWD_MAX)); ++num ) {
 #ifdef CPT
-		ccdecrypt_init(b, st, password, rkk_hash);
-		memcpy(inbuf, encryption_header, 32);
-		b->next_in = inbuf;
-		b->avail_in = 32;
-		if ( ccdecrypt(b) == 0 ) {
+		if ( ccdecrypt(encryption_header, password, rkk_hash, keyblock, rijndaelkey) == 0 ) {
 			chosen_one = password;
 			this_is_now_we_fight = false;
 		}
@@ -408,6 +398,9 @@ void Cracker::crack() {
 			for ( i = 0; i < len; ++i ) {
 				update_keys(data[i] ^= decrypt_byte());
 			}
+			/*FILE* t = fopen("inflate.raw", "wb");
+			fwrite(data, len, 1, t);
+			fclose(t);*/
 			if ( this->lfh.compression_method == 8 ) {  // The file is deflated
 				if ( puff(dest, destlen, data, sourcelen, io_state) == 0 ) {
 					if ( create_crc32(dest, len) == this->lfh.good_crc_32 ) {
@@ -428,12 +421,7 @@ void Cracker::crack() {
 		fclose(input);
 	}
 	pthread_join(stat, reinterpret_cast<void**>(NULL));
-#ifdef CPT
-	delete b;                                   b = 0;
-	delete st;                                 st = 0;
-	delete rkks;                             rkks = 0;
-	delete[] inbuf;                         inbuf = 0;
-#elif ZIP
+#ifdef ZIP
 	delete[] buf;                             buf = 0;
 	delete[] dest;                           dest = 0;
 	delete[] data;                           data = 0;

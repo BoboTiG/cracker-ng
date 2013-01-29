@@ -3,7 +3,7 @@
  * \file rijndael.h
  * \brief Part of CPT Cracker-ng.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2012.09.15
+ * \date 2013.01.28
  *
  * Copyright (C) 2000-2009 Peter Selinger.
  * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
@@ -25,7 +25,7 @@
 #define SRC_CPT_RIJNDAEL_H_
 
 typedef unsigned char word8;
-typedef int word32;
+typedef unsigned int word32;
 union word8x4_u {
 	word8 w8[4];
 	word32 w32;
@@ -34,13 +34,13 @@ typedef union word8x4_u word8x4;
 
 #include "./tables.h"
 
-#define MAXBC (256/32)
-#define MAXRK (15*MAXBC)
 
 typedef struct {
-	word32 rk[MAXRK];
+	word32 rk[120];
 	int shift[2][4];
 } roundkey;
+
+extern const int xshifts[3][2][4];
 
 /* keys and blocks are externally treated as word32 arrays, to
    make sure they are aligned on 4-byte boundaries on architectures

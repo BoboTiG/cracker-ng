@@ -3,7 +3,7 @@
  * \file rijndael.c
  * \brief Part of CPT Cracker-ng.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2012.09.17
+ * \date 2013.01.28
  *
  * Copyright (C) 2000-2009 Peter Selinger.
  * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
@@ -23,19 +23,19 @@
 
 #include "./rijndael.h"
 
-static const int xshifts[3][2][4] = {
-	 {{0, 1, 2, 3},
+const int xshifts[3][2][4] = {
+	{{0, 1, 2, 3},
 	 {0, 3, 2, 1}},
-	 {{0, 1, 2, 3},
+	{{0, 1, 2, 3},
 	 {0, 5, 4, 3}},
-	 {{0, 1, 3, 4},
+	{{0, 1, 3, 4},
 	 {0, 7, 5, 4}}
 };
 
 /* Exor corresponding text input and round key input bytes */
 /* the result is written to res, which can be the same as a */
 static inline void xKeyAddition(
-	word32 res[MAXBC], word32 a[MAXBC], word32 rk[MAXBC]
+	word32 res[8], word32 a[8], word32 rk[8]
 ) {
 	int j;
 	for (j = 0; j < 8; j++) {
@@ -53,7 +53,7 @@ static inline void xKeyAddition(
 
 // do ShiftRow and Substitution together. res must not be a.
 static inline void xShiftSubst(
-	word32 res[MAXBC], word32 a[MAXBC], int shift[4], word8 box[256]
+	word32 res[8], word32 a[8], int shift[4], word8 box[256]
 ) {
 	int i, j, s;
 	word8 (*a8)[4] = (word8 (*)[4]) a;
@@ -74,7 +74,7 @@ static inline void xShiftSubst(
 
 // do MixColumn and KeyAddition together
 static inline void xMixAdd(
-	word32 res[MAXBC], word32 a[MAXBC], word32 rk[MAXBC]
+	word32 res[8], word32 a[8], word32 rk[8]
 ) {
 	int j;
 	word32 b;
@@ -92,7 +92,7 @@ static inline void xMixAdd(
 /* Mix the four bytes of every column in a linear way
  * This is the opposite operation of xMixColumn
  * the result is written to res, which may equal a */
-static inline void xInvMixColumn(word32 res[MAXBC], word32 a[MAXBC]) {
+static inline void xInvMixColumn(word32 res[8], word32 a[8]) {
 	int j;
 	word32 b;
 	word8 (*a8)[4] = (word8 (*)[4]) a;
@@ -147,7 +147,7 @@ int xrijndaelKeySched(word32 key[], roundkey* rkk) {
 
 // Encryption of one block.
 void xrijndaelEncrypt(word32 block[], roundkey* rkk) {
-	word32 block2[MAXBC];  // hold intermediate result
+	word32 block2[8];  // hold intermediate result
 	int *shift = rkk->shift[0];
 	int r, ROUNDS = 14;
 	word32 *rp = rkk->rk;
@@ -168,7 +168,7 @@ void xrijndaelEncrypt(word32 block[], roundkey* rkk) {
 }
 
 void xrijndaelDecrypt(word32 block[], roundkey* rkk) {
-	word32 block2[MAXBC];  // hold intermediate result
+	word32 block2[8];  // hold intermediate result
 	int *shift = rkk->shift[1];
 	int r = 13, ROUNDS = 14;
 	word32 *rp = rkk->rk + ROUNDS * 8;
