@@ -336,13 +336,13 @@ void Cracker::crack() {
 	char *password          = new char[PWD_MAX];
 	FILE *input             = NULL;
 #ifdef CPT
-	unsigned int* encryption_header = new unsigned int[8];
-	unsigned int keyblock[8] = {0}, rijndaelkey[8] = {0};
-	roundkey rkk_hash;
+	char* encryption_header = new char[32];
+	unsigned int inbuf[8]   = {0};
+	roundkey rkk;
 
 	// Read encrypted data
 	this->filei.seekg(0, std::ios::beg);
-	this->filei.read((char*)encryption_header, 32);
+	this->filei.read(encryption_header, 32);
 	this->filei.close();
 #elif ZIP
 	size_t i                = 0;
@@ -377,7 +377,8 @@ void Cracker::crack() {
 	pthread_create(&stat, NULL, stats, reinterpret_cast<void*>(&s));
 	for ( ; (this_is_now_we_fight = this->read_input(input, password, PWD_MAX)); ++num ) {
 #ifdef CPT
-		if ( ccdecrypt(encryption_header, password, rkk_hash, keyblock, rijndaelkey) == 0 ) {
+		memcpy(inbuf, encryption_header, 32);
+		if ( ccdecrypt(inbuf, password, rkk) == 0 ) {
 			chosen_one = password;
 			this_is_now_we_fight = false;
 		}

@@ -25,22 +25,20 @@
 inline int ccdecrypt(
 	unsigned int inbuf[8],
 	const char*  key,
-	roundkey&    rkk_hash,
-	unsigned int keyblock[8],
-	unsigned int rijndaelkey[8]
+	roundkey&    rkk
 ) {
-	signed int i = -1;
+	unsigned int i = 0, keyblock[8] = {0}, rijndaelkey[8] = {0};
 
 	// Generate the roundkeys
-	for ( ; *key; ++key ) {
-		reinterpret_cast<unsigned char*>(rijndaelkey)[++i] ^= *key;
+	for ( ; *key; ++key, ++i ) {
+		reinterpret_cast<unsigned char*>(rijndaelkey)[i] ^= *key;
 	}
-	xrijndaelKeySched(rijndaelkey, &rkk_hash);
-	xrijndaelEncrypt(keyblock, &rkk_hash);
+	xrijndaelKeySched(rijndaelkey, &rkk);
+	xrijndaelEncrypt(keyblock, &rkk);
 	
 	// Décrypt the block
-	xrijndaelKeySched(keyblock, &rkk_hash);
-	xrijndaelDecrypt(inbuf, &rkk_hash);
+	xrijndaelKeySched(keyblock, &rkk);
+	xrijndaelDecrypt(inbuf, &rkk);
 	
 	// Check the magic number!
 	return memcmp(inbuf, "c051", 4);
