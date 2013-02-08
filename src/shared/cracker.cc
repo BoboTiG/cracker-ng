@@ -3,7 +3,7 @@
  * \file cracker.cc
  * \brief Cracker class for ZIP Cracker-ng.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2013.01.28
+ * \date 2013.02.08
  *
  * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
  * See http://www.pkware.com/documents/casestudies/APPNOTE.TXT for

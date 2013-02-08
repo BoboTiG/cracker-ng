@@ -3,7 +3,7 @@
  * \file gui.h
  * \brief GUI management.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2013.01.27
+ * \date 2013.02.08
  *
  * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
  */
@@ -35,7 +35,7 @@ public:
 	);
 	~GUI();
 	
-	bool is_ok() const;
+	//bool is_ok() const;
 	void run() const;
 	void stop() const { /*endwin(); printf("\r\n");*/ };
 	

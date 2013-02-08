@@ -3,7 +3,7 @@
  * \file functions.cc
  * \brief Cracker-ng (optimized) functions.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2013.01.27
+ * \date 2013.02.08
  *
  * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
  */
@@ -48,7 +48,7 @@ const std::string format_number(const size_t& num) {
 	return format.str();
 }
 
-unsigned int get_cores() {
+/*unsigned int get_cores() {
 	unsigned int n = 0;
 	char *buf = new char[256];
 	FILE *f = fopen("/proc/cpuinfo", "r");
@@ -67,7 +67,7 @@ unsigned int get_cores() {
 	}
 	delete[] buf;
 	return n == 0 ? 1 : n;
-}
+}*/
 
 const std::string substr(const std::string& str, unsigned int max, bool middle) {
 	size_t len = str.length();

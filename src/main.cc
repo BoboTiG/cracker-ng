@@ -3,7 +3,7 @@
  * \file main.cc
  * \brief ZIP module for Cracker-ng.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2013.01.27
+ * \date 2013.02.08
  *
  * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
  * See http://www.pkware.com/documents/casestudies/APPNOTE.TXT for
@@ -45,11 +45,9 @@ int main(int argc, char *argv[]) {
 	delete[] str;
 
 	zizi.set_debug(argz.flag == DEBUG);
-#ifdef ZIP
 	if ( !zizi.is_ok() ) {
 		return 1;
 	}
-#endif
 	zizi.crack();
 	return 0;
 }

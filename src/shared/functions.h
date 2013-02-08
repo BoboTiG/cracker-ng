@@ -3,7 +3,7 @@
  * \file functions.h
  * \brief Cracker-ng (optimized) functions headers.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2013.01.27
+ * \date 2013.02.08
  *
  * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
  */
@@ -54,7 +54,7 @@ const std::string format_number(const size_t&);
  * \return \li 0 if \b arguments are valids;
  * \return \li 1 otherwise.
  */
-unsigned int get_cores();
+//unsigned int get_cores();
 
 /*!
  * \fn 

@@ -3,7 +3,7 @@
  * \file gui.cc
  * \brief GUI management.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2013.01.27
+ * \date 2013.02.08
  *
  * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
  */
@@ -58,14 +58,14 @@ void GUI::init() {
 	delete[] _generator; _generator = 0;
 }
 
-bool GUI::is_ok() const {
-	/*if ( this->col < WIDTH || this->row < HEIGHT + 2 ) {
+/*bool GUI::is_ok() const {
+	if ( this->col < WIDTH || this->row < HEIGHT + 2 ) {
 		this->stop();
 		printf(" ! I need a terminal with a minimum size of %dx%d.\n", WIDTH, HEIGHT);
 		return false;
-	}*/
+	}
 	return true;
-}
+}*/
 
 void GUI::run() const {
 	//unsigned int y = 0;    // Y axis indice
