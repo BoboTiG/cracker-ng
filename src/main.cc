@@ -58,7 +58,6 @@ int main(int argc, char *argv[]) {
 	
 	zizi.set_debug(argz.flag == DEBUG);
 	if ( !zizi.is_ok() ) {
-		delete[] false_pos;
 		return 1;
 	}
 	zizi.crack();
