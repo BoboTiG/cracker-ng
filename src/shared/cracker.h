@@ -143,7 +143,7 @@ private:
 
 	/*!
 	 * \fn is_false_positive(const std::string&)
-	 * \brief Initialize the light Local File Header.
+	 * \brief Check the the given pasword is not a false positive.
 	 * \param password The password to check.
 	 * \return \li 0 if is \b false positive;
 	 * \return \li 1 otherwise.
