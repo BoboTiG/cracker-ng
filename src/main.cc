@@ -157,11 +157,8 @@ void help(const std::string& module) {
 	printf(
 		"\nAvailable options:\n"
 		"    -f,  --file       file to crack\n"
-		"    -fp, --false-pos  set one false positive (accumulate up to 8) [only for ZIP]\n"
-		"                      ex: -fp word1 -fp word2 ...\n"
-		"    -i,  --infos      print informations about a file to crack (only for ZIP)\n"
 		"    -,   --stdin      read from STDIN\n"
-		"    -w,  --wordlist   dictionnary tu use\n"
+		"    -w,  --wordlist   dictionnary to use\n"
 		"    -h,  --help       display this message\n"
 		"    -v,  --version    display module version\n"
 		"\nZIP specific options:\n"
@@ -182,7 +179,7 @@ void usage(const std::string& module) {
 	transform(mo.begin(), mo.end(), mo.begin(), ::tolower);
 	printf(
 		"Usage:\n"
-		"\t%scracker-ng -f <file> [-w <wordlist>]\n"
+		"\t%scracker-ng -f <file> [-w <wordlist>] [-fp <word>...]\n"
 		"\tgenerator | %scracker-ng -f <file> -\n"
 		"Where generator could be cat, crunch, john, jot or whatever you want.\n",
 		mo.c_str(), mo.c_str());
