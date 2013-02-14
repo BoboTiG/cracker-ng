@@ -3,7 +3,7 @@
  * \file main.cc
  * \brief ZIP module for Cracker-ng.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2013.02.08
+ * \date 2013.02.14
  *
  * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
  * See http://www.pkware.com/documents/casestudies/APPNOTE.TXT for
@@ -17,12 +17,14 @@
 // C'est parti mon kiki !
 int main(int argc, char *argv[]) {
 	std::string filename, input, password;
+	std::string* false_pos = new std::string[8];
 	size_t flag = NONE;
 	arguments argz = {
-		MODULE, std::string(VERSION), filename, input, flag, (size_t)argc, argv
+		MODULE, std::string(VERSION), filename, input, flag, (size_t)argc, argv, false_pos
 	};
 
 	if ( !argz_traitment(argz) ) {
+		delete[] false_pos;
 		return 0;
 	}
 	
@@ -44,8 +46,19 @@ int main(int argc, char *argv[]) {
 	zizi.set_generator(str);
 	delete[] str;
 
+	// Set false positives
+	size_t i, n = 0;
+	for ( i = 0; i < 8; ++i ) {
+		if ( !false_pos[i].empty() ) {
+			zizi.set_false_pos(false_pos[i], n);
+			++n;
+		}
+	}
+	delete[] false_pos;
+	
 	zizi.set_debug(argz.flag == DEBUG);
 	if ( !zizi.is_ok() ) {
+		delete[] false_pos;
 		return 1;
 	}
 	zizi.crack();
@@ -64,7 +77,7 @@ bool argz_traitment(const arguments& argz) {
 		version(argz.module, argz.version);
 		return false;
 	} else {
-		size_t i;
+		size_t i, fp = 0;
 		bool filename = false;
 		bool wordlist = false;
 		for ( i = 1; i < argz.argc; ++i ) {
@@ -82,6 +95,14 @@ bool argz_traitment(const arguments& argz) {
 				}
 				argz.filename = argz.argv[i];
 				filename = true;
+			}
+			
+			// -fp | --false-pos to set up to 8 false positives
+			if ( !strcmp(argz.argv[i], "-fp") || !strcmp(argz.argv[i], "--false-pos") ) {
+				if ( argz.argv[++i] && fp++ <= 8 ) {
+					argz.false_pos[fp] = std::string(argz.argv[i]);
+					++fp;
+				}
 			}
 			
 			// -i | --infos to get informations about a file
@@ -136,12 +157,18 @@ void help(const std::string& module) {
 	usage(module);
 	printf(
 		"\nAvailable options:\n"
-		"    -f, --file     file to crack\n"
-		"    -i, --infos    print informations about a file to crack (only for ZIP)\n"
-		"    -,  --stdin    read from STDIN\n"
-		"    -w, --wordlist dictionnary tu use\n"
-		"    -h, --help     display this message\n"
-		"    -v, --version  display module version\n\n"
+		"    -f,  --file       file to crack\n"
+		"    -fp, --false-pos  set one false positive (accumulate up to 8) [only for ZIP]\n"
+		"                      ex: -fp word1 -fp word2 ...\n"
+		"    -i,  --infos      print informations about a file to crack (only for ZIP)\n"
+		"    -,   --stdin      read from STDIN\n"
+		"    -w,  --wordlist   dictionnary tu use\n"
+		"    -h,  --help       display this message\n"
+		"    -v,  --version    display module version\n"
+		"\nZIP specific options:\n"
+		"    -fp, --false-pos  set one false positive (accumulate up to 8)\n"
+		"                      ex: -fp word1 -fp word2 ...\n"
+		"    -i,  --infos      print informations about a file to crack\n\n"
 		"Do not hesitate to contact me at <tiger-222@matriux.com> for critics,\n"
 		"suggestions, contributions (or whatever you want!).\n");
 }

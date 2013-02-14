@@ -3,7 +3,7 @@
  * \file main.h
  * \brief ZIP Cracker-ng headers.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2013.01.27
+ * \date 2013.02.14
  * 
  * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
  * See http://www.pkware.com/documents/casestudies/APPNOTE.TXT for
@@ -27,7 +27,7 @@
 	static const char* MODULE = "ZIP";     //!< Module name.
 #endif
 
-static const char* VERSION = "2013.01-21";  //!< Cracker-ng version.
+static const char* VERSION       = "2013.02-14_dev";  //!< Cracker-ng version.
 
 
 /*!
@@ -44,13 +44,14 @@ enum FLAG {
  * \brief ZIP Central Directory structure.
  */
 typedef struct {
-	std::string   module;    //!< The module's name
-	std::string   version;   //!< The module's version
-	std::string & filename;  //!< The file name to crack
-	std::string & input;     //!< The source of words (STDIN or a wordlist)
-	size_t      & flag;      //!< A flag (to set debug)
-	size_t        argc;      //!< Number of arguments
-	char**        argv;      //!< Array of arguments
+	std::string   module;     //!< The module's name
+	std::string   version;    //!< The module's version
+	std::string & filename;   //!< The file name to crack
+	std::string & input;      //!< The source of words (STDIN or a wordlist)
+	size_t      & flag;       //!< A flag (to set debug)
+	size_t        argc;       //!< Number of arguments
+	char**        argv;       //!< Array of arguments
+	std::string * false_pos;  //!< Array of false positives (8 max)
 } arguments;
 
 

@@ -3,7 +3,7 @@
  * \file cracker.h
  * \brief Cracker class header for Cracker-ng.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2013.01.27
+ * \date 2013.02.14
  * 
  * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
  * See http://www.pkware.com/documents/casestudies/APPNOTE.TXT for
@@ -51,11 +51,13 @@ public:
 	void set_encryption(const char* str) { this->encryption = str; };
 	void set_method(const char* str)     { this->method     = str; };
 	void set_generator(const char* str)  { this->generator  = str; };
+	void set_false_pos(const std::string&, const size_t&);
 
 private:
 	std::ifstream filei;
 	size_t debug;
 	std::string title, file, chosen_one, encryption, method, generator;
+	std::string false_pos[8];
 #ifdef ZIP
 	size_t start_byte, end_byte, strong_encryption;
 	local_file_header_light lfh;
@@ -138,6 +140,15 @@ private:
 	 * Contains useful informations about file to crack.
 	 */
 	void init_lfh();
+
+	/*!
+	 * \fn is_false_positive(const std::string&)
+	 * \brief Initialize the light Local File Header.
+	 * \param password The password to check.
+	 * \return \li 0 if is \b false positive;
+	 * \return \li 1 otherwise.
+	 */
+	bool is_false_positive(const std::string&);
 #endif
 };
 

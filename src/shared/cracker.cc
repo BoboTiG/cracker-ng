@@ -3,7 +3,7 @@
  * \file cracker.cc
  * \brief Cracker class for ZIP Cracker-ng.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2013.02.08
+ * \date 2013.02.14
  *
  * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
  * See http://www.pkware.com/documents/casestudies/APPNOTE.TXT for
@@ -306,7 +306,8 @@ Cracker::Cracker(const std::string& filename, const std::string& from) :
 	chosen_one(std::string()),
 	encryption(std::string()),
 	method(std::string()),
-	generator(std::string())
+	generator(std::string()),
+	false_pos()
 #ifdef ZIP
 	,
 	start_byte(0),
@@ -316,7 +317,13 @@ Cracker::Cracker(const std::string& filename, const std::string& from) :
 	cd(cd),
 	ecd(ecd)
 #endif
-{}
+{
+	// Initialize the array of false positive
+	size_t i;
+	for ( i = 0; i < 8; ++i ) {
+		this->false_pos[i] = std::string();
+	}
+}
 
 Cracker::~Cracker() {
 	if ( this->filei.is_open() ) {
@@ -405,14 +412,18 @@ void Cracker::crack() {
 			if ( this->lfh.compression_method == 8 ) {  // The file is deflated
 				if ( puff(dest, destlen, data, sourcelen, io_state) == 0 ) {
 					if ( create_crc32(dest, len) == this->lfh.good_crc_32 ) {
-						chosen_one = password;
-						this_is_now_we_fight = false;
+						if ( !is_false_positive(password) ) {
+							chosen_one = password;
+							this_is_now_we_fight = false;
+						}
 					}
 				}
 			} else {  // The file is stored (no compression)
 				if ( create_crc32(data, len) == this->lfh.good_crc_32 ) {
-					chosen_one = password;
-					this_is_now_we_fight = false;
+					if ( !is_false_positive(password) ) {
+						chosen_one = password;
+						this_is_now_we_fight = false;
+					}
 				}
 			}
 		}
@@ -631,7 +642,23 @@ void Cracker::init_lfh() {
 	this->lfh.strong_encryption         = true;
 	this->lfh.is_encrypted              = true;
 }
+
+bool Cracker::is_false_positive(const std::string& password) {
+	size_t i;
+	bool ret = false;
+	
+	for ( i = 0; i < 8; ++i ) {
+		if ( password == this->false_pos[i] ) {
+			printf(" # False positive ignored: %s\n\n", password.c_str());
+			ret = true;
+			break;
+		}
+	}
+	return ret;
+}
+
 #endif
+
 
 bool Cracker::is_ok() {
 	bool res = true;
@@ -644,6 +671,10 @@ bool Cracker::is_ok() {
 		res = false;
 	}
 	return res;
+}
+
+void Cracker::set_false_pos(const std::string& password, const size_t& i) {
+	this->false_pos[i] = password;
 }
 
 void Cracker::result(const std::string& password) {
