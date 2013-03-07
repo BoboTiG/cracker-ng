@@ -29,9 +29,9 @@ int main(int argc, char *argv[]) {
 	}
 	
 	// Signal handler
-	signal(SIGABRT, &signal_handler);
+	/*signal(SIGABRT, &signal_handler);
 	signal(SIGTERM, &signal_handler);
-	signal(SIGINT,  &signal_handler);
+	signal(SIGINT,  &signal_handler);*/
 
 	// Who I am? I'm a champion!
 	Cracker zizi(argz.filename, argz.input);
