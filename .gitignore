@@ -1,4 +1,6 @@
 *.o
 .*
-test*
+#test*
 bin/
+tests/*.d
+tests/perf*
