@@ -365,7 +365,7 @@ void Cracker::crack() {
 	unsigned long destlen   = this->lfh.uncompressed_size;
 	unsigned long sourcelen = len;
 	struct state io_state;
-	
+
 	// Read encrypted data
 	this->filei.seekg(this->lfh.start_byte, std::ios::beg);
 	this->filei.read(encryption_header, 12);
@@ -378,7 +378,7 @@ void Cracker::crack() {
 	} else {
 		input = fopen(this->from.c_str(), "r");
 	}
-	
+
 	// Let's go!
 	gui.run();
 	pthread_create(&stat, NULL, stats, reinterpret_cast<void*>(&s));
@@ -530,7 +530,7 @@ bool Cracker::check_method() {
 int Cracker::check_lfh() {
 	size_t max16 = std::numeric_limits<uint16_t>::max();
 	size_t max32 = std::numeric_limits<uint32_t>::max();
-	
+
 	if ( this->lfh.good_crc_32 > max32 ) {
 		return -1;
 	}
@@ -646,7 +646,7 @@ void Cracker::init_lfh() {
 bool Cracker::is_false_positive(const std::string& password) {
 	size_t i;
 	bool ret = false;
-	
+
 	for ( i = 0; i < 8; ++i ) {
 		if ( password == this->false_pos[i] ) {
 			printf(" # False positive ignored: %s\n\n", password.c_str());
@@ -662,7 +662,7 @@ bool Cracker::is_false_positive(const std::string& password) {
 
 bool Cracker::is_ok() {
 	bool res = true;
-	
+
 	if ( !this->filei.is_open() ) {
 		fprintf(stderr, " ! I cannot open the file.\n");
 		res = false;

@@ -2,7 +2,7 @@ NAME    = cracker-ng
 MODULES = cpt zip
 
 all: title
-	@echo " - Available modules are: cpt, zip."
+	@echo " - Available modules are: $(MODULES)"
 	@echo " + Try 'make <module>' to build <module>cracker-ng."
 	@echo " + Try 'make modules' to build all modules."
 
