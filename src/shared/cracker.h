@@ -3,8 +3,8 @@
  * \file cracker.h
  * \brief Cracker class header for Cracker-ng.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2013.02.14
- * 
+ * \date 2013.12.30
+ *
  * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
  * See http://www.pkware.com/documents/casestudies/APPNOTE.TXT for
  * more details about ZIP specifications.
@@ -64,7 +64,10 @@ private:
 	central_directory cd;
 	end_central_directory ecd;
 #endif
-	
+
+	Cracker(const Cracker &);
+	Cracker & operator=(const Cracker &);
+
 	// Optimized read from stdin or a wordlist
 	inline bool read_input(FILE* input, char*& output, const size_t& len) {
 		if ( fgets(output, len, input) != NULL ) {
@@ -100,7 +103,7 @@ private:
 	 * \return \li 1 otherwise.
 	 */
 	bool check_headers();
-	
+
 	/*!
 	 * \fn check_lfh()
 	 * \brief Check all variables of the LFH struct.
@@ -128,9 +131,9 @@ private:
 	 * \brief Try to find the Central Directory Headers start and end.
 	 * \return \li 0 if signatures \b not found;
 	 * \return \li 1 otherwise.
-	 * 
+	 *
 	 * Signatures: start = 0x02014b50, end = 0x06054b50.
-	 * 
+	 *
 	 */
 	bool find_central_directory();
 
