@@ -3,7 +3,7 @@
  * \file cracker.cc
  * \brief Cracker class for ZIP Cracker-ng.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2013.02.14
+ * \date 2013.12.30
  *
  * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
  * See http://www.pkware.com/documents/casestudies/APPNOTE.TXT for
@@ -313,9 +313,9 @@ Cracker::Cracker(const std::string& filename, const std::string& from) :
 	start_byte(0),
 	end_byte(0),
 	strong_encryption(0),
-	lfh(lfh),
-	cd(cd),
-	ecd(ecd)
+	lfh(local_file_header_light()),
+	cd(central_directory()),
+	ecd(end_central_directory())
 #endif
 {
 	// Initialize the array of false positive
