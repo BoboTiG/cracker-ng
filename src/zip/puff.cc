@@ -3,11 +3,11 @@
  * \file puff.cc
  * \brief ZIP Cracker-ng deflate algorithm (optimized for the project).
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2013.01.28
- * 
+ * \date 2014.01.04
+ *
  * Copyright (C) 2002-2010 Mark Adler
- * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
- * 
+ * Copyright (C) 2012-2014 Mickaël 'Tiger-222' Schoentgen.
+ *
  * Why using puff() instead of optimized boost libraries?
  * This is simple: puff() aborts early when there is one bad operation.
  * Boost inflates all datas and then thows an error.
@@ -39,7 +39,7 @@ const short dext[30] = {
 const short order[19] = {
 	16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15};
 
-static int bits(struct state *s, int need)
+static int bits(struct state *s, const int need)
 {
     int val = s->bitbuf;  // load at least need bits into val
 
@@ -118,7 +118,7 @@ static int decode(struct state *s, const struct huffman *h)
             code  <<= 1;
             ++len;
         }
-        left = (MAXBITS+1) - len;
+        left = 16 - len;
         if (left == 0)
             break;
         if (s->incnt == s->inlen)
@@ -130,15 +130,15 @@ static int decode(struct state *s, const struct huffman *h)
     return -10;  // ran out of codes
 }
 
-static int construct(struct huffman *h, const short *length, int n)
+static int construct(struct huffman *h, const short *length, const int &n)
 {
     int symbol;             // current symbol when stepping through length[]
     int len;                // current length when stepping through h->count[]
     int left;               // number of possible codes left of current length
-    short offs[MAXBITS+1];  // offsets in symbol table for each length
+    short offs[16];         // offsets in symbol table for each length
 
     // count number of codes of each length
-    for (len = 0; len <= MAXBITS; ++len)
+    for (len = 0; len < 16; ++len)
         h->count[len] = 0;
     for (symbol = 0; symbol < n; ++symbol)
         h->count[length[symbol]]++;   // assumes lengths are within bounds
@@ -147,7 +147,7 @@ static int construct(struct huffman *h, const short *length, int n)
 
     // check for an over-subscribed or incomplete set of lengths
     left = 1;                         // one possible code of zero length
-    for (len = 1; len <= MAXBITS; ++len) {
+    for (len = 1; len < 16; ++len) {
         left <<= 1;                   // one more bit, double codes left
         left -= h->count[len];        // deduct count from possible codes
         if (left < 0)
@@ -156,7 +156,7 @@ static int construct(struct huffman *h, const short *length, int n)
 
     // generate offsets into symbol table for each length for sorting
     offs[1] = 0;
-    for (len = 1; len < MAXBITS; ++len)
+    for (len = 1; len < 15; ++len)
         offs[len + 1] = offs[len] + h->count[len];
 
     /*
@@ -223,11 +223,11 @@ static int codes(
 
 static int fixed(struct state *s)
 {
-    static short lencnt[MAXBITS+1], lensym[FIXLCODES];
-    static short distcnt[MAXBITS+1], distsym[MAXDCODES];
+    static short lencnt[16], lensym[288];
+    static short distcnt[16], distsym[30];
     static struct huffman lencode, distcode;
     int symbol;
-    short lengths[FIXLCODES];
+    short lengths[288];
 
     // build fixed huffman tables
 
@@ -244,14 +244,14 @@ static int fixed(struct state *s)
         lengths[symbol] = 9;
     for (; symbol < 280; ++symbol)
         lengths[symbol] = 7;
-    for (; symbol < FIXLCODES; ++symbol)
+    for (; symbol < 288; ++symbol)
         lengths[symbol] = 8;
-    construct(&lencode, lengths, FIXLCODES);
+    construct(&lencode, lengths, 288);
 
     // distance table
-    for (symbol = 0; symbol < MAXDCODES; ++symbol)
+    for (symbol = 0; symbol < 30; ++symbol)
         lengths[symbol] = 5;
-    construct(&distcode, lengths, MAXDCODES);
+    construct(&distcode, lengths, 30);
 
     // decode data until end-of-block code
     return codes(s, &lencode, &distcode);
@@ -259,13 +259,13 @@ static int fixed(struct state *s)
 
 static int dynamic(struct state *s)
 {
-    int nlen, ndist, ncode;                        // number of lengths in descriptor
-    int index;                                     // index of lengths[]
-    int err;                                       // construct() return value
-    short lengths[MAXCODES];                       // descriptor code lengths
-    short lencnt[MAXBITS+1], lensym[MAXLCODES];    // lencode memory
-    short distcnt[MAXBITS+1], distsym[MAXDCODES];  // distcode memory
-    struct huffman lencode, distcode;              // length and distance codes
+    int nlen, ndist, ncode;            // number of lengths in descriptor
+    int index;                         // index of lengths[]
+    int err;                           // construct() return value
+    short lengths[316];                // descriptor code lengths
+    short lencnt[16], lensym[286];     // lencode memory
+    short distcnt[16], distsym[30];    // distcode memory
+    struct huffman lencode, distcode;  // length and distance codes
 
     // construct lencode and distcode
     lencode.count = lencnt;
@@ -277,7 +277,7 @@ static int dynamic(struct state *s)
     nlen  = bits(s, 5) + 257;
     ndist = bits(s, 5) + 1;
     ncode = bits(s, 4) + 4;
-    if (nlen > MAXLCODES || ndist > MAXDCODES)
+    if (nlen > 286 || ndist > 30)
         return -3;  // bad counts
 
     // read code length code lengths (really), missing lengths are zero
@@ -369,19 +369,17 @@ int puff(
         // process blocks until last block or error
         do {
             last = bits(&s, 1);  // one if last block
-            type = bits(&s, 2);  // block type 0..3 
-            if ( type == 2 )
-            	err = dynamic(&s);
-            else if ( type == 1 )
+            type = bits(&s, 2);  // block type 0..3
+            if ( type == 1 ) {
             	err = fixed(&s);
-            else if ( type == 0 )
+            } else if ( type == 2 ) {
+            	err = dynamic(&s);
+            } else if ( type == 0 ) {
             	err = stored(&s);
-            else {
+            } else {
             	err = -1;  // return with error
             }
-            if ( err != 0 )
-            	break;
-        } while (!last);
+        } while (!last && err == 0);
     }
     return err;
 }

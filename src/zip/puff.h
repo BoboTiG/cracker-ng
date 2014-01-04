@@ -3,19 +3,19 @@
  * \file puff.h
  * \brief ZIP Cracker-ng headers for the deflate algorithm (optimized for the project).
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2013.01.28
- * 
+ * \date 2014.01.04
+ *
  * Copyright (C) 2002-2010 Mark Adler
- * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
- * 
+ * Copyright (C) 2012-2014 Mickaël 'Tiger-222' Schoentgen.
+ *
  * This software is provided 'as-is', without any express or implied
  * warranty.  In no event will the author be held liable for any damages
  * arising from the use of this software.
- * 
+ *
  * Permission is granted to anyone to use this software for any purpose,
  * including commercial applications, and to alter it and redistribute it
  * freely, subject to the following restrictions:
- * 
+ *
  * 1. The origin of this software must not be misrepresented; you must not
  *    claim that you wrote the original software. If you use this software
  *    in a product, an acknowledgment in the product documentation would be
@@ -23,7 +23,7 @@
  * 2. Altered source versions must be plainly marked as such, and must not be
  *    misrepresented as being the original software.
  * 3. This notice may not be removed or altered from any source distribution.
- * 
+ *
  *
  * In the comments below are "Format notes" that describe the inflate process
  * and document some of the less obvious aspects of the format.  This source
@@ -31,57 +31,8 @@
  * format:
  *
  *    http://www.zlib.org/rfc-deflate.html
- * 
+ *
  * Mark Adler    madler@alumni.caltech.edu
- *
- * 
- * Change history:
- *
- * 1.0  10 Feb 2002     - First version
- * 1.1  17 Feb 2002     - Clarifications of some comments and notes
- *                      - Update puff() dest and source pointers on negative
- *                        errors to facilitate debugging deflators
- *                      - Remove longest from struct huffman -- not needed
- *                      - Simplify offs[] index in construct()
- *                      - Add input size and checking, using longjmp() to
- *                        maintain easy readability
- *                      - Use short data type for large arrays
- *                      - Use pointers instead of long to specify source and
- *                        destination sizes to avoid arbitrary 4 GB limits
- * 1.2  17 Mar 2002     - Add faster version of decode(), doubles speed (!),
- *                        but leave simple version for readabilty
- *                      - Make sure invalid distances detected if pointers
- *                        are 16 bits
- *                      - Fix fixed codes table error
- *                      - Provide a scanning mode for determining size of
- *                        uncompressed data
- * 1.3  20 Mar 2002     - Go back to lengths for puff() parameters [Gailly]
- *                      - Add a puff.h file for the interface
- *                      - Add braces in puff() for else do [Gailly]
- *                      - Use indexes instead of pointers for readability
- * 1.4  31 Mar 2002     - Simplify construct() code set check
- *                      - Fix some comments
- *                      - Add FIXLCODES #define
- * 1.5   6 Apr 2002     - Minor comment fixes
- * 1.6   7 Aug 2002     - Minor format changes
- * 1.7   3 Mar 2003     - Added test code for distribution
- *                      - Added zlib-like license
- * 1.8   9 Jan 2004     - Added some comments on no distance codes case
- * 1.9  21 Feb 2008     - Fix bug on 16-bit integer architectures [Pohland]
- *                      - Catch missing end-of-block symbol error
- * 2.0  25 Jul 2008     - Add #define to permit distance too far back
- *                      - Add option in TEST code for puff to write the data
- *                      - Add option in TEST code to skip input bytes
- *                      - Allow TEST code to read from piped stdin
- * 2.1   4 Apr 2010     - Avoid variable initialization for happier compilers
- *                      - Avoid unsigned comparisons for even happier compilers
- * 2.2  25 Apr 2010     - Fix bug in variable initializations [Oberhumer]
- *                      - Add const where appropriate [Oberhumer]
- *                      - Split if's and ?'s for coverage testing
- *                      - Break out test code to separate file
- *                      - Move NIL to puff.h
- *                      - Allow incomplete code only if single code length is 1
- *                      - Add full code coverage test to Makefile
 */
 
 
@@ -96,11 +47,11 @@
  * Maximums for allocations and loops.  It is not useful to change these --
  * they are fixed by the deflate format.
  */
-static const int MAXBITS   = 15;                     // maximum bits in a code */
-static const int MAXLCODES = 286;                    // maximum number of literal/length codes */
-static const int MAXDCODES = 30;                     // maximum number of distance codes */
-static const int MAXCODES  = MAXLCODES + MAXDCODES;  // maximum codes lengths to read */
-static const int FIXLCODES = 288;                    // number of fixed literal/length codes */
+// static const int MAXBITS   = 15;                     // maximum bits in a code */
+// static const int MAXLCODES = 286;                    // maximum number of literal/length codes */
+// static const int MAXDCODES = 30;                     // maximum number of distance codes */
+// static const int MAXCODES  = MAXLCODES + MAXDCODES;  // maximum codes lengths to read */
+// static const int FIXLCODES = 288;                    // number of fixed literal/length codes */
 
 // input and output state
 struct state {
