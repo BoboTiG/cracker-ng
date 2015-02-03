@@ -457,10 +457,10 @@ bool Cracker::check() {
 	this->filei.seekg(0, std::ios::end);
 	size_t size = this->filei.tellg();
 	if ( size < 22 ) {
-		fprintf(stderr, " ! The file size is %lu bytes, but the minimum size is 22 bytes.\n", size);
+		fprintf(stderr, " ! The file size is %zu bytes, but the minimum size is 22 bytes.\n", size);
 		return false;
 	} else if ( size > 4294967295 ) {
-		fprintf(stderr, " ! The file size is %lu bytes, but the maximum size is 4294967295 bytes.\n", size);
+		fprintf(stderr, " ! The file size is %zu bytes, but the maximum size is 4294967295 bytes.\n", size);
 		return false;
 	}
 	if ( !this->find_central_directory() ) {
