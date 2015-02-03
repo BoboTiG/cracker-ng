@@ -8,6 +8,9 @@
 
 [ dev ]
 	. Cracker-ng 2015.mm-jj released
+
+[ february 03 2015 ]
+	. Cracker-ng 2015.02-03 released
 	. code refactoring
 	^ bugs pointed by cppcheck tool
 	. ZIP module:
