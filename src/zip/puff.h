@@ -66,9 +66,6 @@ struct state {
     unsigned long incnt;        // bytes read so far
     int bitbuf;                 // bit buffer
     int bitcnt;                 // number of bits in bit buffer
-
-    // input limit error return state for bits() and decode()
-    jmp_buf env;
 };
 
 /*
@@ -79,8 +76,8 @@ struct state {
  * seen in the function decode() below.
 */
 struct huffman {
-    short *count;       // number of symbols of each length
-    short *symbol;      // canonically ordered symbols
+    int *count;       // number of symbols of each length
+    int *symbol;      // canonically ordered symbols
 };
 
 /*
@@ -233,10 +230,10 @@ struct huffman {
 	struct state *s,
 	const struct huffman *lencode,
 	const struct huffman *distcode);*/
-extern const short  lens[29];  // Size base for length codes 257..285
-extern const short  lext[29];  // Extra bits for length codes 257..285
-extern const short dists[30];  // Offset base for distance codes 0..29
-extern const short  dext[30];  // Extra bits for distance codes 0..29
+extern const int  lens[29];  // Size base for length codes 257..285
+extern const int  lext[29];  // Extra bits for length codes 257..285
+extern const int dists[30];  // Offset base for distance codes 0..29
+extern const int  dext[30];  // Extra bits for distance codes 0..29
 
 /*
  * Process a fixed codes block.
@@ -352,7 +349,7 @@ extern const short  dext[30];  // Extra bits for distance codes 0..29
  *   block is around 80 bytes.
 */
 //static int dynamic(struct state *s);
-extern const short order[19];  // permutation of code length codes
+extern const int order[19];  // permutation of code length codes
 
 /*
  * Inflate source to dest.  On return, destlen and sourcelen are updated to the

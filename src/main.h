@@ -3,9 +3,9 @@
  * \file main.h
  * \brief ZIP Cracker-ng headers.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2013.02.14
- * 
- * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
+ * \date 2015.02.03
+ *
+ * Copyright (C) 2012-2015 Mickaël 'Tiger-222' Schoentgen.
  * See http://www.pkware.com/documents/casestudies/APPNOTE.TXT for
  * more details about ZIP specifications.
  */
@@ -17,6 +17,7 @@
 
 #include <algorithm>  // transform()
 #include <csignal>    // SIGABRT, SIGTERM, SIGINT
+#include <string>
 #include "./shared/functions.h"
 #include "./shared/stats.h"
 #include "./shared/gui.h"
@@ -27,7 +28,7 @@
 	static const char* MODULE = "ZIP";     //!< Module name.
 #endif
 
-static const char* VERSION       = "2013.02-14_dev";  //!< Cracker-ng version.
+static const char* VERSION       = "2015.02-03";  //!< Cracker-ng version.
 
 
 /*!

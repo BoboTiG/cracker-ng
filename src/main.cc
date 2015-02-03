@@ -27,7 +27,7 @@ int main(int argc, char *argv[]) {
 		delete[] false_pos;
 		return 0;
 	}
-	
+
 	// Signal handler
 	/*signal(SIGABRT, &signal_handler);
 	signal(SIGTERM, &signal_handler);
@@ -55,7 +55,7 @@ int main(int argc, char *argv[]) {
 		}
 	}
 	delete[] false_pos;
-	
+
 	zizi.set_debug(argz.flag == DEBUG);
 	if ( !zizi.is_ok() ) {
 		return 1;
@@ -77,12 +77,11 @@ bool argz_traitment(const arguments& argz) {
 		return false;
 	} else {
 		size_t i, fp = 0;
-		bool filename = false;
-		bool wordlist = false;
-		for ( i = 1; i < argz.argc; ++i ) {
-			
+		bool filename = false, wordlist = false;
+		for ( i = 1; i < argz.argc; ++i )
+		{
 			// -f | --file to set the file to crack
-			if ( !filename && 
+			if ( !filename &&
 				(!strcmp(argz.argv[i], "-f") || !strcmp(argz.argv[i], "--file")) ) {
 				if ( !argz.argv[++i] ) {
 					fprintf(stderr, " ! Please gimme a file.\n");
@@ -95,7 +94,6 @@ bool argz_traitment(const arguments& argz) {
 				argz.filename = argz.argv[i];
 				filename = true;
 			}
-			
 			// -fp | --false-pos to set up to 8 false positives
 			if ( !strcmp(argz.argv[i], "-fp") || !strcmp(argz.argv[i], "--false-pos") ) {
 				if ( argz.argv[++i] && fp++ <= 8 ) {
@@ -103,10 +101,9 @@ bool argz_traitment(const arguments& argz) {
 					++fp;
 				}
 			}
-			
 			// -i | --infos to get informations about a file
 			// Useful for the ZIP module, for others it will just do as -f | --file option
-			else if ( !filename && 
+			else if ( !filename &&
 				     (!strcmp(argz.argv[i], "-i") || !strcmp(argz.argv[i], "--infos")) ) {
 				if ( !argz.argv[++i] ) {
 					fprintf(stderr, " ! Please gimme a wordlist.\n");
@@ -120,9 +117,8 @@ bool argz_traitment(const arguments& argz) {
 				argz.flag = DEBUG;
 				filename = true;
 			}
-			
 			// -w | --wordlist to set the wordlist file to use
-			else if ( !wordlist && 
+			else if ( !wordlist &&
 				    (!strcmp(argz.argv[i], "-w") || !strcmp(argz.argv[i], "--wordlist")) ) {
 				if ( !argz.argv[++i] ) {
 					fprintf(stderr, " ! Please gimme a wordlist.\n");

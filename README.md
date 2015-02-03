@@ -1,11 +1,11 @@
 Cracker-ng
 ==========
 
-Copyright (C) 2011-2013 by Mickaël 'Tiger-222' Schoentgen.
+Copyright (C) 2011-2014 by Mickaël 'Tiger-222' Schoentgen.
 
-Cracker-ng comes with ABSOLUTELY NO WARRANTY.  
-This is free software, and you are welcome to redistribute it under   
-certain conditions. See the GNU General Public Licence for details.  
+Cracker-ng comes with ABSOLUTELY NO WARRANTY.
+This is free software, and you are welcome to redistribute it under
+certain conditions. See the GNU General Public Licence for details.
 
 
 What
@@ -38,14 +38,14 @@ Usage: **MODULE**cracker-ng -f FILE
 
 Examples with ZIP module:
 
-* wordlist attack: 
-	cat wordlist.lst | zipcracker-ng -f FILE  -  
-	john --incremental --stdout | zipcracker-ng -f FILE -  
-	crunch 1 8 -f charset.lst lalpha | zipcracker-ng -f FILE -  
+* wordlist attack:
+	cat wordlist.lst | zipcracker-ng -f FILE  -
+	john --incremental --stdout | zipcracker-ng -f FILE -
+	crunch 1 8 -f charset.lst lalpha | zipcracker-ng -f FILE -
 	zipcracker-ng -f FILE -w wordlist.lst
 
 Why
 ---
 
-I wrote this tool when I saw poor resources we have on *unix for ZIP and  
+I wrote this tool when I saw poor resources we have on *unix for ZIP and
 RAR files password cracking. Hope it will be helpful.

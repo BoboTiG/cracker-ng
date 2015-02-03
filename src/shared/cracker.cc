@@ -3,9 +3,9 @@
  * \file cracker.cc
  * \brief Cracker class for ZIP Cracker-ng.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2013.12.30
+ * \date 2015.02.03
  *
- * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
+ * Copyright (C) 2012-2015 Mickaël 'Tiger-222' Schoentgen.
  * See http://www.pkware.com/documents/casestudies/APPNOTE.TXT for
  * more details about ZIP specifications.
  */
@@ -417,6 +417,7 @@ void Cracker::crack() {
 							this_is_now_we_fight = false;
 						}
 					}
+					continue;
 				}
 			} else {  // The file is stored (no compression)
 				if ( create_crc32(data, len) == this->lfh.good_crc_32 ) {
@@ -442,29 +443,27 @@ void Cracker::crack() {
 	delete[] password;                   password = 0;
 	delete[] encryption_header; encryption_header = 0;
 	this->result(chosen_one);
-	return;
 }
 
 bool Cracker::check() {
 #ifdef CPT
 	return true;
-}
 #elif ZIP
 	if ( !this->check_headers() ) {
-		fprintf(stderr, " ! Bad ZIP file (wrong headers).\n");
+		std::cerr << " ! Bad ZIP file (wrong headers)." << std::endl;
 		return false;
 	}
 	this->filei.seekg(0, std::ios::end);
 	size_t size = this->filei.tellg();
 	if ( size < 22 ) {
-		fprintf(stderr, " ! The file size is %zu bytes, but the minimum size is 22 bytes.\n", size);
+		std::cerr << " ! The file size is " << size << " bytes, but the minimum size is 22 bytes." << std::endl;
 		return false;
 	} else if ( size > 4294967295 ) {
-		fprintf(stderr, " ! The file size is %zu bytes, but the maximum size is 4294967295 bytes.\n", size);
+		std::cerr << " ! The file size is " << size << " bytes, but the maximum size is 4294967295 bytes." << std::endl;
 		return false;
 	}
 	if ( !this->find_central_directory() ) {
-		fprintf(stderr, " ! Unable to find Central Directory signatures.\n");
+		std::cerr << " ! Unable to find Central Directory signatures." << std::endl;
 		return false;
 	}
 	read_ng::read_central_directory(this->filei, &this->cd, this->start_byte, this->debug);
@@ -472,27 +471,27 @@ bool Cracker::check() {
 	this->init_lfh();
 	this->determine_chosen_one();
 	if ( !this->check_method() ) {
-		fprintf(stderr, " ! Method not implemented (%d).\n", this->lfh.compression_method);
+		std::cerr << " ! Method not implemented (" << this->lfh.compression_method << ")." << std::endl;
 		return false;
 	}
 	int ret = this->check_lfh();
 	if ( ret != 1 ) {
-		fprintf(stderr, " ! I found a bad parameter (%d) into the LFH struct.\n", ret);
+		std::cerr << " ! I found a bad parameter (" << ret << ") into the LFH struct." << std::endl;
 		return false;
 	}
 	if ( this->cd.is_encrypted && this->lfh.is_encrypted ) {
 		if ( this->cd.strong_encryption && this->lfh.strong_encryption ) {
-			fprintf(stderr, " ! Encryption: strong (no implemented).\n");
+			std::cerr << " ! Encryption: strong (no implemented)." << std::endl;
 			this->strong_encryption = true;
 		} else {
 			this->set_encryption("Encryption: standard (traditional PKWARE)");
 			if ( this->lfh.good_crc_32 == 0 ) {
-				fprintf(stderr, " ! CRC-32 empty, cannot work without it on this encryption scheme.\n");
+				std::cerr << " ! CRC-32 empty, cannot work without it on this encryption scheme." << std::endl;
 				return false;
 			}
 		}
 	} else {
-		fprintf(stderr, " + This file is not encrypted.\n");
+		std::cerr << " + This file is not encrypted." << std::endl;
 		return false;
 	}
 	if ( this->debug ) {
@@ -502,7 +501,7 @@ bool Cracker::check() {
 #endif
 }
 
-#elif ZIP
+#ifdef ZIP
 bool Cracker::check_headers() {
 	uint32_t* header_signature = new uint32_t;
 	uint32_t zip_signature = 0x04034b50;
@@ -651,7 +650,7 @@ bool Cracker::is_false_positive(const std::string& password) {
 
 	for ( i = 0; i < 8; ++i ) {
 		if ( password == this->false_pos[i] ) {
-			printf(" # False positive ignored: %s\n\n", password.c_str());
+			std::cout << " # False positive ignored: " << password.c_str() << std::endl << std::endl;
 			ret = true;
 			break;
 		}
@@ -666,7 +665,7 @@ bool Cracker::is_ok() {
 	bool res = true;
 
 	if ( !this->filei.is_open() ) {
-		fprintf(stderr, " ! I cannot open the file.\n");
+		std::cerr << " ! I cannot open the file." << std::endl;
 		res = false;
 	}
 	if ( !this->check() ) {
@@ -684,9 +683,10 @@ void Cracker::result(const std::string& password) {
 		printf(" ! Password not found.\n");
 	} else {
 		const char *p = password.c_str();
+		size_t i, len = strlen(p);
 		printf(" + Password found: %s\n", p);
 		printf("   HEXA[ ");
-		for ( size_t i = 0; i < strlen(p); ++i ) {
+		for ( i = 0; i < len; ++i ) {
 			printf("%02X ", p[i] & 0xff);
 		}
 		printf("]\n");

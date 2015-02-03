@@ -3,10 +3,10 @@
  * \file crypt.h
  * \brief ZIP Cracker-ng headers for the Traditional PKWARE Encryption.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2013.01.27
+ * \date 2014.01.04
  *
  * Copyright (c) 1990-2007 Info-ZIP.  All rights reserved.
- * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
+ * Copyright (C) 2012-2014 Mickaël 'Tiger-222' Schoentgen.
  *
  * See the accompanying file LICENSE, version 2005-Feb-10 or later for
  * terms of use. If, for some reason, all these files are missing, the
@@ -59,7 +59,7 @@ inline uint32_t create_crc32(const unsigned char* buf, size_t len) {
 			pcrc_32_tab[1][(two>>16) & 0xff] ^
 			pcrc_32_tab[0][ two>>24        ];
 	}
-	unsigned char* c = (unsigned char*)current;
+	unsigned char* c = reinterpret_cast<unsigned char*>(current);
 	for ( ; len; --len ) {
 		crc = (crc >> 8) ^ pcrc_32_tab[0][(crc ^ *c++) & 0xff];
 	}
@@ -99,7 +99,9 @@ inline void init_keys(const char* passwd) {
 	keys[0] = 0x12345678;
 	keys[1] = 0x23456789;
 	keys[2] = 0x34567890;
-	while (*passwd) update_keys(*passwd++);
+	while (*passwd) {
+		update_keys(*passwd++);
+	}
 }
 
 #endif  // SRC_ZIP_CRYPT_H_

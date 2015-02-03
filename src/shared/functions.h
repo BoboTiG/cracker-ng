@@ -3,15 +3,16 @@
  * \file functions.h
  * \brief Cracker-ng (optimized) functions headers.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2013.02.08
+ * \date 2015.02.03
  *
- * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
+ * Copyright (C) 2012-2015 Mickaël 'Tiger-222' Schoentgen.
  */
 
 
 #ifndef SRC_SHARED_FUNCTIONS_H_
 #define SRC_SHARED_FUNCTIONS_H_
 
+#include <iostream>
 #include <string>
 #include <sstream>
 #include <cstdio>   // fopen()
@@ -48,7 +49,7 @@ bool file_exists(const char*);
 const std::string format_number(const size_t&);
 
 /*!
- * \fn 
+ * \fn
  * \brief .
  * \param .
  * \return \li 0 if \b arguments are valids;
@@ -57,7 +58,7 @@ const std::string format_number(const size_t&);
 //unsigned int get_cores();
 
 /*!
- * \fn 
+ * \fn
  * \brief .
  * \param .
  * \return \li 0 if \b arguments are valids;

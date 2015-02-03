@@ -2,7 +2,7 @@
 CXX     = g++
 #CXX     = callcatcher g++
 #CFLAGS  = -O0 -g
-CFLAGS  = -march=native -O3 -mmmx -msse -msse2 -msse3 -m3dnow -ffast-math -mno-ieee-fp -s
+CFLAGS  = -march=native -O3 -mmmx -msse -msse2 -msse3 -m3dnow -ffast-math -mno-ieee-fp -s -D_FILE_OFFSET_BITS=64
 CFLAGS += -Wfatal-errors -Werror -Wall -W -pedantic -Wextra -Wunused -Wformat=2 -Weffc++ -Wpadded -fexceptions
 LDLIBS  = -lpthread
 #LDLIBS += -lcurses

@@ -7,8 +7,9 @@
 
 
 [ dev ]
-	. Cracker-ng 2013.mm-jj released
+	. Cracker-ng 2015.mm-jj released
 	. code refactoring
+	^ bugs pointed by cppcheck tool
 	. ZIP module:
 		* use of the patch provided by Mark Adler for the segfault into puff.cc
 		* huge optimizations of create_crc32() into crypt.h
@@ -141,7 +142,7 @@
 
 [ july 05 2011 ]
 	. Cracker-ng 0.1a-2 released
-	. ZIP module: 
+	. ZIP module:
 		* code review for create_crc32() and traditional_pkware()
 	. shared functions:
 		* use of core functions instead of boost::posix_time for stats
@@ -151,7 +152,7 @@
 [ june 24 2011 ]
 	. Cracker-ng 0.1a-1 released
 	+ display statistics (pwd/sec) each 5 secondes
-	. ZIP module: 
+	. ZIP module:
 		* reduce iterations number by 25% into find_central_directory()
 		+ understand the Data Descriptor (local_file_header struct)
 		+ support stored file (when compression_method is 0)

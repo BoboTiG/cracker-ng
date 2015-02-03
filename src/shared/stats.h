@@ -3,9 +3,9 @@
  * \file stats.h
  * \brief Statistics headers.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2013.01.23
+ * \date 2015.02.03
  *
- * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
+ * Copyright (C) 2012-2015 Mickaël 'Tiger-222' Schoentgen.
  */
 
 
@@ -27,7 +27,7 @@ void *stats(void*);
 class Stats {
 public:
 	statistics& s;
-	
+
 	Stats(statistics&);
 	~Stats();
 	void start();
@@ -37,7 +37,6 @@ protected:
 private:
 	size_t sleeping_time;
 	time_t start_time;
-
 	time_t elapsed_seconds();
 };
 

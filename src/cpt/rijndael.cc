@@ -9,14 +9,14 @@
  * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
  * This file is part of ccrypt. It is free software and it is covered
  * by the GNU general public license. See the file COPYING for details.
- * 
+ *
  * $Id: rijndael.c 258 2009-08-26 17:46:10Z selinger $
- * 
+ *
  * derived from original source: rijndael-alg-ref.c   v2.0   August '99
  * Reference ANSI C code for NIST competition
  * authors: Paulo Barreto
  *          Vincent Rijmen
- * 
+ *
  * This is an optimized version for Cracker-ng.
  */
 
@@ -175,9 +175,9 @@ void xrijndaelDecrypt(word32 block[], roundkey* rkk) {
 
 	/* To decrypt: apply the inverse operations of the encrypt routine,
 	*             in opposite order
-	* 
+	*
 	* (xKeyAddition is an involution: it's equal to its inverse)
-	* (the inverse of xSubstitution with table S is xSubstitution with the 
+	* (the inverse of xSubstitution with table S is xSubstitution with the
 	* inverse table of S)
 	* (the inverse of xShiftRow is xShiftRow over a suitable distance)
 	*/
