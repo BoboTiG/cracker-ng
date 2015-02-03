@@ -499,8 +499,10 @@ bool Cracker::check() {
 		return false;
 	}
 	return true;
+#endif
 }
 
+#elif ZIP
 bool Cracker::check_headers() {
 	uint32_t* header_signature = new uint32_t;
 	uint32_t zip_signature = 0x04034b50;
