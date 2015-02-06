@@ -602,7 +602,7 @@ bool Cracker::find_central_directory() {
 				 tmp[2] == 0x05 && tmp[3] == 0x06 ) {
 				this->end_byte = i;
 				found_end = true;
-				i -= 3;
+				i -= 52;  // Minimal size of the Central Directory
 			} else if ( tmp[2] != 0x06 ) {
 				--i;
 				if ( tmp[1] != 0x06 ) {
