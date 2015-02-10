@@ -592,7 +592,7 @@ bool Cracker::find_central_directory() {
 	bool found_end = false, found = false;
 	size_t i;
 
-	this->filei.seekg(-4, std::ios::end);
+	this->filei.seekg(-22, std::ios::end);  // Minimal size of the End of Central Directory + tmp size's
 	i = this->filei.tellg();
 	for ( ; i > 3 && !found; --i ) {
 		this->filei.seekg(i, std::ios::beg);
