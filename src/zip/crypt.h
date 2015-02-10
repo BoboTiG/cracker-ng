@@ -3,10 +3,10 @@
  * \file crypt.h
  * \brief ZIP Cracker-ng headers for the Traditional PKWARE Encryption.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2014.01.04
+ * \date 2015.02.10
  *
  * Copyright (c) 1990-2007 Info-ZIP.  All rights reserved.
- * Copyright (C) 2012-2014 Mickaël 'Tiger-222' Schoentgen.
+ * Copyright (C) 2012-2015 Mickaël 'Tiger-222' Schoentgen.
  *
  * See the accompanying file LICENSE, version 2005-Feb-10 or later for
  * terms of use. If, for some reason, all these files are missing, the
@@ -31,7 +31,7 @@ extern uint32_t keys[3];
  *
  * Note: polynomial is 0xedb88320.
  */
-extern const uint32_t pcrc_32_tab[8][256];
+extern const uint32_t pcrc_32_tab[16][256];
 
 
 /*!
@@ -40,28 +40,44 @@ extern const uint32_t pcrc_32_tab[8][256];
  * \param but Pointer to the decrypted data.
  * \param len Length of the decrypted data.
  * \return The calculated CRC32.
+ *
+ * Source: http://create.stephan-brumme.com/crc32/#slicing-by-16-overview
  */
 inline uint32_t create_crc32(const unsigned char* buf, size_t len) {
 	uint32_t* current = (uint32_t*)buf;
-	uint32_t one, two;
+	uint32_t one, two, three, four;
 	register uint32_t crc = 0xffffffff;
+	unsigned int unroll;
 
-	for ( ; len > 7; len -= 8 ) {
-		one = *current++ ^ crc;
-		two = *current++;
-		crc =
-			pcrc_32_tab[7][ one      & 0xff] ^
-			pcrc_32_tab[6][(one>> 8) & 0xff] ^
-			pcrc_32_tab[5][(one>>16) & 0xff] ^
-			pcrc_32_tab[4][ one>>24        ] ^
-			pcrc_32_tab[3][ two      & 0xff] ^
-			pcrc_32_tab[2][(two>> 8) & 0xff] ^
-			pcrc_32_tab[1][(two>>16) & 0xff] ^
-			pcrc_32_tab[0][ two>>24        ];
+	for ( ; len >= 320; len -= 64 ) {
+		__builtin_prefetch(current + 256);
+		for ( unroll = 0; unroll < 4; ++unroll ) {
+			one   = *current++ ^ crc;
+			two   = *current++;
+			three = *current++;
+			four  = *current++;
+			crc   =
+				pcrc_32_tab[ 0][(four >> 24)  & 0xff] ^
+				pcrc_32_tab[ 1][(four >> 16)  & 0xff] ^
+				pcrc_32_tab[ 2][(four >> 8)   & 0xff] ^
+				pcrc_32_tab[ 3][ four         & 0xff] ^
+				pcrc_32_tab[ 4][(three >> 24) & 0xff] ^
+				pcrc_32_tab[ 5][(three >> 16) & 0xff] ^
+				pcrc_32_tab[ 6][(three >> 8)  & 0xff] ^
+				pcrc_32_tab[ 7][ three        & 0xff] ^
+				pcrc_32_tab[ 8][(two >> 24)   & 0xff] ^
+				pcrc_32_tab[ 9][(two >> 16)   & 0xff] ^
+				pcrc_32_tab[10][(two >> 8)    & 0xff] ^
+				pcrc_32_tab[11][ two          & 0xff] ^
+				pcrc_32_tab[12][(one >> 24)   & 0xff] ^
+				pcrc_32_tab[13][(one >> 16)   & 0xff] ^
+				pcrc_32_tab[14][(one >> 8)    & 0xff] ^
+				pcrc_32_tab[15][ one          & 0xff];
+		}
 	}
 	unsigned char* c = reinterpret_cast<unsigned char*>(current);
 	for ( ; len; --len ) {
-		crc = (crc >> 8) ^ pcrc_32_tab[0][(crc ^ *c++) & 0xff];
+		crc = (crc >> 8) ^ pcrc_32_tab[0][(crc & 0xff) ^ *c++];
 	}
 	return ~crc;
 }
