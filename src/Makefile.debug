@@ -4,7 +4,6 @@ CXX     = g++
 CFLAGS  = -O0 -g
 CFLAGS += -Wfatal-errors -Werror -Wall -W -pedantic -Wextra -Wunused -Wformat=2 -Weffc++ -Wpadded -fexceptions
 LDLIBS  = -lpthread
-#LDLIBS += -lcurses
 CPTOBJ  = cptfunctions.o rijndael.o tables.o stats.o gui.o cptcracker.o cptmain.o
 ZIPOBJ  = zipfunctions.o stats.o zipgui.o read.o puff.o zipcracker.o zipmain.o
 NAME    = cracker-ng.d
@@ -15,14 +14,7 @@ clean:
 	rm -f *.o
 
 mrproper: clean
-	rm -f cptcracker-ng
-
-#$(NAME): $(OBJ)
-#	$(CXX) $(CFLAGS) -o $@ $^ $(LDLIBS)
-
-#%.o: %.cc
-#	$(CXX) $(CFLAGS) -c $*.cc -DZIP
-
+	rm -f *.d
 
 # Modules availables
 cpt: $(CPTOBJ)
@@ -30,6 +22,12 @@ cpt: $(CPTOBJ)
 
 zip: $(ZIPOBJ)
 	$(CXX) $(CFLAGS) -o $@$(NAME) $^ $(LDLIBS)
+
+cpt-ASAN: CFLAGS += -fsanitize=address
+cpt-ASAN: cpt
+
+zip-ASAN: CFLAGS += -fsanitize=address
+zip-ASAN: zip
 
 
 # Shared objects

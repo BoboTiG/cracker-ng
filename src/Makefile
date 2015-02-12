@@ -1,11 +1,8 @@
 
 CXX     = g++
-#CXX     = callcatcher g++
-#CFLAGS  = -O0 -g
 CFLAGS  = -march=native -O3 -mmmx -msse -msse2 -msse3 -m3dnow -ffast-math -mno-ieee-fp -s -D_FILE_OFFSET_BITS=64
 CFLAGS += -Wfatal-errors -Werror -Wall -W -pedantic -Wextra -Wunused -Wformat=2 -Weffc++ -Wpadded -fexceptions
 LDLIBS  = -lpthread
-#LDLIBS += -lcurses
 CPTOBJ  = cptfunctions.o rijndael.o tables.o stats.o gui.o cptcracker.o cptmain.o
 ZIPOBJ  = zipfunctions.o stats.o zipgui.o read.o puff.o zipcracker.o zipmain.o
 NAME    = cracker-ng
@@ -17,13 +14,6 @@ clean:
 
 mrproper: clean
 	rm -f cptcracker-ng
-
-#$(NAME): $(OBJ)
-#	$(CXX) $(CFLAGS) -o $@ $^ $(LDLIBS)
-
-#%.o: %.cc
-#	$(CXX) $(CFLAGS) -c $*.cc -DZIP
-
 
 # Modules availables
 cpt: $(CPTOBJ)

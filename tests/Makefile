@@ -10,7 +10,8 @@ PAUSE   = @echo "$(YELLOW)Press any key to continue ...$(NORMAL)" && read PAUSE
 
 # Debug/test tools
 VAL     = /usr/bin/valgrind
-VALOPT  = --leak-check=full --show-possibly-lost=yes --show-reachable=yes --track-origins=yes --malloc-fill=ff
+VALOPT  = --leak-check=full --show-possibly-lost=yes --show-reachable=yes --track-origins=yes --track-fds=yes --malloc-fill=0x80 --free-fill=0x70
+VALOPT2 = --tool=callgrind --simulate-cache=yes --dump-instr=yes
 PERF    = /usr/bin/perf
 PERFOPT = -B -e cycles,instructions,cpu-clock,branch-misses,cache-misses,faults,alignment-faults
 
@@ -23,17 +24,28 @@ all:
 modules: $(MODULES)
 
 $(MODULES):
-	@echo "$(GREEN) + Building the $@ module ...$(NORMAL)"
+	@echo "$(GREEN) === Module $@ ===$(NORMAL)"
+
+	@echo "$(GREEN) + Address Sanitizer first ...$(NORMAL)"
+	make -C ../src/ -f Makefile.debug $@-ASAN mrproper
+	$(PAUSE)
+
+	@echo "$(GREEN) + Building ...$(NORMAL)"
 	make -C ../src/ -f Makefile.debug $@ clean
 	mv ../src/$@$(NAME) $@$(NAME)
 	$(PAUSE)
 
-	@echo "$(GREEN) + Testing/debugging the $@ module ...$(NORMAL)"
+	@echo "$(GREEN) + Testing/debugging ...$(NORMAL)"
 	@echo "$(GREEN)     === Valgrind$(NORMAL)"
 	$(VAL) $(VALOPT) ./$@$(NAME) -f files/$@.test $(DICO)
 	$(PAUSE)
 
-	@echo "$(GREEN)     === Perf$(NORMAL)"
+	@echo "$(GREEN) + CPU cycles ...$(NORMAL)"
+	@echo "$(GREEN)     === Valgrind$(NORMAL)"
+	$(VAL) $(VALOPT2) ./$@$(NAME) -f files/$@.test $(DICO)
+	$(PAUSE)
+
+	@echo "$(GREEN) + Performances ...$(NORMAL)"
 	$(PERF) stat $(PERFOPT) ./$@$(NAME) -f files/$@.test $(DICO)
 	$(PAUSE)
 	$(PERF) record ./$@$(NAME) -f files/$@.test $(DICO)
