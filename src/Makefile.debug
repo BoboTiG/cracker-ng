@@ -23,10 +23,10 @@ cpt: $(CPTOBJ)
 zip: $(ZIPOBJ)
 	$(CXX) $(CFLAGS) -o $@$(NAME) $^ $(LDLIBS)
 
-cpt-ASAN: CFLAGS += -fsanitize=address
+cpt-ASAN: CFLAGS += -fno-omit-frame-pointer -fsanitize=address
 cpt-ASAN: cpt
 
-zip-ASAN: CFLAGS += -fsanitize=address
+zip-ASAN: CFLAGS += -fno-omit-frame-pointer -fsanitize=address
 zip-ASAN: zip
 
 
