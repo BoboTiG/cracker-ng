@@ -68,73 +68,69 @@ bool argz_traitment(const arguments& argz) {
 	if ( argz.argc == 1 ) {
 		usage(argz.module);
 		return false;
-	} else if ( !strcmp(argz.argv[1], "-h") || !strcmp(argz.argv[1], "--help") ) {
+	}
+	std::string arg = std::string(argz.argv[1]);
+	if ( arg == "-h" || arg == "--help" ) {
 		help(argz.module);
 		return false;
-	} else if ( !strcmp(argz.argv[1], "-v")
-			 || !strcmp(argz.argv[1], "--version") ) {
+	}
+	if ( arg == "-v" || arg == "--version" ) {
 		version(argz.module, argz.version);
 		return false;
-	} else {
-		size_t i, fp = 0;
-		bool filename = false, wordlist = false;
-		for ( i = 1; i < argz.argc; ++i )
-		{
-			// -f | --file to set the file to crack
-			if ( !filename &&
-				(!strcmp(argz.argv[i], "-f") || !strcmp(argz.argv[i], "--file")) ) {
-				if ( !argz.argv[++i] ) {
-					fprintf(stderr, " ! Please gimme a file.\n");
-					return false;
-				}
-				if ( !functions_ng::file_exists(argz.argv[i]) ) {
-					fprintf(stderr, " ! Could not open the file.\n");
-					return false;
-				}
-				argz.filename = argz.argv[i];
-				filename = true;
+	}
+
+	size_t i, fp = 0;
+	for ( i = 1; i < argz.argc; ++i )
+	{
+		arg = std::string(argz.argv[i]);
+		// -f | --file to set the file to crack
+		if ( argz.filename.empty() && (arg == "-f" || arg == "--file") ) {
+			if ( !argz.argv[++i] ) {
+				std::cerr << " ! Please gimme a file." << std::endl;
+				return false;
 			}
-			// -fp | --false-pos to set up to 8 false positives
-			if ( !strcmp(argz.argv[i], "-fp") || !strcmp(argz.argv[i], "--false-pos") ) {
-				if ( argz.argv[++i] && fp++ <= 8 ) {
-					argz.false_pos[fp] = std::string(argz.argv[i]);
-					++fp;
-				}
+			if ( !functions_ng::file_exists(argz.argv[i]) ) {
+				std::cerr << " ! Could not open the file." << std::endl;
+				return false;
 			}
-			// -i | --infos to get informations about a file
-			// Useful for the ZIP module, for others it will just do as -f | --file option
-			else if ( !filename &&
-				     (!strcmp(argz.argv[i], "-i") || !strcmp(argz.argv[i], "--infos")) ) {
-				if ( !argz.argv[++i] ) {
-					fprintf(stderr, " ! Please gimme a wordlist.\n");
-					return false;
-				}
-				if ( !functions_ng::file_exists(argz.argv[i]) ) {
-					fprintf(stderr, " ! Could not open the file.\n");
-					return false;
-				}
-				argz.filename = argz.argv[i];
-				argz.flag = DEBUG;
-				filename = true;
+			argz.filename = argz.argv[i];
+		}
+		// -fp | --false-pos to set up to 8 false positives
+		if ( arg == "-fp" || arg == "--false-pos" ) {
+			if ( argz.argv[++i] && fp++ <= 8 ) {
+				argz.false_pos[fp] = std::string(argz.argv[i]);
+				++fp;
 			}
-			// -w | --wordlist to set the wordlist file to use
-			else if ( !wordlist &&
-				    (!strcmp(argz.argv[i], "-w") || !strcmp(argz.argv[i], "--wordlist")) ) {
-				if ( !argz.argv[++i] ) {
-					fprintf(stderr, " ! Please gimme a wordlist.\n");
-					return false;
-				}
-				if ( !functions_ng::file_exists(argz.argv[i]) ) {
-					fprintf(stderr, " ! Could not open the wordlist.\n");
-					return false;
-				}
-				argz.input = argz.argv[i];
-				wordlist = true;
+		}
+		// -i | --infos to get informations about a file
+		// Useful for the ZIP module, for others it will just do as -f | --file option
+		else if ( argz.filename.empty() && (arg == "-i" || arg == "--infos") ) {
+			if ( !argz.argv[++i] ) {
+				std::cerr << " ! Please gimme a file." << std::endl;
+				return false;
 			}
+			if ( !functions_ng::file_exists(argz.argv[i]) ) {
+				std::cerr << " ! Could not open the file." << std::endl;
+				return false;
+			}
+			argz.filename = argz.argv[i];
+			argz.flag = DEBUG;
+		}
+		// -w | --wordlist to set the wordlist file to use
+		else if ( argz.input.empty() && (arg == "-w" || arg == "--wordlist") ) {
+			if ( !argz.argv[++i] ) {
+				std::cerr << " ! Please gimme a wordlist." << std::endl;
+				return false;
+			}
+			if ( !functions_ng::file_exists(argz.argv[i]) ) {
+				std::cerr << " ! Could not open the wordlist." << std::endl;
+				return false;
+			}
+			argz.input = argz.argv[i];
 		}
 	}
 	if ( argz.filename.empty() ) {
-		fprintf(stderr, " ! Please gimme a file.\n");
+		std::cerr << " ! Please gimme a file." << std::endl;
 		return false;
 	} else if ( argz.input.empty() ) {
 		argz.input = "STDIN";
@@ -143,14 +139,14 @@ bool argz_traitment(const arguments& argz) {
 }
 
 void help(const std::string& module) {
-	printf(
-		"Copyright (C) 2011-2013 by Mickaël 'Tiger-222' Schoentgen.\n\n"
+	std::cout <<
+		"Copyright (C) 2011-2015 by Mickaël 'Tiger-222' Schoentgen.\n\n"
 		"Cracker-ng comes with ABSOLUTELY NO WARRANTY.\n"
 		"This is free software, and you are welcome to redistribute it under\n"
 		"certain conditions. See the GNU General Public Licence for details.\n\n"
-		"Cracker-ng, a multiple file cracker.\n\n");
+		"Cracker-ng, a multiple file cracker.\n\n";
 	usage(module);
-	printf(
+	std::cout <<
 		"\nAvailable options:\n"
 		"    -f,  --file       file to crack\n"
 		"    -,   --stdin      read from STDIN\n"
@@ -162,7 +158,7 @@ void help(const std::string& module) {
 		"                      ex: -fp word1 -fp word2 ...\n"
 		"    -i,  --infos      print informations about a file to crack\n\n"
 		"Do not hesitate to contact me at <tiger-222@matriux.com> for critics,\n"
-		"suggestions, contributions (or whatever you want!).\n");
+		"suggestions, contributions (or whatever you want!).\n";
 }
 
 void signal_handler(int s) {
@@ -173,14 +169,13 @@ void signal_handler(int s) {
 void usage(const std::string& module) {
 	std::string mo = module;
 	transform(mo.begin(), mo.end(), mo.begin(), ::tolower);
-	printf(
+	std::cout <<
 		"Usage:\n"
-		"\t%scracker-ng -f <file> [-w <wordlist>] [-fp <word>...]\n"
-		"\tgenerator | %scracker-ng -f <file> -\n"
-		"Where generator could be cat, crunch, john, jot or whatever you want.\n",
-		mo.c_str(), mo.c_str());
+		"\t" << mo << "cracker-ng -f <file> [-w <wordlist>] [-fp <word>...]\n"
+		"\tgenerator | " << mo << "cracker-ng -f <file> -\n"
+		"Where generator could be cat, crunch, john, jot or whatever you want.\n";
 }
 
 void version(const std::string& module, const std::string& version) {
-	printf("%s Cracker-ng version %s.\n", module.c_str(), version.c_str());
+	std::cout << module << " Cracker-ng version " << version << std::endl;
 }
