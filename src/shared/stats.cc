@@ -47,10 +47,11 @@ void Stats::start() {
 void Stats::stats_sumary() {
 	time_t the_time = this->elapsed_seconds();
 	if ( the_time > 0 ) {
-		printf("\033[A . Worked at ~ %luK pwd/sec for ~ %luM tries.\n   Working time: %lu sec\n",
+		printf("\033[A . Worked at ~ %luK pwd/sec for ~ %luM tries.\n",
 			(*this->s.num / the_time / 1000),
-			(*this->s.num / 1000 / 1000),
-			the_time
+			(*this->s.num / 1000 / 1000)
 		);
+		std::cout << "   Working time: " << functions_ng::format_number(the_time) << " sec" << std::endl;
+		std::cout << "   Combinations: " << functions_ng::format_number(*this->s.num) << std::endl;
 	}
 }
