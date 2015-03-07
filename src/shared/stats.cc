@@ -3,9 +3,9 @@
  * \file stats.cpp
  * \brief Statistics functions.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2013.01.27
+ * \date 2015.03.06
  *
- * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
+ * Copyright (C) 2012-2015 Mickaël 'Tiger-222' Schoentgen.
  */
 
 
@@ -47,9 +47,10 @@ void Stats::start() {
 void Stats::stats_sumary() {
 	time_t the_time = this->elapsed_seconds();
 	if ( the_time > 0 ) {
-		printf("\033[A . Worked at ~ %luK pwd/sec for ~ %luM tries.\n",
+		printf("\033[A . Worked at ~ %luK pwd/sec for ~ %luM tries.\n   Working time: %lu sec\n",
 			(*this->s.num / the_time / 1000),
-			(*this->s.num / 1000 / 1000)
+			(*this->s.num / 1000 / 1000),
+			the_time
 		);
 	}
 }
