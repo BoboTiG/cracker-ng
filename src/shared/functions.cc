@@ -3,9 +3,9 @@
  * \file functions.cc
  * \brief Cracker-ng (optimized) functions.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2013.02.08
+ * \date 2015.03.07
  *
- * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
+ * Copyright (C) 2012-2015 Mickaël 'Tiger-222' Schoentgen.
  */
 
 
@@ -21,7 +21,7 @@ const std::string basename(const std::string& str) {
 
 bool file_exists(const char* filename) {
 	FILE *test = NULL;
-	
+
 	if ( filename != NULL ) {
 		test = fopen(filename, "r");
 		if ( test != NULL ) {
@@ -30,6 +30,18 @@ bool file_exists(const char* filename) {
 		}
 	}
 	return false;
+}
+
+std::string get_file_contents(const char* filename) {
+	// TODO: if file is too big, bad_alloc() thhrowed.
+	std::ifstream in(filename, std::ios::in | std::ios::binary);
+	std::string contents;
+	in.seekg(0, std::ios::end);
+	contents.resize(in.tellg());
+	in.seekg(0, std::ios::beg);
+	in.read(&contents[0], contents.size());
+	in.close();
+	return contents;
 }
 
 const std::string format_number(const size_t& num) {

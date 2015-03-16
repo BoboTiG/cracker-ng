@@ -3,7 +3,7 @@
  * \file stats.h
  * \brief Statistics headers.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2015.02.03
+ * \date 2015.03.16
  *
  * Copyright (C) 2012-2015 Mickaël 'Tiger-222' Schoentgen.
  */
@@ -35,8 +35,9 @@ public:
 
 protected:
 private:
-	size_t sleeping_time;
+	size_t combinations;
 	time_t start_time;
+	time_t elapsed_time;
 	time_t elapsed_seconds();
 };
 

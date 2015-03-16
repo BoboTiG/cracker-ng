@@ -28,7 +28,7 @@
 	static const char* MODULE = "ZIP";     //!< Module name.
 #endif
 
-static const char* VERSION    = "1.1.0-dev";  //!< Cracker-ng version.
+static const char* VERSION = "1.1.0-dev";  //!< Cracker-ng version.
 
 
 /*!

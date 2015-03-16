@@ -3,7 +3,7 @@
  * \file functions.h
  * \brief Cracker-ng (optimized) functions headers.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2015.02.03
+ * \date 2015.03.07
  *
  * Copyright (C) 2012-2015 Mickaël 'Tiger-222' Schoentgen.
  */
@@ -13,6 +13,7 @@
 #define SRC_SHARED_FUNCTIONS_H_
 
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <sstream>
 #include <cstdio>   // fopen()
@@ -47,6 +48,14 @@ bool file_exists(const char*);
  * \return The formatted number.
  */
 const std::string format_number(const size_t&);
+
+/*!
+ * \fn get_file_contents(const char* filename)
+ * \brief Retrieve contents of a given file into a string.
+ * \param file The file to get data from.
+ * \return The contents.
+ */
+std::string get_file_contents(const char*);
 
 /*!
  * \fn

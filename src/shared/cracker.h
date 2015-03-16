@@ -3,9 +3,9 @@
  * \file cracker.h
  * \brief Cracker class header for Cracker-ng.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2013.12.30
+ * \date 2015.03.06
  *
- * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
+ * Copyright (C) 2012-2015 Mickaël 'Tiger-222' Schoentgen.
  * See http://www.pkware.com/documents/casestudies/APPNOTE.TXT for
  * more details about ZIP specifications.
  */
@@ -28,7 +28,9 @@
 	#include "./../zip/crypt.h"
 	#include "./../zip/puff.h"
 	#include "./../zip/read.h"
-	static const size_t PWD_MAX = 80;  //!< Maximum password length
+	static const size_t PWD_MAX  = 80;  //!< Maximum password length
+	static const size_t STORED   = 0;  //!< No compression
+	static const size_t DEFLATED = 8;  //!< Compression used: deflated
 #endif
 
 
@@ -68,8 +70,8 @@ private:
 	Cracker(const Cracker &);
 	Cracker & operator=(const Cracker &);
 
-	// Optimized read from stdin or a wordlist
-	inline bool read_input(FILE* input, char*& output, const size_t& len) {
+	// Optimized read from stdin
+	inline bool cfgets(FILE* input, char*& output, const size_t& len) {
 		if ( fgets(output, len, input) != NULL ) {
 			char *lf = strchr(output, '\n');
 			if ( lf != NULL ) {
@@ -78,6 +80,27 @@ private:
 			return true;
 		}
 		return false;
+	}
+
+	// Optimized read from string
+	inline bool csgets(char* output, const size_t& len, char** input)
+	{
+		char *next = *input;
+		unsigned int numread = 0;
+		for ( ; numread + 1 < len && *next; ++numread ) {
+			int isnewline = (*next == '\n');
+			if ( isnewline ) {
+				*output = *next++;
+				break;
+			}
+			*output++ = *next++;
+		}
+		if ( numread == 0 ) {
+			return false;
+		}
+		*output = '\0';
+		*input = next;
+		return next != '\0';
 	}
 
 	/*!

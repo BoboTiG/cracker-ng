@@ -3,7 +3,7 @@
  * \file stats.cpp
  * \brief Statistics functions.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2015.03.06
+ * \date 2015.2015.03.16
  *
  * Copyright (C) 2012-2015 Mickaël 'Tiger-222' Schoentgen.
  */
@@ -22,8 +22,9 @@ void *stats(void* argz) {
 
 Stats::Stats(statistics& stats) :
 	s(stats),
-	sleeping_time(1),
-	start_time(time(NULL))
+	combinations(0),
+	start_time(0),
+	elapsed_time(0)
 {}
 
 Stats::~Stats() {}
@@ -33,25 +34,28 @@ time_t Stats::elapsed_seconds() {
 }
 
 void Stats::start() {
-	size_t n = 1;
-	for ( ; *this->s.working ; ++n ) {
-		sleep(this->sleeping_time);
-		printf("\033[A . Working at %luK pwd/sec [%luM tries]\n",
-			(*this->s.num / (this->sleeping_time * n) / 1024),
-			(*this->s.num / 1024 / 1024)
+	size_t n = 0;
+	this->start_time = time(NULL);
+	for ( ; *this->s.working ; ) {
+		sleep(1);
+		n = __sync_fetch_and_and(&*this->s.num, 0);
+		this->combinations += n;
+		printf("\033[A . Working at %s pwd/sec [%luM tries]\n",
+			(functions_ng::format_number(n).c_str()),
+			(this->combinations / 1000 / 1000)
 		);
 	}
+	this->elapsed_time = this->elapsed_seconds();
 	this->stats_sumary();
 }
 
 void Stats::stats_sumary() {
-	time_t the_time = this->elapsed_seconds();
-	if ( the_time > 0 ) {
-		printf("\033[A . Worked at ~ %luK pwd/sec for ~ %luM tries.\n",
-			(*this->s.num / the_time / 1000),
-			(*this->s.num / 1000 / 1000)
+	if ( this->elapsed_time > 0 ) {
+		printf("\033[A . Worked at ~ %s pwd/sec for ~ %luM tries.\n",
+			(functions_ng::format_number(this->combinations / this->elapsed_time).c_str()),
+			(this->combinations / 1000 / 1000)
 		);
-		std::cout << "   Working time: " << functions_ng::format_number(the_time) << " sec" << std::endl;
-		std::cout << "   Combinations: " << functions_ng::format_number(*this->s.num) << std::endl;
+		std::cout << "   Working time: " << functions_ng::format_number(this->elapsed_time) << " sec" << std::endl;
+		std::cout << "   Combinations: " << functions_ng::format_number(this->combinations) << std::endl;
 	}
 }

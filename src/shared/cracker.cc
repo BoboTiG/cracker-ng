@@ -3,7 +3,7 @@
  * \file cracker.cc
  * \brief Cracker class for ZIP Cracker-ng.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2015.02.10
+ * \date 2015.03.16
  *
  * Copyright (C) 2012-2015 Mickaël 'Tiger-222' Schoentgen.
  * See http://www.pkware.com/documents/casestudies/APPNOTE.TXT for
@@ -605,7 +605,6 @@ void Cracker::crack() {
 	statistics s = { &num, &this_is_now_we_fight };
 	pthread_t stat;
 	char *password          = new char[PWD_MAX];
-	FILE *input             = NULL;
 #ifdef CPT
 	char* encryption_header = new char[32];
 	unsigned int inbuf[8]   = {0};
@@ -637,16 +636,22 @@ void Cracker::crack() {
 	this->filei.close();
 #endif
 
-	if ( this->from == "STDIN" ) {
-		input = stdin;
-	} else {
-		input = fopen(this->from.c_str(), "r");
-	}
+	//~ if ( this->from == "STDIN" ) {
+		//~ FILE *input = stdin;
+		//~ read_data = this->cfgets;
+	//~ } else {
+		std::string file_data;
+		std::cerr << "Loading wordlist ... " << std::endl;
+		file_data = functions_ng::get_file_contents(this->from.c_str());
+		char *input = const_cast<char*>(file_data.c_str());
+		//~ void (&rf)(char*, const size_t&, char**) = this->csgets;
+		//~ read_data = this->csgets;
+	//~ }
 
 	// Let's go!
 	gui.run();
 	pthread_create(&stat, NULL, stats, reinterpret_cast<void*>(&s));
-	for ( ; (this_is_now_we_fight = this->read_input(input, password, PWD_MAX)); ++num ) {
+	for ( ; (this_is_now_we_fight = this->csgets(password, PWD_MAX, &input)); ) {
 #ifdef CPT
 		memcpy(inbuf, encryption_header, 32);
 		if ( ccdecrypt(inbuf, password, rkk) == 0 ) {
@@ -654,26 +659,24 @@ void Cracker::crack() {
 			this_is_now_we_fight = false;
 		}
 #elif ZIP
-		// 1) Initialize the three 32-bit keys with the password.
-		init_keys(password);
-		// 2) Read and decrypt the 12-byte encryption header,
-		//    further initializing the encryption keys.
-		memcpy(buffer, encryption_header, 12);
+		/*
+		 * 1) Initialize the three 32-bit keys with the password.
+		 * 2) Read and decrypt the 12-byte encryption header,
+		 *    further initializing the encryption keys.
+		 * 3) Read and decrypt the compressed data stream using
+		 *    the encryption keys.
+		 */
+		init_keys(password);  // 1
+		memcpy(buffer, encryption_header, 12);  // 2
 		for ( i = 0; i < 12; ++i ) {
 			update_keys(buffer[i] ^= decrypt_byte());
 		}
-		// First verification ...
 		if ( buffer[11] == check2 || (least_ver && buffer[11] == check1) ) {
-			// 3) Read and decrypt the compressed data stream using
-			//    the encryption keys.
-			memcpy(data, buf, len);
+			memcpy(data, buf, len);  // 3
 			for ( i = 0; i < len; ++i ) {
 				update_keys(data[i] ^= decrypt_byte());
 			}
-			/*FILE* t = fopen("inflate.raw", "wb");
-			fwrite(data, len, 1, t);
-			fclose(t);*/
-			if ( this->lfh.compression_method == 8 ) {  // The file is deflated
+			if ( this->lfh.compression_method == DEFLATED ) {
 				if ( puff(dest, destlen, data, sourcelen, io_state) == 0 ) {
 					if ( create_crc32(dest, len) == this->lfh.good_crc_32 ) {
 						if ( !is_false_positive(password) ) {
@@ -681,9 +684,8 @@ void Cracker::crack() {
 							this_is_now_we_fight = false;
 						}
 					}
-					continue;
 				}
-			} else {  // The file is stored (no compression)
+			} else {
 				if ( create_crc32(data, len) == this->lfh.good_crc_32 ) {
 					if ( !is_false_positive(password) ) {
 						chosen_one = password;
@@ -693,10 +695,11 @@ void Cracker::crack() {
 			}
 		}
 #endif
+		__sync_add_and_fetch(&num, 1);
 	}
-	if ( this->from != "STDIN" ) {
-		fclose(input);
-	}
+	//~ if ( this->from != "STDIN" ) {
+		//~ fclose(input);
+	//~ }
 	pthread_join(stat, reinterpret_cast<void**>(NULL));
 #ifdef ZIP
 	delete[] buf;                             buf = 0;
@@ -780,11 +783,11 @@ bool Cracker::check_method() {
 	bool okay = false;
 
 	switch ( this->lfh.compression_method ) {
-		case 0 :
+		case STORED :
 			this->set_method("Method....: stored");
 			okay = true;
 			break;
-		case 8 :
+		case DEFLATED :
 			this->set_method("Method....: deflated");
 			okay = true;
 			break;
@@ -944,15 +947,15 @@ void Cracker::set_false_pos(const std::string& password, const size_t& i) {
 
 void Cracker::result(const std::string& password) {
 	if ( password.empty() ) {
-		printf(" ! Password not found.\n");
+		std::cout << " ! Password not found." << std::endl;
 	} else {
 		const char *p = password.c_str();
 		size_t i, len = strlen(p);
-		printf(" + Password found: %s\n", p);
-		printf("   HEXA[ ");
+		std::cout << " + Password found: " << p << std::endl;
+		std::cout << "   HEXA[ ";
 		for ( i = 0; i < len; ++i ) {
 			printf("%02X ", p[i] & 0xff);
 		}
-		printf("]\n");
+		std::cout << "]" << std::endl;
 	}
 }
