@@ -39,10 +39,13 @@ Usage: **MODULE**cracker-ng -f FILE
 Examples with ZIP module:
 
 
-	cat wordlist.lst | zipcracker-ng -f FILE  -
-	john --incremental --stdout | zipcracker-ng -f FILE -
-	crunch 1 8 -f charset.lst lalpha | zipcracker-ng -f FILE -
-	zipcracker-ng -f FILE -w wordlist.lst
+	$ cat wordlist.lst | zipcracker-ng -f FILE  -
+
+	$ john --incremental --stdout | zipcracker-ng -f FILE -
+
+	$ crunch 1 8 -f charset.lst lalpha | zipcracker-ng -f FILE -
+
+	$ zipcracker-ng -f FILE -w wordlist.lst
 
 Why
 ---
