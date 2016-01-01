@@ -31,6 +31,20 @@ What this tool does:
 	- cat, john, crunch or whatever you want for wordlist attack
 
 
+Installation
+---
+
+    $ git clone https://github.com/BoboTiG/cracker-ng.git
+    $ cd cracker-ng
+
+    # For testers and contributors: always work with on the devel branch:
+    $ git checkout devel
+
+    $ make
+
+The final execuable file will be stored into `bin` folder.
+
+
 Man
 ---
 
