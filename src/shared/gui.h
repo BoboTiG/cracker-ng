@@ -34,15 +34,15 @@ public:
 		const std::string&, const std::string&, const std::string&
 	);
 	~GUI();
-	
+
 	//bool is_ok() const;
 	void run() const;
 	void stop() const { /*endwin(); printf("\r\n");*/ };
-	
+
 protected:
 	size_t row, col;
 	std::string title, file, chosen_one, encryption, method, generator;
-	
+
 	void init();
 };
 

@@ -46,12 +46,12 @@ void GUI::init() {
     sprintf(_file, "File......: %s", functions_ng::substr(this->file, MAXLEN).c_str());
     this->file = _file;
 	delete[] _file; _file = 0;
-    
+
 	char* _chosen_one = new char[WIDTH];
  	sprintf(_chosen_one, "Chosen one: %s", functions_ng::substr(this->chosen_one, MAXLEN).c_str());
     this->chosen_one = _chosen_one;
 	delete[] _chosen_one; _chosen_one = 0;
- 	
+
 	char* _generator = new char[WIDTH];
 	sprintf(_generator, "Generator.: %s", functions_ng::substr(this->generator, MAXLEN).c_str());
     this->generator = _generator;
@@ -121,7 +121,7 @@ void GUI::run() const {
 	++y;
 	mvprintw(++y, WIDTH - 21, "Press CTRL+C to abort");
 	refresh();*/
-	
+
 	printf("\n %s\n", this->title.c_str());
 	printf(" - %s\n", this->file.c_str());
 #ifdef ZIP

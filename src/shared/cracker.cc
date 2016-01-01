@@ -635,23 +635,23 @@ void Cracker::crack() {
 	this->filei.read(buf, len);
 	this->filei.close();
 #endif
-
-	//~ if ( this->from == "STDIN" ) {
-		//~ FILE *input = stdin;
-		//~ read_data = this->cfgets;
-	//~ } else {
-		std::string file_data;
-		std::cerr << "Loading wordlist ... " << std::endl;
-		file_data = functions_ng::get_file_contents(this->from.c_str());
-		char *input = const_cast<char*>(file_data.c_str());
-		//~ void (&rf)(char*, const size_t&, char**) = this->csgets;
-		//~ read_data = this->csgets;
-	//~ }
+	FILE* input             = NULL;
+	if ( this->from == "STDIN" ) {
+		input = stdin;
+		//read_data = this->cfgets;
+	} else {
+		//std::cerr << "Loading wordlist ... " << std::endl;
+		//std::string file_data = functions_ng::get_file_contents(this->from.c_str());
+		//input = const_cast<char*>(file_data.c_str());
+		//void (&rf)(char*, const size_t&, char**) = this->csgets;
+		//read_data = this->csgets;
+		input = fopen(this->from.c_str(), "r");
+	}
 
 	// Let's go!
 	gui.run();
 	pthread_create(&stat, NULL, stats, reinterpret_cast<void*>(&s));
-	for ( ; (this_is_now_we_fight = this->csgets(password, PWD_MAX, &input)); ) {
+	for ( ; (this_is_now_we_fight = this->cfgets(input, password, PWD_MAX)); ) {
 #ifdef CPT
 		memcpy(inbuf, encryption_header, 32);
 		if ( ccdecrypt(inbuf, password, rkk) == 0 ) {
@@ -697,9 +697,9 @@ void Cracker::crack() {
 #endif
 		__sync_add_and_fetch(&num, 1);
 	}
-	//~ if ( this->from != "STDIN" ) {
-		//~ fclose(input);
-	//~ }
+	if ( this->from != "STDIN" ) {
+		fclose(input);
+	}
 	pthread_join(stat, reinterpret_cast<void**>(NULL));
 #ifdef ZIP
 	delete[] buf;                             buf = 0;

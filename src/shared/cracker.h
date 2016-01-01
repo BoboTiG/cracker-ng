@@ -72,18 +72,14 @@ private:
 
 	// Optimized read from stdin
 	inline bool cfgets(FILE* input, char*& output, const size_t& len) {
-		if ( fgets(output, len, input) != NULL ) {
-			char *lf = strchr(output, '\n');
-			if ( lf != NULL ) {
-				 *lf = '\0';
-			}
-			return true;
-		}
-		return false;
+		if ( fgets(output, len, input) == NULL ) return false;
+		char *lf = strchr(output, '\n');
+		*lf = '\0';
+		return true;
 	}
 
 	// Optimized read from string
-	inline bool csgets(char* output, const size_t& len, char** input)
+	inline bool csgets(char** input, char*& output, const size_t& len)
 	{
 		char *next = *input;
 		unsigned int numread = 0;
