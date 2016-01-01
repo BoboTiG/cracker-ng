@@ -5,7 +5,7 @@
  * \author Mickaël 'Tiger-222' Schoentgen
  * \date 2016.01.01
  *
- * Copyright (C) 2012-2016 Mickaël 'Tiger-222' Schoentgen.
+ * Copyright (C) 2011-2016 Mickaël 'Tiger-222' Schoentgen.
  * See http://www.pkware.com/documents/casestudies/APPNOTE.TXT for
  * more details about ZIP specifications.
  */
@@ -140,7 +140,7 @@ bool argz_traitment(const arguments& argz) {
 
 void help(const std::string& module) {
 	std::cout <<
-		"Copyright (C) 2011-2015 by Mickaël 'Tiger-222' Schoentgen.\n\n"
+		"Copyright (C) 2011-2016 by Mickaël 'Tiger-222' Schoentgen.\n\n"
 		"Cracker-ng comes with ABSOLUTELY NO WARRANTY.\n"
 		"This is free software, and you are welcome to redistribute it under\n"
 		"certain conditions. See the GNU General Public Licence for details.\n\n"

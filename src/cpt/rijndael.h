@@ -6,17 +6,17 @@
  * \date 2013.01.30
  *
  * Copyright (C) 2000-2009 Peter Selinger.
- * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
+ * Copyright (C) 2011-2016 Mickaël 'Tiger-222' Schoentgen.
  * This file is part of ccrypt. It is free software and it is covered
  * by the GNU general public license. See the file COPYING for details.
- * 
+ *
  * $Id: rijndael.h 258 2009-08-26 17:46:10Z selinger $
- * 
+ *
  * derived from original source: rijndael-alg-ref.h   v2.0   August '99
  * Reference ANSI C code for NIST competition
  * authors: Paulo Barreto
  *          Vincent Rijmen
- * 
+ *
  * This is an optimized version for Cracker-ng.
  */
 

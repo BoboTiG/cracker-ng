@@ -4,14 +4,14 @@
  * \brief Part of CPT Cracker-ng.
  * \author Mickaël 'Tiger-222' Schoentgen
  * \date 2013.01.28
- * 
+ *
  * Copyright (C) 2000-2009 Peter Selinger.
- * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
+ * Copyright (C) 2011-2016 Mickaël 'Tiger-222' Schoentgen.
  * This file is part of ccrypt. It is free software and it is covered
  * by the GNU general public license. See the file COPYING for details.
- * 
+ *
  * ccryptlib.h: library for decrypting a character stream.
- * 
+ *
  * This is an epured/optimized version for Cracker-ng.
  */
 
@@ -35,11 +35,11 @@ inline int ccdecrypt(
 	}
 	xrijndaelKeySched(rijndaelkey, &rkk);
 	xrijndaelEncrypt(keyblock, &rkk);
-	
+
 	// Décrypt the block
 	xrijndaelKeySched(keyblock, &rkk);
 	xrijndaelDecrypt(inbuf, &rkk);
-	
+
 	// Check the magic number!
 	return memcmp(inbuf, "c051", 4);
 }

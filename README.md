@@ -1,7 +1,7 @@
 Cracker-ng
 ==========
 
-Copyright (C) 2011-2015 by Mickaël 'Tiger-222' Schoentgen.
+Copyright (C) 2011-2016 by Mickaël 'Tiger-222' Schoentgen.
 
 Cracker-ng comes with ABSOLUTELY NO WARRANTY.
 This is free software, and you are welcome to redistribute it under
@@ -14,8 +14,8 @@ What
 Cracker-ng, a multiple file password finder.
 For now, there are these modules:
 
-* zip cracker (zip, winzip, apm, ipa, and all zip based files),
-* ccrypt cracker (cpt, antigift) [from the 2nd version (1.1) to the latest (1.10), 1.0 is buggy]
+* **zip cracker** (zip, winzip, apm, ipa, and all zip based files),
+* **ccrypt cracker** (cpt, antigift) [from the 2nd version (1.1) to the latest (1.10), 1.0 is buggy]
 
 What this tool does **not**:
 
@@ -37,7 +37,7 @@ Installation
     $ git clone https://github.com/BoboTiG/cracker-ng.git
     $ cd cracker-ng
 
-    # For testers and contributors: always work with on the devel branch:
+    # For testers and contributors, always work with on the devel branch:
     $ git checkout devel
 
     $ make

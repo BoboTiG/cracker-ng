@@ -5,7 +5,7 @@
  * \author Mickaël 'Tiger-222' Schoentgen
  * \date 2013.01.07
  *
- * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
+ * Copyright (C) 2011-2016 Mickaël 'Tiger-222' Schoentgen.
  */
 
 
