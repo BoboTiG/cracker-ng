@@ -38,7 +38,7 @@ Usage: **MODULE**cracker-ng -f FILE
 
 Examples with ZIP module:
 
-* wordlist attack:
+
 	cat wordlist.lst | zipcracker-ng -f FILE  -
 	john --incremental --stdout | zipcracker-ng -f FILE -
 	crunch 1 8 -f charset.lst lalpha | zipcracker-ng -f FILE -
