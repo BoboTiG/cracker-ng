@@ -679,7 +679,7 @@ void Cracker::crack() {
 			if ( this->lfh.compression_method == DEFLATED ) {
 				if ( puff(dest, destlen, data, sourcelen, io_state) == 0 ) {
 					if ( create_crc32(dest, len) == this->lfh.good_crc_32 ) {
-						if ( !is_false_positive(password) ) {
+						if ( is_false_positive(password) == 0 ) {
 							chosen_one = password;
 							this_is_now_we_fight = false;
 						}
@@ -687,7 +687,7 @@ void Cracker::crack() {
 				}
 			} else {
 				if ( create_crc32(data, len) == this->lfh.good_crc_32 ) {
-					if ( !is_false_positive(password) ) {
+					if ( is_false_positive(password) == 0 ) {
 						chosen_one = password;
 						this_is_now_we_fight = false;
 					}
@@ -861,12 +861,12 @@ bool Cracker::find_central_directory() {
 
 	this->filei.seekg(-22, std::ios::end);  // Minimal size of the End of Central Directory + tmp size's
 	i = this->filei.tellg();
-	for ( ; i > 3 && !found; --i ) {
+	for ( ; i > 3 && found == 0; --i ) {
 		this->filei.seekg(i, std::ios::beg);
 		this->filei.read(tmp, 4);
-		if ( !found_end ) {
+		if ( found_end == 0 ) {
 			if ( tmp[0] == 0x50 && tmp[1] == 0x4b &&
-				 tmp[2] == 0x05 && tmp[3] == 0x06 ) {
+			     tmp[2] == 0x05 && tmp[3] == 0x06 ) {
 				this->end_byte = i;
 				found_end = true;
 				i -= 52;  // Minimal size of the Central Directory
@@ -881,7 +881,7 @@ bool Cracker::find_central_directory() {
 			}
 		} else {
 			if ( tmp[0] == 0x50 && tmp[1] == 0x4b &&
-				 tmp[2] == 0x01 && tmp[3] == 0x02 ) {
+			     tmp[2] == 0x01 && tmp[3] == 0x02 ) {
 				this->start_byte = i;
 				found = true;
 			} else if ( tmp[2] != 0x02 ) {

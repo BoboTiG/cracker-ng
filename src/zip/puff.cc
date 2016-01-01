@@ -72,20 +72,20 @@ static int stored(struct state *s)
 		return 2;  // not enough input
 	len = s->in[s->incnt++];
 	len |= s->in[s->incnt++] << 8;
-	if (s->in[s->incnt++] != (~len & 0xff) ||
-		s->in[s->incnt++] != ((~len >> 8) & 0xff))
-		return -2;  // didn't match complement!
+	if (s->in[s->incnt++] == (~len & 0xff) ||
+		s->in[s->incnt++] == ((~len >> 8) & 0xff)) {
+		// copy len bytes from in to out
+		if (s->incnt + len > s->inlen)
+			return 2;  // not enough input
+		if (s->outcnt + len > s->outlen)
+			return 1;  // not enough output space
+		for ( ; len; --len )
+			s->out[s->outcnt++] = s->in[s->incnt++];
+		// done with a valid stored block
+		return 0;
+	}
+	return -2;  // didn't match complement!
 
-	// copy len bytes from in to out
-	if (s->incnt + len > s->inlen)
-		return 2;  // not enough input
-	if (s->outcnt + len > s->outlen)
-		return 1;  // not enough output space
-	for ( ; len; --len )
-		s->out[s->outcnt++] = s->in[s->incnt++];
-
-	// done with a valid stored block
-	return 0;
 }
 
 static int decode(struct state *s, const struct huffman *h)
@@ -157,7 +157,7 @@ static int construct(struct huffman *h, const int *length, const int &n)
 	 * length
 	*/
 	for (symbol = 0; symbol < n; ++symbol)
-		if (length[symbol] != 0)
+		if (length[symbol])
 			h->symbol[offs[length[symbol]]++] = symbol;
 
 	// return zero for complete set, positive for incomplete set
@@ -364,7 +364,7 @@ int puff(
 			} else {
 				err = -1;  // return with error
 			}
-		} while (!last && err == 0);
+		} while (last == 0 && err == 0);
 	}
 	return err;
 }
