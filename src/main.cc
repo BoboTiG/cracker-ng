@@ -3,9 +3,9 @@
  * \file main.cc
  * \brief ZIP module for Cracker-ng.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2013.03.08
+ * \date 2016.01.01
  *
- * Copyright (C) 2012-2013 Mickaël 'Tiger-222' Schoentgen.
+ * Copyright (C) 2012-2016 Mickaël 'Tiger-222' Schoentgen.
  * See http://www.pkware.com/documents/casestudies/APPNOTE.TXT for
  * more details about ZIP specifications.
  */
@@ -38,7 +38,7 @@ int main(int argc, char *argv[]) {
 
 	size_t str_len = WIDTH - 2;
 	char* str = new char[str_len];
-	snprintf(str, str_len, "~ %s Cracker-ng v%s { Tiger-222 } ~", MODULE, VERSION);
+	snprintf(str, str_len, "~ %s Cracker-ng v%s ~", MODULE, VERSION);
 	zizi.set_title(str);
 	snprintf(str, str_len, "%s", functions_ng::basename(argz.filename).c_str());
 	zizi.set_file(str);
