@@ -1,19 +1,25 @@
 
-CXX     = g++
-CFLAGS  = -march=native -O3 -mmmx -msse -msse2 -msse3 -m3dnow -ffast-math -mno-ieee-fp -s -D_FILE_OFFSET_BITS=64
+DEBUG ?= 0
+CXX    = g++
+ifeq ($(DEBUG), 0)
+	CFLAGS = -march=native -O3 -mmmx -msse -msse2 -msse3 -m3dnow -ffast-math -mno-ieee-fp -s -D_FILE_OFFSET_BITS=64
+else
+	#CXX     = /usr/local/bin/callcatcher g++
+	CFLAGS  = -O0 -g
+	#CFLAGS += -fno-omit-frame-pointer -fsanitize=address
+endif
 CFLAGS += -Wfatal-errors -Werror -Wall -W -pedantic -Wextra -Wunused -Wformat=2 -Weffc++ -Wpadded -fexceptions
 LDLIBS  = -lpthread
 CPTOBJ  = cptfunctions.o rijndael.o tables.o stats.o gui.o cptcracker.o cptmain.o
 ZIPOBJ  = zipfunctions.o stats.o zipgui.o read.o puff.o zipcracker.o zipmain.o
 NAME    = cracker-ng
 
+
 all: $(NAME)
 
 clean:
 	rm -f *.o
 
-mrproper: clean
-	rm -f cptcracker-ng
 
 # Modules availables
 cpt: $(CPTOBJ)

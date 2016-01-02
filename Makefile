@@ -1,5 +1,6 @@
 NAME    = cracker-ng
 MODULES = cpt zip
+DEBUG  ?= 0
 
 all: title
 	@echo " - Available modules are: $(MODULES)"
@@ -17,7 +18,7 @@ title:
 $(MODULES):
 	@echo " + Building $@ module ..."
 	@[ -d bin ] || mkdir bin
-	make -C src/ $@ clean
+	make -C src/ $@ clean DEBUG=${DEBUG}
 	mv src/$@$(NAME) bin/
 
 love:

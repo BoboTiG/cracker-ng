@@ -4,7 +4,7 @@
 make
 	print available modules
 
-make <module>
+make <module> [DEBUG=1]
 	build the <module> binary into bin/
 
 make modules

@@ -37,12 +37,19 @@ Installation
     $ git clone https://github.com/BoboTiG/cracker-ng.git
     $ cd cracker-ng
 
-    # For testers and contributors, always work with on the devel branch:
+    For testers and contributors, always work with on the devel branch:
     $ git checkout devel
 
+    To show available commands:
     $ make
 
-The final execuable file will be stored into `bin` folder.
+    Example: build the ZIP module:
+    $ make zip
+
+    Build the debug version (for testers and contributors):
+    $ make zip DEBUG=1
+
+The final executable file will be stored into `bin` folder.
 
 
 Man
