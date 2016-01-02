@@ -15,4 +15,4 @@ Ideas:
   [ ] distributed system
   [ ] use GMP
   [ ] benchmark with dictionnary entirely loaded in memory
-  [ ] Rethink stats https://github.com/jvns/fun-with-threads/blob/master/counter_with_atomics.c#L12
+  [X] Rethink stats https://github.com/jvns/fun-with-threads/blob/master/counter_with_atomics.c#L12
