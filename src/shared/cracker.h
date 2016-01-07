@@ -72,8 +72,9 @@ private:
 	// Optimized read from stdin
 	inline int cfgets(FILE* input, char*& output, const size_t& len) {
 		if ( fgets(output, len, input) ) {
-			//output[strcspn(output, "\n")] = 0;
-			output[strlen(output) - 1] = 0;  // Faster than previous line
+			//~ output[strcspn(output, "\n")] = 0;
+			//~ output[strlen(output) - 1] = 0;  // Faster than previous line
+			output[strnlen(output, len) - 1] = 0;  // Faster than previous line
 			return 1;
 		}
 		return 0;
