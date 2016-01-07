@@ -71,10 +71,11 @@ extern const int order[19];  // permutation of code length codes
 
 // Inflate source to dest.
 int puff(
-	unsigned char*       dest,       // pointer to destination pointer
-	const unsigned long  destlen,    // amount of output space
-	const unsigned char* source,     // pointer to source data pointer
-	const unsigned long  sourcelen,  // amount of input available
-	struct state&        s);         // input/output state
+    unsigned char*       dest,       // pointer to destination pointer
+    const unsigned long  destlen,    // amount of output space
+    const unsigned char *source,     // pointer to source data pointer
+    const unsigned long  sourcelen,  // amount of input available
+    struct state        &s           // input/output state
+);
 
 #endif  // SRC_ZIP_PUFF_H_

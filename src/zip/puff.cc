@@ -214,7 +214,7 @@ static int fixed(struct state *s)
 
 static int dynamic(struct state *s)
 {
-	int nlen, ndist, ncode, index, err;
+	int nlen, ndist, ncode, index;
 	int lengths[316], lencnt[16], lensym[286],distcnt[16], distsym[30];
 	struct huffman lencode, distcode;
 
@@ -266,25 +266,16 @@ static int dynamic(struct state *s)
 			else  // == 18, repeat zero 11..138 times
 				symbol = 11 + bits(s, 7);
 			if (index + symbol > nn)
-				return -6;  // too many lengths!
+				return 1;  // too many lengths!
 			for ( ; symbol; --symbol )  // repeat last or zero symbol times
 				lengths[index++] = len;
 		}
 	}
 
-	// check for end-of-block code -- there better be one!
-	if (lengths[256] == 0)
-		return -9;
-
-	// build huffman table for literal/length codes
-	err = construct(&lencode, lengths, nlen);
-	if (err && (err < 0 || nlen != lencode.count[0] + lencode.count[1]))
-		return -7;  // incomplete code ok only for single length 1 code
-
-	// build huffman table for distance codes
-	err = construct(&distcode, lengths + nlen, ndist);
-	if (err && (err < 0 || ndist != distcode.count[0] + distcode.count[1]))
-		return -8;  // incomplete code ok only for single length 1 code
+	if (lengths[256] == 0
+		|| construct(&lencode, lengths, nlen)
+		|| construct(&distcode, lengths + nlen, ndist))
+		return 1;
 
 	// decode data until end-of-block code
 	return codes(s, &lencode, &distcode);
@@ -293,9 +284,9 @@ static int dynamic(struct state *s)
 int puff(
 	unsigned char*       dest,
 	const unsigned long  destlen,
-	const unsigned char* source,
+	const unsigned char  *source,
 	const unsigned long  sourcelen,
-	struct state&        s)
+	struct state         &s)
 {
 	int last, type, err;
 
@@ -311,24 +302,17 @@ int puff(
 	s.bitbuf = 0;
 	s.bitcnt = 0;
 
-	// return if bits() or decode() tries to read past available input
-	if (setjmp(jump) != 0)  // if came back here via longjmp()
-		err = 2;             // then skip do-loop, return error
-	else {
-		// process blocks until last block or error
-		do {
-			last = bits(&s, 1);  // one if last block
-			type = bits(&s, 2);  // block type 0..3
-			if ( type == 1 ) {
-				err = fixed(&s);
-			} else if ( type == 2 ) {
-				err = dynamic(&s);
-			} else if ( type == 0 ) {
-				err = stored(&s);
-			} else {
-				err = -1;  // return with error
-			}
-		} while (last == 0 && err == 0);
-	}
+	// process blocks until last block or error
+	do {
+		last = bits(&s, 1);  // one if last block
+		type = bits(&s, 2);  // block type 0..3
+		if ( type == 1 ) {
+			err = fixed(&s);
+		} else if ( type == 2 ) {
+			err = dynamic(&s);
+		} else {
+			err = -1;
+		}
+	} while (last == 0 && err == 0);
 	return err;
 }

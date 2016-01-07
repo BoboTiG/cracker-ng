@@ -1,4 +1,4 @@
-NAME    = cracker-ng.d
+NAME    = cracker-ng
 MODULES = cpt zip
 DICO    = -w list/10k-most-common.txt
 
@@ -26,12 +26,12 @@ modules: $(MODULES)
 $(MODULES):
 	@echo "$(GREEN) === Module $@ ===$(NORMAL)"
 
-	@echo "$(GREEN) + Address Sanitizer first ...$(NORMAL)"
-	make -C ../src/ -f Makefile.debug $@-ASAN mrproper
-	$(PAUSE)
+	#@echo "$(GREEN) + Address Sanitizer first ...$(NORMAL)"
+	#make -C ../src/ -f Makefile $@-ASAN mrproper DEBUG=1
+	#$(PAUSE)
 
 	@echo "$(GREEN) + Building ...$(NORMAL)"
-	make -C ../src/ -f Makefile.debug $@ clean
+	make -C ../src/ -f Makefile $@ clean DEBUG=1
 	mv ../src/$@$(NAME) $@$(NAME)
 	$(PAUSE)
 
