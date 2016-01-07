@@ -70,11 +70,12 @@ private:
 	Cracker & operator=(const Cracker &);
 
 	// Optimized read from stdin
-	inline bool cfgets(FILE* input, char*& output, const size_t& len) {
-		if ( fgets(output, len, input) == NULL ) return false;
-		char *lf = strchr(output, '\n');
-		*lf = '\0';
-		return true;
+	inline int cfgets(FILE* input, char*& output, const size_t& len) {
+		if ( fgets(output, len, input) ) {
+			output[strcspn(output, "\n")] = 0;
+			return 1;
+		}
+		return 0;
 	}
 
 	// Optimized read from string
