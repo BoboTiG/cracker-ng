@@ -3,7 +3,6 @@
  * \file cracker.h
  * \brief Cracker class header for Cracker-ng.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2016.01.01
  *
  * Copyright (C) 2011-2016 Mickaël 'Tiger-222' Schoentgen.
  * See http://www.pkware.com/documents/casestudies/APPNOTE.TXT for

@@ -3,7 +3,6 @@
  * \file read.cc
  * \brief Cracker-ng (optimized) functions.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2013.01.20
  *
  * Copyright (C) 2011-2016 Mickaël 'Tiger-222' Schoentgen.
  */

@@ -3,7 +3,6 @@
  * \file gui.cc
  * \brief GUI management.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2013.02.08
  *
  * Copyright (C) 2011-2016 Mickaël 'Tiger-222' Schoentgen.
  */

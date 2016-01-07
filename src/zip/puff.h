@@ -3,7 +3,6 @@
  * \file puff.h
  * \brief ZIP Cracker-ng headers for the deflate algorithm (optimized for the project).
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2014.01.04
  *
  * Copyright (C) 2002-2010 Mark Adler
  * Copyright (C) 2011-2016 Mickaël 'Tiger-222' Schoentgen.

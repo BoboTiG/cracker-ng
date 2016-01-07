@@ -3,7 +3,6 @@
  * \file read.h
  * \brief Cracker-ng (optimized) functions headers.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2013.01.07
  *
  * Copyright (C) 2011-2016 Mickaël 'Tiger-222' Schoentgen.
  */

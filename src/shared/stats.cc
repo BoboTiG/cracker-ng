@@ -3,7 +3,6 @@
  * \file stats.cpp
  * \brief Statistics functions.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2015.03.16
  *
  * Copyright (C) 2011-2016 Mickaël 'Tiger-222' Schoentgen.
  */

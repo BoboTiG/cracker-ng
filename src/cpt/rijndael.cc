@@ -3,7 +3,6 @@
  * \file rijndael.c
  * \brief Part of CPT Cracker-ng.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2013.01.28
  *
  * Copyright (C) 2000-2009 Peter Selinger.
  * Copyright (C) 2011-2016 Mickaël 'Tiger-222' Schoentgen.

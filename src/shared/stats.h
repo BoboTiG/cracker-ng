@@ -3,7 +3,6 @@
  * \file stats.h
  * \brief Statistics headers.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2015.03.16
  *
  * Copyright (C) 2011-2016 Mickaël 'Tiger-222' Schoentgen.
  */

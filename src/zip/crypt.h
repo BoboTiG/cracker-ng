@@ -3,7 +3,6 @@
  * \file crypt.h
  * \brief ZIP Cracker-ng headers for the Traditional PKWARE Encryption.
  * \author Mickaël 'Tiger-222' Schoentgen
- * \date 2015.02.10
  *
  * Copyright (c) 1990-2007 Info-ZIP.  All rights reserved.
  * Copyright (C) 2011-2016 Mickaël 'Tiger-222' Schoentgen.
