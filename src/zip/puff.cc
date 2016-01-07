@@ -49,40 +49,11 @@ static int bits(struct state *s, const int &need)
 	}
 
 	// drop need bits and update buffer, always zero to seven bits left
-	s->bitbuf  = val >> need;
+	s->bitbuf = val >> need;
 	s->bitcnt -= need;
 
 	// return need bits, zeroing the bits above that
 	return val & ((1L << need) - 1);
-}
-
-static int stored(struct state *s)
-{
-	unsigned int len;  // length of stored block
-
-	// discard leftover bits from current byte (assumes s->bitcnt < 8)
-	s->bitbuf = 0;
-	s->bitcnt = 0;
-
-	// get length and check against its one's complement
-	if (s->incnt + 4 > s->inlen)
-		return 2;  // not enough input
-	len = s->in[s->incnt++];
-	len |= s->in[s->incnt++] << 8;
-	if (s->in[s->incnt++] == (~len & 0xff) ||
-		s->in[s->incnt++] == ((~len >> 8) & 0xff)) {
-		// copy len bytes from in to out
-		if (s->incnt + len > s->inlen)
-			return 2;  // not enough input
-		if (s->outcnt + len > s->outlen)
-			return 1;  // not enough output space
-		for ( ; len; --len )
-			s->out[s->outcnt++] = s->in[s->incnt++];
-		// done with a valid stored block
-		return 0;
-	}
-	return -2;  // didn't match complement!
-
 }
 
 static int decode(struct state *s, const struct huffman *h)
@@ -96,7 +67,7 @@ static int decode(struct state *s, const struct huffman *h)
 	len = 1;
 	next = h->count + 1;
 	for ( ;; ) {
-		for ( ; left; --left ) {
+		for ( ; left; --left, ++len) {
 			code |= bitbuf & 1;
 			bitbuf >>= 1;
 			count = *next++;
@@ -109,7 +80,6 @@ static int decode(struct state *s, const struct huffman *h)
 			first += count;
 			first <<= 1;
 			code  <<= 1;
-			++len;
 		}
 		left = 16 - len;
 		if (left == 0 || s->incnt == s->inlen)
@@ -118,7 +88,7 @@ static int decode(struct state *s, const struct huffman *h)
 		if (left > 8)
 			left = 8;
 	}
-	return -10;  // ran out of codes
+	return -1;  // ran out of codes
 }
 
 static int construct(struct huffman *h, const int *length, const int &n)
@@ -171,7 +141,7 @@ static int codes(
 	do {
 		symbol = decode(s, lencode);
 		if (symbol < 0)
-			return symbol;  // invalid symbol
+			return 1;  // invalid symbol
 		if (symbol < 256) {  // literal: symbol is the byte
 			// write out the literal
 			if (s->outcnt == s->outlen)
@@ -182,8 +152,8 @@ static int codes(
 		else if (symbol > 256) {  // length
 			// get and compute length
 			symbol -= 257;
-			if (symbol >= 29)
-				return -10;  // invalid fixed code
+			if (symbol > 28)
+				return 1;  // invalid fixed code
 			len = lens[symbol] + bits(s, lext[symbol]);
 
 			// get and check distance
@@ -192,7 +162,7 @@ static int codes(
 				return symbol;  // invalid symbol
 			dist = dists[symbol] + bits(s, dext[symbol]);
 			if (dist > s->outcnt)
-				return -11;  // distance too far back
+				return 1;  // distance too far back
 
 			// copy length bytes from distance bytes back
 			if (s->outcnt + len > s->outlen)
@@ -259,7 +229,7 @@ static int dynamic(struct state *s)
 	ndist = bits(s, 5) + 1;
 	ncode = bits(s, 4) + 4;
 	if (nlen > 286 || ndist > 30)
-		return -3;  // bad counts
+		return 1;  // bad counts
 
 	// read code length code lengths (really), missing lengths are zero
 	for (index = 0; index < ncode; ++index)
@@ -268,9 +238,8 @@ static int dynamic(struct state *s)
 		lengths[order[index]] = 0;
 
 	// build huffman table for code lengths codes (use lencode temporarily)
-	err = construct(&lencode, lengths, 19);
-	if (err != 0)  // require complete code set here
-		return -4;
+	if (construct(&lencode, lengths, 19))  // require complete code set here
+		return 1;
 
 	// read length/literal and distance code length tables
 	index = 0;
@@ -281,14 +250,14 @@ static int dynamic(struct state *s)
 
 		symbol = decode(s, &lencode);
 		if (symbol < 0)
-			return symbol;  // invalid symbol
+			return 1;  // invalid symbol
 		if (symbol < 16)  // length in 0..15
 			lengths[index++] = symbol;
 		else {  // repeat instruction
 			len = 0;  // assume repeating zeros
 			if (symbol == 16) {  // repeat last length 3..6 times
 				if (index == 0)
-					return -5;  // no last length!
+					return 1;  // no last length!
 				len = lengths[index - 1];  // last length
 				symbol = 3 + bits(s, 2);
 			}
