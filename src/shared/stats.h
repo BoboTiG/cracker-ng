@@ -36,8 +36,6 @@ protected:
 private:
 	size_t combinations;
 	time_t start_time;
-	time_t elapsed_time;
-	time_t elapsed_seconds();
 };
 
 #endif  // SRC_SHARED_STATS_H_
