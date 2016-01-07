@@ -41,7 +41,7 @@ enum FLAG {
 
 /*!
  * \struct arguments
- * \brief ZIP Central Directory structure.
+ * \brief All informations needed to start a crack.
  */
 struct arguments {
 	std::string   module;     //!< The module's name
