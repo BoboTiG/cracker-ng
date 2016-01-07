@@ -38,15 +38,13 @@ const int dext[30] = {
 const int order[19] = {
 	16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15};
 
-static jmp_buf jump;
-
 static int bits(struct state *s, const int &need)
 {
 	int val = s->bitbuf;
 
 	for ( ; s->bitcnt < need ; s->bitcnt += 8 ) {
 		if (s->incnt == s->inlen)
-			longjmp(jump, 1);  // out of input
+			return 1;  // out of input
 		val |= s->in[s->incnt++] << s->bitcnt;  // load eight bits
 	}
 
@@ -114,10 +112,8 @@ static int decode(struct state *s, const struct huffman *h)
 			++len;
 		}
 		left = 16 - len;
-		if (left == 0)
-			break;
-		if (s->incnt == s->inlen)
-			longjmp(jump, 1);  // out of input
+		if (left == 0 || s->incnt == s->inlen)
+			return -1;
 		bitbuf = s->in[s->incnt++];
 		if (left > 8)
 			left = 8;

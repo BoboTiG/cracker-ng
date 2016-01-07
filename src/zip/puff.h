@@ -40,7 +40,6 @@
 
 
 #include <string.h>  // for memcpy()
-#include <setjmp.h>  // for setjmp(), longjmp(), and jmp_buf
 
 
 // input and output state
