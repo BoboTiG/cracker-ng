@@ -69,12 +69,26 @@ private:
 	Cracker(const Cracker &);
 	Cracker & operator=(const Cracker &);
 
+	inline size_t istrlen(const char *s) {
+		register size_t len = 0;
+		register unsigned x;
+		for( ;; ) {
+			x = *(unsigned*)s;
+			if ( (x & 0xFF) == 0 ) return len;
+			if ( (x & 0xFF00) == 0 ) return len + 1;
+			if ( (x & 0xFF0000) == 0 ) return len + 2;
+			if ( (x & 0xFF000000) == 0 ) return len + 3;
+			s += 4, len += 4;
+		}
+	}
+
 	// Optimized read from stdin
 	inline int cfgets(FILE* input, char*& output, const size_t& len) {
 		if ( fgets(output, len, input) ) {
-			//~ output[strcspn(output, "\n")] = 0;
-			//~ output[strlen(output) - 1] = 0;  // Faster than previous line
-			output[strnlen(output, len) - 1] = 0;  // Faster than previous line
+			//output[strcspn(output, "\n")] = 0;
+			//output[strlen(output) - 1] = 0;  // Faster than previous line
+			//output[strnlen(output, len) - 1] = 0;  // Slightly faster than previous line
+			output[istrlen(output) - 1] = 0;  // Even faster than previous line
 			return 1;
 		}
 		return 0;

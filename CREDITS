@@ -1,6 +1,6 @@
 ﻿
  * icon from http://www.iconarchive.com/
- 
+
  * CPT module based on the work of Peter Selinger
 	URL: http://ccrypt.sourceforge.net/
 
@@ -9,6 +9,9 @@
 
  * Optimized ZIP create_crc32() inspired by one of Stephan Brumme
  	URL: http://create.stephan-brumme.com/crc32/
+
+ * Optimized ZIP istrlen() inspired by one of Peter Kankowski
+	URL: http://www.strchr.com/optimized_strlen_function
 
  * functions_ng::get_cores() inspired from the excellent lophttpd project by Sebastian Kramer:
     URL: https://github.com/stealth/lophttpd/blob/master/multicore.cc
