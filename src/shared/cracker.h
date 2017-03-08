@@ -21,7 +21,7 @@
 	#include "./../cpt/tables.h"
 	#include "./../cpt/rijndael.h"
 	#include "./../cpt/ccryptlib.h"
-	static const size_t PWD_MAX = 32;  //!< Maximum password length
+	static const size_t PWD_MAX = 80;  //!< Maximum password length
 #elif ZIP
 	#include <limits>
 	#include "./../zip/crypt.h"
