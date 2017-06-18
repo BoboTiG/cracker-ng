@@ -26,14 +26,16 @@ inline int ccdecrypt(
 	const char*  key,
 	roundkey&    rkk
 ) {
-	unsigned int i = 0, keyblock[8] = {0}, rijndaelkey[8] = {0};
+	unsigned int i, keyblock[8] = {0}, rijndaelkey[8] = {0};
 
 	// Generate the roundkeys
-	for ( ; *key; ++key, ++i ) {
-		reinterpret_cast<unsigned char*>(rijndaelkey)[i] ^= *key;
-	}
-	xrijndaelKeySched(rijndaelkey, &rkk);
-	xrijndaelEncrypt(keyblock, &rkk);
+	do {
+		for ( i = 0; i < 32 && *key; ++key, ++i ) {
+			reinterpret_cast<unsigned char*>(rijndaelkey)[i] ^= *key;
+		}
+		xrijndaelKeySched(rijndaelkey, &rkk);
+		xrijndaelEncrypt(keyblock, &rkk);
+	} while ( *key );
 
 	// Décrypt the block
 	xrijndaelKeySched(keyblock, &rkk);
