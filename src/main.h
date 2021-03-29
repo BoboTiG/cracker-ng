@@ -4,7 +4,7 @@
  * \brief ZIP Cracker-ng headers.
  * \author Mickaël 'Tiger-222' Schoentgen
  *
- * Copyright (C) 2011-2016 Mickaël 'Tiger-222' Schoentgen.
+ * Copyright (C) 2011-2021 Mickaël 'Tiger-222' Schoentgen.
  * See http://www.pkware.com/documents/casestudies/APPNOTE.TXT for
  * more details about ZIP specifications.
  */

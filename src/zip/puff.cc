@@ -5,7 +5,7 @@
  * \author Mickaël 'Tiger-222' Schoentgen
  *
  * Copyright (C) 2002-2010 Mark Adler
- * Copyright (C) 2011-2016 Mickaël 'Tiger-222' Schoentgen.
+ * Copyright (C) 2011-2021 Mickaël 'Tiger-222' Schoentgen.
  *
  * Why using puff() instead of optimized boost libraries?
  * This is simple: puff() aborts early when there is one bad operation.

@@ -5,7 +5,7 @@
  * \author Mickaël 'Tiger-222' Schoentgen
  *
  * Copyright (c) 1990-2007 Info-ZIP.  All rights reserved.
- * Copyright (C) 2011-2016 Mickaël 'Tiger-222' Schoentgen.
+ * Copyright (C) 2011-2021 Mickaël 'Tiger-222' Schoentgen.
  *
  * See the accompanying file LICENSE, version 2005-Feb-10 or later for
  * terms of use. If, for some reason, all these files are missing, the

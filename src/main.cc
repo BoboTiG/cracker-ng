@@ -4,7 +4,7 @@
  * \brief ZIP module for Cracker-ng.
  * \author Mickaël 'Tiger-222' Schoentgen
  *
- * Copyright (C) 2011-2016 Mickaël 'Tiger-222' Schoentgen.
+ * Copyright (C) 2011-2021 Mickaël 'Tiger-222' Schoentgen.
  * See http://www.pkware.com/documents/casestudies/APPNOTE.TXT for
  * more details about ZIP specifications.
  */
@@ -139,7 +139,7 @@ bool argz_traitment(const arguments& argz) {
 
 void help(const std::string& module) {
 	std::cout <<
-		"Copyright (C) 2011-2016 by Mickaël 'Tiger-222' Schoentgen.\n\n"
+		"Copyright (C) 2011-2021 by Mickaël 'Tiger-222' Schoentgen.\n\n"
 		"Cracker-ng comes with ABSOLUTELY NO WARRANTY.\n"
 		"This is free software, and you are welcome to redistribute it under\n"
 		"certain conditions. See the GNU General Public Licence for details.\n\n"
@@ -155,9 +155,7 @@ void help(const std::string& module) {
 		"\nZIP specific options:\n"
 		"    -fp, --false-pos  set one false positive (accumulate up to 8)\n"
 		"                      ex: -fp word1 -fp word2 ...\n"
-		"    -i,  --infos      print informations about a file to crack\n\n"
-		"Do not hesitate to contact me at <tiger-222@matriux.com> for critics,\n"
-		"suggestions, contributions (or whatever you want!).\n";
+		"    -i,  --infos      print informations about a file to crack\n";
 }
 
 void signal_handler(int s) {

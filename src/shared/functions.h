@@ -4,7 +4,7 @@
  * \brief Cracker-ng (optimized) functions headers.
  * \author Mickaël 'Tiger-222' Schoentgen
  *
- * Copyright (C) 2011-2016 Mickaël 'Tiger-222' Schoentgen.
+ * Copyright (C) 2011-2021 Mickaël 'Tiger-222' Schoentgen.
  */
 
 

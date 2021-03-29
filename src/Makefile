@@ -2,7 +2,7 @@
 DEBUG ?= 0
 CXX    = g++
 ifeq ($(DEBUG), 0)
-	CFLAGS = -march=native -O3 -mmmx -msse -msse2 -msse3 -m3dnow -ffast-math -mno-ieee-fp -s -D_FILE_OFFSET_BITS=64
+	CFLAGS = -O3 -ffast-math -march=native -D_FILE_OFFSET_BITS=64
 else
 	#CXX     = /usr/local/bin/callcatcher g++
 	CFLAGS  = -O0 -g
