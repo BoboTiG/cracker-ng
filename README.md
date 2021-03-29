@@ -54,7 +54,7 @@ The final executable file will be stored into `bin` folder.
 Man
 ---
 
-Usage: **MODULE**cracker-ng -f FILE
+Usage: `<MODULE>cracker-ng -f FILE`
 
 Examples with ZIP module:
 
