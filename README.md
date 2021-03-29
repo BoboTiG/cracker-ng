@@ -1,17 +1,6 @@
 Cracker-ng
 ==========
 
-```
-Copyright (C) 2011-2021 by Mickaël 'Tiger-222' Schoentgen.
-
-Cracker-ng comes with ABSOLUTELY NO WARRANTY.
-This is free software, and you are welcome to redistribute it under
-certain conditions. See the GNU General Public Licence for details.
-```
-
-What
-----
-
 Cracker-ng, a multiple file password finder.
 For now, there are these modules:
 
@@ -38,22 +27,29 @@ Installation
 ```shell
 $ git clone https://github.com/BoboTiG/cracker-ng.git
 $ cd cracker-ng
+```
 
-# For testers and contributors, always work with on the devel branch:
+For testers and contributors, always work with on the devel branch:
+```shell
 $ git checkout devel
+```
 
-# To show available commands:
-$ make
-
-# xample: build the ZIP module:
-$ make zip
-
-# Build the debug version (for testers and contributors):
+To show available commands:
+```shell
 $ make
 ```
 
-The final executable file will be stored into `bin` folder.
+Example to build the ZIP module:
+```shell
+$ make zip
+```
 
+Build the debug version (for testers and contributors):
+```shell
+$ DEBUG=1 make zip
+```
+
+The final executable file will be stored into `bin` folder.
 
 Man
 ---
@@ -63,17 +59,28 @@ Usage: **MODULE**cracker-ng -f FILE
 Examples with ZIP module:
 
 ```shell
+# Using STDIN to use power of other tools
 $ cat wordlist.lst | zipcracker-ng -f FILE  -
-
 $ john --incremental --stdout | zipcracker-ng -f FILE -
-
 $ crunch 1 8 -f charset.lst lalpha | zipcracker-ng -f FILE -
 
+# Or using a wordlist
 $ zipcracker-ng -f FILE -w wordlist.lst
 ```
 
 Why
 ---
 
-I wrote this tool when I saw poor resources we have on *unix for ZIP and
+I wrote this tool when I saw poor resources we have on Unix for ZIP and
 RAR files password cracking. Hope it will be helpful.
+
+License
+-------
+
+```
+Copyright (C) 2011-2021 by Mickaël 'Tiger-222' Schoentgen.
+
+Cracker-ng comes with ABSOLUTELY NO WARRANTY.
+This is free software, and you are welcome to redistribute it under
+certain conditions. See the GNU General Public Licence for details.
+```
