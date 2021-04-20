@@ -112,7 +112,7 @@ private:
 		}
 		*output = '\0';
 		*input = next;
-		return next != '\0';
+		return next != output;
 	}
 
 	/*!
