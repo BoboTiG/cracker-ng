@@ -25,7 +25,7 @@ void swap_lfh(
 	lfh->strong_encryption         = local_lfh.strong_encryption;
 	lfh->is_encrypted              = local_lfh.is_encrypted;
 	if ( local_lfh.file_name_length > 0 ) {
-		strncpy(lfh->file_name, local_lfh.file_name, 512);
+		snprintf(lfh->file_name, strlen(local_lfh.file_name) + 1, "%s", local_lfh.file_name);
 	}
 }
 
