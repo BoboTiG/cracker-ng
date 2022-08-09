@@ -694,6 +694,7 @@ void Cracker::crack() {
 			}
 		}
 #endif
+		if (!this_is_now_we_fight) break; // we found a match, we can stop trying.
 		__sync_add_and_fetch(&num, 1);
 	}
 	if ( this->from != "STDIN" ) {
