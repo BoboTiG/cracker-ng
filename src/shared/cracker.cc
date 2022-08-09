@@ -695,6 +695,7 @@ void Cracker::crack() {
 		}
 #endif
 		__sync_add_and_fetch(&num, 1);
+		if (!this_is_how_we_fight) break; // we're done, no need to check any more candidates.
 	}
 	if ( this->from != "STDIN" ) {
 		fclose(input);
