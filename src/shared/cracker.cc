@@ -650,7 +650,8 @@ void Cracker::crack() {
 	// Let's go!
 	gui.run();
 	pthread_create(&stat, NULL, stats, reinterpret_cast<void*>(&s));
-	for ( ; (this_is_now_we_fight = this->cfgets(input, password, PWD_MAX)); ) {
+	do {
+		this_is_now_we_fight = this->cfgets(input, password, PWD_MAX);
 #ifdef CPT
 		memcpy(inbuf, encryption_header, 32);
 		if ( ccdecrypt(inbuf, password, rkk) == 0 ) {
@@ -695,7 +696,7 @@ void Cracker::crack() {
 		}
 #endif
 		__sync_add_and_fetch(&num, 1);
-	}
+	} while (this_is_now_we_fight);
 	if ( this->from != "STDIN" ) {
 		fclose(input);
 	}
