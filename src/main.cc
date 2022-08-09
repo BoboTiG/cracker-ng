@@ -149,7 +149,7 @@ void help(const std::string& module) {
 		"\nAvailable options:\n"
 		"    -f,  --file       file to crack\n"
 		"    -,   --stdin      read from STDIN\n"
-		"    -w,  --wordlist   dictionnary to use\n"
+		"    -w,  --wordlist   dictionary to use\n"
 		"    -h,  --help       display this message\n"
 		"    -v,  --version    display module version\n"
 		"\nZIP specific options:\n"
