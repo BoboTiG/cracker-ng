@@ -70,8 +70,8 @@ private:
 	Cracker & operator=(const Cracker &);
 
 	inline size_t istrlen(const char *s) {
-		register size_t len = 0;
-		register unsigned x;
+		size_t len = 0;
+		unsigned x;
 		for( ;; ) {
 			x = *(unsigned*)s;
 			if ( (x & 0xFF) == 0 ) return len;
