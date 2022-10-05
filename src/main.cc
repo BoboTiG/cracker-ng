@@ -4,7 +4,7 @@
  * \brief ZIP module for Cracker-ng.
  * \author Mickaël 'Tiger-222' Schoentgen
  *
- * Copyright (C) 2011-2021 Mickaël 'Tiger-222' Schoentgen.
+ * Copyright (C) 2011-2022 Mickaël 'Tiger-222' Schoentgen.
  * See http://www.pkware.com/documents/casestudies/APPNOTE.TXT for
  * more details about ZIP specifications.
  */
@@ -139,7 +139,7 @@ bool argz_traitment(const arguments& argz) {
 
 void help(const std::string& module) {
 	std::cout <<
-		"Copyright (C) 2011-2021 by Mickaël 'Tiger-222' Schoentgen.\n\n"
+		"Copyright (C) 2011-2022 by Mickaël 'Tiger-222' Schoentgen.\n\n"
 		"Cracker-ng comes with ABSOLUTELY NO WARRANTY.\n"
 		"This is free software, and you are welcome to redistribute it under\n"
 		"certain conditions. See the GNU General Public Licence for details.\n\n"

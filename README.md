@@ -78,7 +78,7 @@ License
 -------
 
 ```
-Copyright (C) 2011-2021 by Mickaël 'Tiger-222' Schoentgen.
+Copyright (C) 2011-2022 by Mickaël 'Tiger-222' Schoentgen.
 
 Cracker-ng comes with ABSOLUTELY NO WARRANTY.
 This is free software, and you are welcome to redistribute it under

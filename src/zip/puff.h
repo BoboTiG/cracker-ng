@@ -5,7 +5,7 @@
  * \author Mickaël 'Tiger-222' Schoentgen
  *
  * Copyright (C) 2002-2010 Mark Adler
- * Copyright (C) 2011-2021 Mickaël 'Tiger-222' Schoentgen.
+ * Copyright (C) 2011-2022 Mickaël 'Tiger-222' Schoentgen.
  *
  * This software is provided 'as-is', without any express or implied
  * warranty.  In no event will the author be held liable for any damages
