@@ -45,7 +45,7 @@ extern const uint32_t pcrc_32_tab[16][256];
 inline uint32_t create_crc32(const unsigned char* buf, size_t len) {
 	uint32_t* current = (uint32_t*)buf;
 	uint32_t one, two, three, four;
-	register uint32_t crc = 0xffffffff;
+	uint32_t crc = 0xffffffff;
 	unsigned int unroll;
 
 	for ( ; len >= 320; len -= 64 ) {
@@ -90,7 +90,7 @@ inline uint32_t create_crc32(const unsigned char* buf, size_t len) {
  * so far, though.
  */
 inline unsigned char decrypt_byte() {
-    register uint16_t temp = keys[2] | 2;
+    uint16_t temp = keys[2] | 2;
     return (temp * (temp ^ 1)) >> 8;
 }
 
