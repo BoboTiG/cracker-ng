@@ -1,6 +1,5 @@
 *.o
 .*
-#test*
 bin/
 tests/*.d
 tests/callgrind*
