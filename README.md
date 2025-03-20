@@ -1,6 +1,8 @@
 Cracker-ng
 ==========
 
+[![Patreon](https://img.shields.io/badge/Patreon-F96854?style=for-the-badge&logo=patreon&logoColor=white)](https://www.patreon.com/mschoentgen)
+
 Cracker-ng, a multiple file password finder.
 For now, there are these modules:
 
