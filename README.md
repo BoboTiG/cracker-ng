@@ -1,18 +1,20 @@
-Cracker-ng
-==========
+# Cracker-ng
 
-[![Patreon](https://img.shields.io/badge/Patreon-F96854?style=for-the-badge&logo=patreon&logoColor=white)](https://www.patreon.com/mschoentgen)
+> [!TIP]
+> Become **my boss** to help me work on this awesome software, and make the world better:
+> 
+> [![Patreon](https://img.shields.io/badge/Patreon-F96854?style=for-the-badge&logo=patreon&logoColor=white)](https://www.patreon.com/mschoentgen)
 
 Cracker-ng, a multiple file password finder.
 For now, there are these modules:
 
-* **zip cracker** (zip, winzip, apm, ipa, and all zip based files),
-* **ccrypt cracker** (cpt, antigift) [from the 2nd version (1.1) to the latest (1.10), 1.0 is buggy]
+- **zip cracker** (zip, winzip, apm, ipa, and all zip based files),
+- **ccrypt cracker** (cpt, antigift) [from the 2nd version (1.1) to the latest (1.10), 1.0 is buggy]
 
 What this tool does **not**:
 
-* call a tierce tool like unrar or unzip to check the password (and will never)
-* compute permutations (will change) or create wordlists
+- call a tierce tool like unrar or unzip to check the password (and will never)
+- compute permutations (will change) or create wordlists
 
 What this tool does:
 
@@ -23,8 +25,7 @@ What this tool does:
 	- cat, john, crunch or whatever you want for wordlist attack
 
 
-Installation
----
+## Installation
 
 ```shell
 $ git clone https://github.com/BoboTiG/cracker-ng.git
@@ -53,8 +54,7 @@ $ DEBUG=1 make zip
 
 The final executable file will be stored into `bin` folder.
 
-Man
----
+## Man
 
 Usage: `<MODULE>cracker-ng -f FILE`
 
@@ -70,17 +70,15 @@ $ crunch 1 8 -f charset.lst lalpha | zipcracker-ng -f FILE -
 $ zipcracker-ng -f FILE -w wordlist.lst
 ```
 
-Why
----
+## Why
 
 I wrote this tool when I saw poor resources we have on Unix for ZIP and
 RAR files password cracking. Hope it will be helpful.
 
-License
--------
+## License
 
 ```
-Copyright (C) 2011-2022 by Mickaël 'Tiger-222' Schoentgen.
+Copyright (C) 2011-2025 by Mickaël 'Tiger-222' Schoentgen.
 
 Cracker-ng comes with ABSOLUTELY NO WARRANTY.
 This is free software, and you are welcome to redistribute it under
