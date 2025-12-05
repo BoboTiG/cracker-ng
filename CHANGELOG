@@ -7,7 +7,10 @@
 
 
 [ dev ]
-	. Cracker-ng 2015.mm-jj released
+	. Cracker-ng 2025.12-05 released
+	. ZIP module:
+		* huge optimization by running a deflate dry-run to catch early decompression issues, and prevent unnecessary memory copies
+		* small optimizations in keys initialization (see GH#17)
 
 [ february 03 2015 ]
 	. Cracker-ng 2015.02-03 released

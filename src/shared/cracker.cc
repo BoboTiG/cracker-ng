@@ -677,11 +677,13 @@ void Cracker::crack() {
 				update_keys(data[i] ^= decrypt_byte(keys[2]));
 			}
 			if ( this->lfh.compression_method == DEFLATED ) {
-				if ( puff(dest, destlen, data, sourcelen, io_state) == 0 ) {
-					if ( create_crc32(dest, len) == this->lfh.good_crc_32 ) {
-						if ( is_false_positive(password) == 0 ) {
-							chosen_one = password;
-							this_is_now_we_fight = false;
+				if ( puff_dry_run(destlen, data, sourcelen, io_state) == 0 ) {
+					if ( puff(dest, destlen, data, sourcelen, io_state) == 0 ) {
+						if ( create_crc32(dest, len) == this->lfh.good_crc_32 ) {
+							if ( is_false_positive(password) == 0 ) {
+								chosen_one = password;
+								this_is_now_we_fight = false;
+							}
 						}
 					}
 				}

@@ -5,7 +5,7 @@ ifeq ($(DEBUG), 0)
 	CFLAGS = -O3 -ffast-math -march=native -D_FILE_OFFSET_BITS=64
 else
 	#CXX     = /usr/local/bin/callcatcher g++
-	CFLAGS  = -O0 -g
+	CFLAGS  = -O0 -pg
 	#CFLAGS += -fno-omit-frame-pointer -fsanitize=address
 endif
 CFLAGS += -Wfatal-errors -Werror -Wall -W -pedantic -Wextra -Wunused -Wformat=2 -Weffc++ -Wpadded -fexceptions

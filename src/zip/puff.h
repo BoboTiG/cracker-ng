@@ -5,7 +5,7 @@
  * \author Mickaël 'Tiger-222' Schoentgen
  *
  * Copyright (C) 2002-2010 Mark Adler
- * Copyright (C) 2011-2022 Mickaël 'Tiger-222' Schoentgen.
+ * Copyright (C) 2011-2025 Mickaël 'Tiger-222' Schoentgen.
  *
  * This software is provided 'as-is', without any express or implied
  * warranty.  In no event will the author be held liable for any damages
@@ -72,6 +72,12 @@ extern const int order[19];  // permutation of code length codes
 // Inflate source to dest.
 int puff(
     unsigned char*       dest,       // pointer to destination pointer
+    const unsigned long  destlen,    // amount of output space
+    const unsigned char *source,     // pointer to source data pointer
+    const unsigned long  sourcelen,  // amount of input available
+    struct state        &s           // input/output state
+);
+int puff_dry_run(
     const unsigned long  destlen,    // amount of output space
     const unsigned char *source,     // pointer to source data pointer
     const unsigned long  sourcelen,  // amount of input available

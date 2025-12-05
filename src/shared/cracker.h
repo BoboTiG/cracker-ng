@@ -79,8 +79,7 @@ private:
 	}
 
 	// Optimized read from string
-	inline bool csgets(char** input, char*& output, const size_t& len)
-	{
+	inline bool csgets(char** input, char*& output, const size_t& len) {
 		char *next = *input;
 		unsigned int numread = 0;
 		for ( ; numread + 1 < len && *next; ++numread ) {
