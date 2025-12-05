@@ -151,11 +151,13 @@ void help(const std::string& module) {
 		"    -,   --stdin      read from STDIN\n"
 		"    -w,  --wordlist   dictionary to use\n"
 		"    -h,  --help       display this message\n"
-		"    -v,  --version    display module version\n"
-		"\nZIP specific options:\n"
+		"    -v,  --version    display module version\n";
+#ifdef ZIP
+	std::cout <<
 		"    -fp, --false-pos  set one false positive (accumulate up to 8)\n"
 		"                      ex: -fp word1 -fp word2 ...\n"
 		"    -i,  --infos      print informations about a file to crack\n";
+#endif
 }
 
 void signal_handler(int s) {
