@@ -594,7 +594,7 @@ Cracker::~Cracker() {
 	}
 }
 
-void Cracker::crack() {
+int Cracker::crack() {
 	GUI gui(
 		this->title, this->file, this->chosen_one,
 		this->encryption, this->method, this->generator
@@ -614,6 +614,7 @@ void Cracker::crack() {
 	this->filei.read(encryption_header, 32);
 	this->filei.close();
 #elif ZIP
+	size_t end_line_drift   = 1;
 	size_t i                = 0;
 	size_t len              = this->lfh.good_length;
 	uint8_t check1          = this->lfh.last_mod_file_time >> 8;
@@ -645,13 +646,15 @@ void Cracker::crack() {
 		//void (&rf)(char*, const size_t&, char**) = this->csgets;
 		//read_data = this->csgets;
 		input = fopen(this->from.c_str(), "r");
+		// get 1st line and guess line ending
+		// end_line_drift = 2;
 	}
 
 	// Let's go!
 	gui.run();
 	pthread_create(&stat, NULL, stats, reinterpret_cast<void*>(&s));
 	do {
-		this_is_now_we_fight = this->cfgets(input, password, PWD_MAX);
+		this_is_now_we_fight = this->cfgets(input, password, PWD_MAX, end_line_drift);
 #ifdef CPT
 		memcpy(inbuf, encryption_header, 32);
 		if ( ccdecrypt(inbuf, password, rkk) == 0 ) {
@@ -711,7 +714,7 @@ void Cracker::crack() {
 #endif
 	delete[] password;                   password = 0;
 	delete[] encryption_header; encryption_header = 0;
-	this->result(chosen_one);
+	return this->result(chosen_one);
 }
 
 bool Cracker::check() {
@@ -947,9 +950,10 @@ void Cracker::set_false_pos(const std::string& password, const size_t& i) {
 	this->false_pos[i] = password;
 }
 
-void Cracker::result(const std::string& password) {
+int Cracker::result(const std::string& password) {
 	if ( password.empty() ) {
 		std::cout << " ! Password not found." << std::endl;
+		return 1;
 	} else {
 		const char *p = password.c_str();
 		size_t i, len = strlen(p);
@@ -959,5 +963,6 @@ void Cracker::result(const std::string& password) {
 			printf("%02X ", p[i] & 0xff);
 		}
 		std::cout << "]" << std::endl;
+		return 0;
 	}
 }

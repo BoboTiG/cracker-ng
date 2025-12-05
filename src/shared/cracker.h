@@ -43,7 +43,7 @@ public:
 
 	Cracker(const std::string&, const std::string&);
 	~Cracker();
-	void crack();
+	int crack();
 	bool is_ok();
 	void set_debug(const bool yesno)     { this->debug      = yesno; };
 	void set_title(const char* str)      { this->title      = str; };
@@ -69,10 +69,10 @@ private:
 	Cracker(const Cracker &);
 	Cracker & operator=(const Cracker &);
 
-	// Optimized read from stdin
-	inline int cfgets(FILE* input, char*& output, const size_t& len) {
+	// Optimized read
+	inline int cfgets(FILE* input, char*& output, const size_t& len, const size_t &end_line_drift) {
 		if ( fgets(output, len, input) ) {
-			output[strlen(output) - 1] = 0;
+			output[strlen(output) - end_line_drift] = 0;
 			return 1;
 		}
 		return 0;
@@ -110,8 +110,10 @@ private:
 	 * \fn result(const std::string& password)
 	 * \brief Print the password if found.
 	 * \param password The password (str::string() if empty).
+	 * \return \li 0 if \b found;
+	 * \return \li 1 otherwise.
 	 */
-	void result(const std::string&);
+	int result(const std::string&);
 
 #ifdef ZIP
 	/*!

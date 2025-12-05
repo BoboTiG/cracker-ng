@@ -59,8 +59,7 @@ int main(int argc, char *argv[]) {
 	if ( !zizi.is_ok() ) {
 		return 1;
 	}
-	zizi.crack();
-	return 0;
+	return zizi.crack();
 }
 
 bool argz_traitment(const arguments& argz) {
