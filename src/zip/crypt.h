@@ -85,13 +85,10 @@ inline uint32_t create_crc32(const unsigned char* buf, size_t len) {
  * \fn decrypt_byte(void)
  * \brief Return the next byte in the pseudo-random sequence.
  * \return Decrypted byte.
- * \bug POTENTIAL:  temp*(temp^1) may overflow in an unpredictable
- * manner on 16-bit systems; not a problem with any known compiler
- * so far, though.
  */
-inline unsigned char decrypt_byte() {
-    uint16_t temp = keys[2] | 2;
-    return (temp * (temp ^ 1)) >> 8;
+static inline unsigned char decrypt_byte(uint32_t k2) {
+    uint16_t temp = (uint16_t)(k2 | 2);
+    return (unsigned char)((temp * (temp ^ 1)) >> 8);
 }
 
 /*!
@@ -99,9 +96,9 @@ inline unsigned char decrypt_byte() {
  * \brief Update the encryption keys with the next byte of plain text.
  * \param c The next byte.
  */
-inline void update_keys(const int& c) {
+static inline void update_keys(int c) {
 	keys[0] = (keys[0] >> 8) ^ pcrc_32_tab[0][(keys[0] ^ c) & 0xff];
-	keys[1] = (keys[1] + (keys[0] & 0xff)) * 134775813 + 1;
+	keys[1] = (keys[1] + (keys[0] & 0xff)) * 134775813U + 1U;
 	keys[2] = (keys[2] >> 8) ^ pcrc_32_tab[0][(keys[2] ^ (keys[1] >> 24)) & 0xff];
 }
 
@@ -110,10 +107,10 @@ inline void update_keys(const int& c) {
  * \brief Initialize the encryption keys and the random header according to the given password.
  * \param passwd The password.
  */
-inline void init_keys(const char* passwd) {
-	keys[0] = 0x12345678;
-	keys[1] = 0x23456789;
-	keys[2] = 0x34567890;
+static inline void init_keys(const char* passwd) {
+	keys[0] = 0x12345678U;
+	keys[1] = 0x23456789U;
+	keys[2] = 0x34567890U;
 	while (*passwd) {
 		update_keys(*passwd++);
 	}

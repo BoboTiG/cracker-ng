@@ -4,7 +4,7 @@
  * \brief Cracker class header for Cracker-ng.
  * \author Mickaël 'Tiger-222' Schoentgen
  *
- * Copyright (C) 2011-2022 Mickaël 'Tiger-222' Schoentgen.
+ * Copyright (C) 2011-2025 Mickaël 'Tiger-222' Schoentgen.
  * See http://www.pkware.com/documents/casestudies/APPNOTE.TXT for
  * more details about ZIP specifications.
  */
@@ -69,26 +69,10 @@ private:
 	Cracker(const Cracker &);
 	Cracker & operator=(const Cracker &);
 
-	inline size_t istrlen(const char *s) {
-		size_t len = 0;
-		unsigned x;
-		for( ;; ) {
-			x = *(unsigned*)s;
-			if ( (x & 0xFF) == 0 ) return len;
-			if ( (x & 0xFF00) == 0 ) return len + 1;
-			if ( (x & 0xFF0000) == 0 ) return len + 2;
-			if ( (x & 0xFF000000) == 0 ) return len + 3;
-			s += 4, len += 4;
-		}
-	}
-
 	// Optimized read from stdin
 	inline int cfgets(FILE* input, char*& output, const size_t& len) {
 		if ( fgets(output, len, input) ) {
-			//output[strcspn(output, "\n")] = 0;
-			//output[strlen(output) - 1] = 0;  // Faster than previous line
-			//output[strnlen(output, len) - 1] = 0;  // Slightly faster than previous line
-			output[istrlen(output) - 1] = 0;  // Even faster than previous line
+			output[strlen(output) - 1] = 0;
 			return 1;
 		}
 		return 0;

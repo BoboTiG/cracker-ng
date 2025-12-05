@@ -4,7 +4,7 @@
  * \brief Cracker class for ZIP Cracker-ng.
  * \author Mickaël 'Tiger-222' Schoentgen
  *
- * Copyright (C) 2011-2022 Mickaël 'Tiger-222' Schoentgen.
+ * Copyright (C) 2011-2025 Mickaël 'Tiger-222' Schoentgen.
  * See http://www.pkware.com/documents/casestudies/APPNOTE.TXT for
  * more details about ZIP specifications.
  */
@@ -669,12 +669,12 @@ void Cracker::crack() {
 		init_keys(password);  // 1
 		memcpy(buffer, encryption_header, 12);  // 2
 		for ( i = 0; i < 12; ++i ) {
-			update_keys(buffer[i] ^= decrypt_byte());
+			update_keys(buffer[i] ^= decrypt_byte(keys[2]));
 		}
 		if ( buffer[11] == check2 || (least_ver && buffer[11] == check1) ) {
 			memcpy(data, buf, len);  // 3
 			for ( i = 0; i < len; ++i ) {
-				update_keys(data[i] ^= decrypt_byte());
+				update_keys(data[i] ^= decrypt_byte(keys[2]));
 			}
 			if ( this->lfh.compression_method == DEFLATED ) {
 				if ( puff(dest, destlen, data, sourcelen, io_state) == 0 ) {
