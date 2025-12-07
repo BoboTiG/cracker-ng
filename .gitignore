@@ -1,6 +1,8 @@
 *.o
+*.out
 .*
 bin/
 tests/*.d
+tests/*cracker-ng
 tests/callgrind*
 tests/perf*

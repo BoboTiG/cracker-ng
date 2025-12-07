@@ -595,15 +595,12 @@ Cracker::~Cracker() {
 }
 
 int Cracker::crack() {
-	GUI gui(
-		this->title, this->file, this->chosen_one,
-		this->encryption, this->method, this->generator
-	);
 	std::string chosen_one;
 	size_t num = 0;
 	statistics s = { &num, &this_is_now_we_fight };
 	pthread_t stat;
 	char *password          = new char[PWD_MAX];
+	size_t end_line_drift   = 1;
 #ifdef CPT
 	char* encryption_header = new char[32];
 	unsigned int inbuf[8]   = {0};
@@ -614,7 +611,6 @@ int Cracker::crack() {
 	this->filei.read(encryption_header, 32);
 	this->filei.close();
 #elif ZIP
-	size_t end_line_drift   = 1;
 	size_t i                = 0;
 	size_t len              = this->lfh.good_length;
 	uint8_t check1          = this->lfh.last_mod_file_time >> 8;
@@ -646,9 +642,28 @@ int Cracker::crack() {
 		//void (&rf)(char*, const size_t&, char**) = this->csgets;
 		//read_data = this->csgets;
 		input = fopen(this->from.c_str(), "r");
-		// get 1st line and guess line ending
-		// end_line_drift = 2;
+
+		// Check for line ending to support both Unix files (LF), and Windows (CRLF)
+		char * first_line = NULL;
+		size_t fl_len = 0;
+		ssize_t fl_read;
+
+		fl_read = getline(&first_line, &fl_len, input);
+		if ( fl_read != -1 ) {
+			if ( first_line[strlen(first_line) - 2] == '\r' ) {
+				end_line_drift = 2;
+			}
+
+			// Seek back to the top
+			fseek(input, 0, SEEK_SET);
+		}
 	}
+
+	GUI gui(
+		this->title, this->file, this->chosen_one,
+		this->encryption, this->method, this->generator,
+		end_line_drift
+	);
 
 	// Let's go!
 	gui.run();

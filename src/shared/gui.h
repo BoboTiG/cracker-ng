@@ -30,7 +30,8 @@ class GUI {
 public:
 	GUI(
 		const std::string&, const std::string&, const std::string&,
-		const std::string&, const std::string&, const std::string&
+		const std::string&, const std::string&, const std::string&,
+		const size_t&
 	);
 	~GUI();
 
@@ -41,6 +42,7 @@ public:
 protected:
 	size_t row, col;
 	std::string title, file, chosen_one, encryption, method, generator;
+	size_t end_line_drift;
 
 	void init();
 };

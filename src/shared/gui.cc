@@ -13,7 +13,8 @@
 
 GUI::GUI(
 	const std::string& title, const std::string& file, const std::string& chosen_one,
-	const std::string& encryption, const std::string& method, const std::string& generator
+	const std::string& encryption, const std::string& method, const std::string& generator,
+	const size_t& end_line_drift
 ):
 	row(0),
 	col(0),
@@ -22,7 +23,8 @@ GUI::GUI(
 	chosen_one(chosen_one),
 	encryption(encryption),
 	method(method),
-	generator(generator)
+	generator(generator),
+	end_line_drift(end_line_drift)
 {
 	this->init();
 }
@@ -129,8 +131,10 @@ void GUI::run() const {
 	printf(" - %s\n", this->method.c_str());
 #endif
 	printf(" - %s\n", this->generator.c_str());
+	if ( this->end_line_drift == 2 ) {
+		printf("   Shifted to CRLF support\n");
+	}
 	printf(" . Working ...\n");
-
 
 	//
 	// The loop
