@@ -616,6 +616,7 @@ int Cracker::crack() {
 	uint8_t check1          = this->lfh.last_mod_file_time >> 8;
 	uint8_t check2          = this->lfh.good_crc_32 >> 24;
 	bool least_ver          = this->lfh.version_needed_to_extract <= 20;
+	size_t method           = this->lfh.compression_method;
 	char* encryption_header = new char[12];
 	char* buf               = new char[len];
 	uint8_t* buffer         = new uint8_t[12];
@@ -694,7 +695,7 @@ int Cracker::crack() {
 			for ( i = 0; i < len; ++i ) {
 				update_keys(data[i] ^= decrypt_byte(keys[2]));
 			}
-			if ( this->lfh.compression_method == DEFLATED ) {
+			if ( method == DEFLATED ) {
 				if ( puff_dry_run(destlen, data, sourcelen, io_state) == 0 ) {
 					if ( puff(dest, destlen, data, sourcelen, io_state) == 0 ) {
 						if ( create_crc32(dest, len) == this->lfh.good_crc_32 ) {
