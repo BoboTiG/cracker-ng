@@ -6,8 +6,8 @@
 	. : information
 
 
-[ dev ]
-	. Cracker-ng 2025.12-05 released
+[ december 09 2025 ]
+	. Cracker-ng 2025.12-09 released
 	+ statistics
 	. ZIP module:
 		* great optimization in find_central_directory()
