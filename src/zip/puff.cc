@@ -38,7 +38,7 @@ const int dext[30] = {
 const int order[19] = {
 	16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15};
 
-static int bits(struct state *s, const int &need)
+static inline int bits(struct state *s, const int &need)
 {
 	int val = s->bitbuf;
 
@@ -56,7 +56,7 @@ static int bits(struct state *s, const int &need)
 	return val & ((1L << need) - 1);
 }
 
-static int decode(struct state *s, const struct huffman *h)
+static inline int decode(struct state *s, const struct huffman *h)
 {
 	int len, code, first, count, index, bitbuf, left;
 	int *next;
@@ -91,7 +91,7 @@ static int decode(struct state *s, const struct huffman *h)
 	return -1;  // ran out of codes
 }
 
-static int construct(struct huffman *h, const int *length, const int &n)
+static inline int construct(struct huffman *h, const int *length, const int &n)
 {
 	int symbol, len, left, offs[16];
 
@@ -101,7 +101,7 @@ static int construct(struct huffman *h, const int *length, const int &n)
 	for (symbol = 0; symbol < n; ++symbol)
 		h->count[length[symbol]]++;   // assumes lengths are within bounds
 	if (h->count[0] == n)             // no codes!
-		return 0;                     // complete, but decode() will fail
+		return -1;                    // complete, but decode() will fail
 
 	// check for an over-subscribed or incomplete set of lengths
 	left = 1;                         // one possible code of zero length
@@ -129,7 +129,7 @@ static int construct(struct huffman *h, const int *length, const int &n)
 	return left;
 }
 
-static int codes(
+static inline int codes(
 	struct state *s,
 	const struct huffman *lencode,
 	const struct huffman *distcode)
@@ -156,17 +156,21 @@ static int codes(
 				return 1;  // invalid fixed code
 			len = lens[symbol] + bits(s, lext[symbol]);
 
-			// get and check distance
+			// get distance
 			symbol = decode(s, distcode);
 			if (symbol < 0)
 				return symbol;  // invalid symbol
+	
+			// check copy length bytes from distance bytes back
+			if (s->outcnt + len > s->outlen)
+				return 1;
+
+			// check distance
 			dist = dists[symbol] + bits(s, dext[symbol]);
 			if (dist > s->outcnt)
 				return 1;  // distance too far back
 
 			// copy length bytes from distance bytes back
-			if (s->outcnt + len > s->outlen)
-				return 1;
 			for ( ; len; --len ) {
 				s->out[s->outcnt] = s->out[s->outcnt - dist];
 				++s->outcnt;
@@ -178,7 +182,7 @@ static int codes(
 	return 0;
 }
 
-static int fixed(struct state *s)
+static inline int fixed(struct state *s)
 {
 	int symbol;
 	int lencnt[16], lensym[288], distcnt[16], distsym[30], lengths[288];
@@ -212,7 +216,7 @@ static int fixed(struct state *s)
 	return codes(s, &lencode, &distcode);
 }
 
-static int dynamic(struct state *s)
+static inline int dynamic(struct state *s)
 {
 	int nlen, ndist, ncode, index;
 	int lengths[316], lencnt[16], lensym[286],distcnt[16], distsym[30];
@@ -226,10 +230,12 @@ static int dynamic(struct state *s)
 
 	// get number of lengths in each table, check lengths
 	nlen  = bits(s, 5) + 257;
-	ndist = bits(s, 5) + 1;
-	ncode = bits(s, 4) + 4;
-	if (nlen > 286 || ndist > 30)
+	if (nlen > 286)
 		return 1;  // bad counts
+	ndist = bits(s, 5) + 1;
+	if (ndist > 30)
+		return 1;  // bad counts
+	ncode = bits(s, 4) + 4;
 
 	// read code length code lengths (really), missing lengths are zero
 	for (index = 0; index < ncode; ++index)
@@ -317,13 +323,12 @@ int puff(
 	return err;
 }
 
-static int codes_dry_run(
+static inline int codes_dry_run(
 	struct state *s,
 	const struct huffman *lencode,
 	const struct huffman *distcode)
 {
 	int symbol, len;
-	unsigned int dist;
 
 	// decode literals and length/distance pairs
 	do {
@@ -343,18 +348,20 @@ static int codes_dry_run(
 				return 1;  // invalid fixed code
 			len = lens[symbol] + bits(s, lext[symbol]);
 
-			// get and check distance
+			// get distance
 			symbol = decode(s, distcode);
 			if (symbol < 0)
 				return symbol;  // invalid symbol
-			dist = dists[symbol] + bits(s, dext[symbol]);
-			if (dist > s->outcnt)
-				return 1;  // distance too far back
 
-			// copy length bytes from distance bytes back
+			// check copy length bytes from distance bytes back
 			if (s->outcnt + len > s->outlen)
 				return 1;
 
+			// check distance
+			if ((unsigned int)(dists[symbol] + bits(s, dext[symbol])) > s->outcnt)
+				return 1;  // distance too far back
+
+			// copy length bytes from distance bytes back
 			s->outcnt += len;
 		}
 	} while (symbol != 256);  // end of block symbol
@@ -363,7 +370,7 @@ static int codes_dry_run(
 	return 0;
 }
 
-static int fixed_dry_run(struct state *s)
+static inline int fixed_dry_run(struct state *s)
 {
 	int symbol;
 	int lencnt[16], lensym[288], distcnt[16], distsym[30], lengths[288];
@@ -397,7 +404,7 @@ static int fixed_dry_run(struct state *s)
 	return codes_dry_run(s, &lencode, &distcode);
 }
 
-static int dynamic_dry_run(struct state *s)
+static inline int dynamic_dry_run(struct state *s)
 {
 	int nlen, ndist, ncode, index;
 	int lengths[316], lencnt[16], lensym[286],distcnt[16], distsym[30];
@@ -411,10 +418,12 @@ static int dynamic_dry_run(struct state *s)
 
 	// get number of lengths in each table, check lengths
 	nlen  = bits(s, 5) + 257;
-	ndist = bits(s, 5) + 1;
-	ncode = bits(s, 4) + 4;
-	if (nlen > 286 || ndist > 30)
+	if (nlen > 286)
 		return 1;  // bad counts
+	ndist = bits(s, 5) + 1;
+	if (ndist > 30)
+		return 1;  // bad counts
+	ncode = bits(s, 4) + 4;
 
 	// read code length code lengths (really), missing lengths are zero
 	for (index = 0; index < ncode; ++index)

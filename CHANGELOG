@@ -13,7 +13,7 @@
 		* great optimization in find_central_directory()
 		* faster CRC32 implementation (Slicing-By-16 Algorithm by Bulat Ziganshin)
 		* puff optimizations
-		* huge optimization by running a deflate dry-run to catch early decompression issues, and prevent unnecessary memory copies
+		* huge optimization by running a decompression dry-run to catch early issues, and prevent unnecessary memory copies
 		* small optimizations in keys initialization (see GH#17)
 
 [ february 03 2015 ]
